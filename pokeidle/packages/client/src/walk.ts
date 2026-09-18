@@ -146,6 +146,57 @@ export function findPath(
   return null;
 }
 
+
+/**
+ * A path from `from` onto `to`, excluding the start.
+ *
+ * City movement needs to land on the tile the player clicked, unlike combat
+ * pathing above, which deliberately stops beside a creature.
+ */
+export function findPathTo(
+  from: Point,
+  to: Point,
+  grid: WalkGrid,
+  maxNodes = 8000,
+): Point[] | null {
+  if (from.x === to.x && from.y === to.y) return [];
+  if (!grid.walkable(to.x, to.y)) return null;
+
+  const cameFrom = new Map<number, number>();
+  const queue: Point[] = [from];
+  let head = 0;
+  const start = key(from.x, from.y);
+  const seen = new Set<number>([start]);
+
+  while (head < queue.length) {
+    const current = queue[head++]!;
+    if (head > maxNodes) return null;
+
+    for (const step of NEIGHBOURS) {
+      const next = { x: current.x + step.x, y: current.y + step.y };
+      const k = key(next.x, next.y);
+      if (seen.has(k) || !grid.walkable(next.x, next.y)) continue;
+
+      seen.add(k);
+      cameFrom.set(k, key(current.x, current.y));
+
+      if (next.x === to.x && next.y === to.y) {
+        const path: Point[] = [];
+        let cursor: number | undefined = k;
+        while (cursor !== undefined && cursor !== start) {
+          path.push({ x: Math.floor(cursor / 65536), y: cursor % 65536 });
+          cursor = cameFrom.get(cursor);
+        }
+        return path.reverse();
+      }
+
+      queue.push(next);
+    }
+  }
+
+  return null;
+}
+
 /**
  * The trail the party walks in.
  *
