@@ -1,0 +1,10 @@
+Module
+  name: game_messageboxparser
+  description: Parse message box opcodes
+  author:
+  website: https://github.com/edubart/otclient
+  scripts: [ messageboxparser ]
+  sandboxed: true
+  reloadable: true
+  @onLoad: init()
+  @onUnload: terminate()

@@ -1,0 +1,7 @@
+{
+  "name": "@pokeidle/content-compiler",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "bin": { "pokeidle-cc": "./src/cli.ts" }
+}

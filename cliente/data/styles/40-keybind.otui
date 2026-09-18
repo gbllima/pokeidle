@@ -1,0 +1,60 @@
+KeybindAssignWindow < MainHeadlessWindow
+  id: assignWindow
+  !text: tr('Button Assign')
+  size: 480 210
+
+  Label-16px-Regular
+    id: context
+    !text: tr('Please, press the key you wish to add onto your hotkeys manager')
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    text-auto-resize: true
+    text-align: center
+    text-wrap: true
+    margin: 0 12 12 12
+
+  Label-16px-Bold
+    id: capturePreview
+    !text: tr('<none>')
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    text-auto-resize: true
+    margin: 18 12 12 12
+
+  UIButton
+    id: resetButton
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/icons/icon_reset
+    margin: 0 0 1 8
+    change-cursor-image: true
+    cursor: pointer
+    visible: false
+    !tooltip: tr('Reset to Default')
+
+  Label-16px-Regular
+    id: extra
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-align: center
+    text-wrap: true
+    margin: 0 12 12 12
+
+  ButtonBlueSmall
+    id: confirmButton
+    !text: tr('Confirm')
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    anchors.right: parent.horizontalCenter
+    margin-right: 5
+
+  ButtonRedSmall
+    id: cancelButton
+    !text: tr('Cancel')
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    anchors.left: parent.horizontalCenter
+    margin-left: 5

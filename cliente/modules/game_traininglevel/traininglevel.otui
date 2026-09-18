@@ -1,0 +1,379 @@
+TrainingButtonClose < UIButton
+  size: 19 19
+  image-source: /images/ui/miniwindow_buttons
+  image-clip: 0 0 19 19
+  image-color: #e63e32
+
+  $hover:
+    image-color: #e8645a
+
+  $pressed:
+    image-color: #b33229
+
+TrainingGuide < UIWindow
+  size: 923 680
+  anchors.centerIn: parent
+  image-source: /images/game/traininglevel/guide
+  padding: 10
+  @onEscape: self:destroy()
+
+  TrainingButtonClose
+    anchors.top: parent.top
+    anchors.right: parent.right
+    @onClick: self:getParent():destroy()
+
+TrainingSlot < UIWidget
+  image-clip: 0 0 467 93
+  height: 93
+  margin: 2
+
+  $hover:
+    image-clip: 0 93 467 93
+
+  $focus:
+    image-clip: 0 186 467 93
+
+  Label-16px-Bold
+    id: cooldownLabel
+    anchors.centerIn: parent
+    text-auto-resize: true
+    margin: 15 0 0 36
+
+  ButtonBlueBase
+    id: iconCooldown
+    size: 42 42
+    anchors.left: iconBuy.left
+    anchors.bottom: iconBuy.bottom
+    icon: /images/game/icons/icon_historic
+    visible: false
+    !tooltip: tr('Reset time')
+    @onClick: modules.game_traininglevel.sendResetCooldown()
+
+  ButtonBase
+    id: iconSwitch
+    size: 22 22
+    anchors.bottom: next.bottom
+    anchors.left: next.right
+    image-source: /images/game/icons/icons_two
+    image-clip: 162 0 22 22
+    margin: 0 0 -1 12
+    @onClick: modules.game_traininglevel.sendSwitchSlot()
+    visible: false
+    !tooltip: tr('Switch training')
+
+  ButtonBase
+    id: iconChoose
+    size: 22 22
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin: 0 0 12 110
+    image-source: /images/game/icons/icons_two
+    image-clip: 24 0 22 22
+    @onClick: modules.game_traininglevel.onOpenChooseWindow()
+    visible: false
+    !tooltip: tr('Search training')
+
+  ButtonBlueBase
+    id: iconBuy
+    size: 42 42
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.left
+    margin-left: 32
+    icon: /images/game/traininglevel/icon_add
+    visible: false
+    @onClick: modules.game_traininglevel.sendPaidSlot()
+    !tooltip: tr("Buy")
+
+TrainingImage < UIWidget
+  image-clip: 0 0 467 93
+  height: 93
+  margin: 2
+
+  $hover:
+    image-clip: 0 93 467 93
+
+  $focus:
+    image-clip: 0 186 467 93
+
+TrainingChooseWindow < HeadlessWindow
+  anchors.fill: parent
+  !text: tr('Choose you training')
+  draggable: false
+  image-source: /images/ui/panel
+  margin: -8
+
+  ScrollablePanel
+    id: list
+    anchors.fill: parent
+    anchors.bottom: next.bottom
+    anchors.right: next.left
+    vertical-scrollbar: listScrollBar
+    auto-focus: first
+    layout:
+      type: grid
+      cell-size: 373 80
+      flow: true
+
+  VerticalScrollBar
+    id: listScrollBar
+    anchors.top: parent.top
+    anchors.bottom: next.top
+    anchors.right: parent.right
+    margin-bottom: 20
+    step: 14
+    pixels-scroll: true
+
+  ButtonBlueSmall
+    id: buttonChoose
+    !text: tr('Choose')
+    anchors.bottom: parent.bottom
+    anchors.right: parent.horizontalCenter
+    margin-right: 5
+    @onClick: modules.game_traininglevel.sendChooseTraining()
+
+  ButtonRedSmall
+    id: buttonCancel
+    !text: tr('Cancel')
+    anchors.bottom: parent.bottom
+    anchors.left: parent.horizontalCenter
+    margin-left: 5
+    @onClick: modules.game_traininglevel.onCloseChooseWindow()
+
+  Label-14px-Regular
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin-bottom: 12
+    text-auto-resize: true
+    !text: tr('Required') .. ': 1x'
+
+  UIItem
+    size: 34 34
+    anchors.bottom: prev.bottom
+    anchors.left: prev.right
+    margin: 0 0 -6 3
+    virtual: true
+    item-id: 23825
+
+MainWindow
+  size: 810 577
+  !text: tr('Pokémon Training')
+  @onClose: modules.game_traininglevel.onOffline()
+  @onEscape: modules.game_traininglevel.onOffline()
+
+
+  Label-14px-Medium
+    width: 295
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 12
+    text-wrap: true
+    text-align: center
+    text-auto-resize: true
+    !text: tr('O POKEMON TRAINING fará com que seu Pokémon treine para atingir seu potencial máximo. A cada level de Training que ele subir, subirá o seu status base.')
+
+  Label-13px-Bold
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: prev.horizontalCenter
+    margin-top: 26
+    text-auto-resize: true
+    !text: tr('SELECTED TRAINING')
+
+  Panel
+    id: selectedPanel
+    width: 295
+    anchors.top: prev.bottom
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    border: 1 #6b6b6b
+    background-color: #121212
+    margin-top: 8
+    padding: 8
+
+    UIWidget
+      id: elementImageInfo
+      height: 60
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      image-clip: 0 93 471 93
+      margin-right: -4
+
+    Label-13px-Regular
+      id: elementDescriptionInfo
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 12
+      text-wrap: true
+      text-align: center
+      text-auto-resize: true
+      !text: tr('A Gym Leader Erika do ginásio de Celadon, especialista em Pokémon do tipo planta treinará seu Pokémon para você.')
+
+    HorizontalSeparator
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 16
+
+    Label
+      anchors.top: prev.bottom
+      anchors.left: prev.left
+      margin: 12 0 0 4
+      !text: tr("Pokemon")
+
+    Item
+      id: slotPokeball
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-top: 4
+      &slotType: 1
+      &onDrop: modules.game_traininglevel.onDropSlotItem
+
+    ButtonClose
+      size: 16 16
+      anchors.bottom: prev.bottom
+      anchors.right: prev.right
+      margin: 0 -8 -6 0
+      @onClick: modules.game_traininglevel.onClearSlotPokeball()
+
+    Panel
+      anchors.fill: next
+      background-color: #4B4B4B
+
+    ProgressBar
+      id: levelProgress
+      height: 8
+      anchors.top: slotPokeball.bottom
+      anchors.left: slotPokeball.left
+      anchors.right: slotPokeball.right
+      margin-top: 8
+      background-color: #3ae637
+      image-border: 1
+      &percent: 0
+
+    Label
+      id: pokemonLevel
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      text-align: right
+      margin-top: 5
+      text-auto-resize: true
+      text: Lv. 0
+
+    Label
+      id: countPlayerLabel
+      anchors.top: slotPlate.bottom
+      anchors.right: slotPlate.horizontalCenter
+      text-auto-resize: true
+      margin: 8 3 0 0
+      !text: tr("0")
+
+    Label
+      id: countPlateLabel
+      anchors.bottom: prev.bottom
+      anchors.left: prev.right
+      text-auto-resize: true
+      !text: tr("/0")
+
+    Item
+      id: slotPlate
+      anchors.left: slotPokeball.right
+      anchors.verticalCenter: slotPokeball.verticalCenter
+      margin-left: 26
+      &slotType: 2
+      &onDrop: modules.game_traininglevel.onDropSlotItem
+
+    ButtonClose
+      size: 16 16
+      anchors.bottom: prev.bottom
+      anchors.right: prev.right
+      margin: 0 -8 -6 0
+      @onClick: modules.game_traininglevel.onClearSlotPlate()
+
+    Label
+      anchors.bottom: slotPlate.top
+      anchors.horizontalCenter: slotPlate.horizontalCenter
+      margin-bottom: 3
+      !text: tr("Plate")
+
+    Label
+      anchors.top: slotPlate.bottom
+      anchors.left: prev.right
+      margin: 7 0 0 20
+      !text: tr("(Opcional)")
+
+    Item
+      id: slotBoost
+      anchors.bottom: prev.top
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-bottom: 7
+      &slotType: 3
+      &onDrop: modules.game_traininglevel.onDropSlotItem
+
+    ButtonClose
+      size: 16 16
+      anchors.bottom: prev.bottom
+      anchors.right: prev.right
+      margin: 0 -8 -6 0
+      @onClick: modules.game_traininglevel.onClearSlotBoost()
+
+    Label
+      anchors.bottom: slotBoost.top
+      anchors.horizontalCenter: slotBoost.horizontalCenter
+      margin-bottom: 3
+      !text: tr("Coin")
+
+    Label
+      id: percentLabel
+      anchors.top: prev.top
+      anchors.right: parent.right
+      margin: 14 5 0 0
+      text-auto-resize: true
+      text-align: center
+      !text: tr('Training\nSucess rate:\n0%%')
+
+    UIWidget
+      anchors.bottom: prev.top
+      anchors.left: prev.right
+      image-source: /images/game/traininglevel/icon_info
+      margin: 0 0 -12 -10
+      !tooltip: tr('A Rate de sucesso é calculada com base no Pokémon que receberá o treinamento,\nno elemento da plate inserida e no uso ou não do Elemental Coin.')
+
+    Label
+      id: messageLabel
+      anchors.bottom: next.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text-auto-resize: true
+      text-wrap: true
+      text-align: center
+      margin-bottom: 8
+
+    ButtonBlueSmall
+      id: startButton
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      !text: tr('Start')
+      enabled: false
+      @onClick: modules.game_traininglevel.sendStart()
+
+  TextList
+    id: trainingList
+    width: 467
+    anchors.top: next.top
+    anchors.bottom: next.bottom
+    anchors.right: next.left
+    vertical-scrollbar: scrollBar
+    margin-left: 12
+    auto-focus: first
+    &onChildFocusChange: modules.game_traininglevel.onUpdateTrainingInfo
+
+  VerticalScrollBar
+    id: scrollBar
+    anchors.top: closeButton.bottom
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-top: 10
+    step: 14
+    pixels-scroll: true

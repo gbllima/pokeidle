@@ -1,0 +1,8 @@
+Module
+  name: game_expedition
+  description: Expeditions
+  author: PStory
+  sandboxed: true
+  scripts: [ expedition ]
+  @onLoad: init()
+  @onUnload: terminate()

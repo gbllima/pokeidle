@@ -1,0 +1,58 @@
+NameEffectWidget < PanelRoundedSolid
+  image-color: #525252
+  phantom: false
+
+  $checked:
+    image-color: #69B2FC
+
+  UIWidget
+    id: nameEffectWidget
+    anchors.fill: next
+    phantom: true
+
+  Label-14px-Medium
+    id: nameEffectLabel
+    text: title
+    text-auto-resize: true
+    text-align: center
+    anchors.centerIn: parent
+    phantom: true
+
+MainWindow
+  id: nameEffectsWindow
+  !text: tr("Name Effects")
+  size: 704 405
+  @onEscape: self:hide()
+  @onClose: self:hide()
+
+  VerticalScrollBar
+    id: nameEffectsPanelScrollBar
+    step: 14
+    pixels-scroll: true
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    anchors.bottom: setButton.top
+    margin: 18 0 10 0
+
+  TextList
+    id: nameEffectsPanel
+    vertical-scrollbar: nameEffectsPanelScrollBar
+    anchors.top: prev.top
+    anchors.left: parent.left
+    anchors.right: prev.left
+    anchors.bottom: prev.bottom
+    margin-right: 5
+    padding: 6
+    layout:
+      type: grid
+      cell-spacing: 4
+      cell-size: 319 66
+      flow: true  
+
+  ButtonBlueSmall
+    id: setButton
+    width: 206
+    !text: tr("Set")
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: function(...) modules.game_nameeffects.setSelectedNameEffect(...) end

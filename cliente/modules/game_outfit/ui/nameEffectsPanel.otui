@@ -1,0 +1,47 @@
+PanelCustomNameEffect < PanelRoundedSolid
+  image-color: #626262
+  phantom: false
+  padding: 10
+  id: 0
+  @onClick: modules.game_outfit.onNameEffectSelect(self)
+
+  $focus:
+    image-color: #057FFA
+
+  Label-14px-Medium
+    id: name
+    text: title
+    text-auto-resize: true
+    text-align: center
+    anchors.centerIn: parent
+    margin-left: 5
+    phantom: true
+
+  Panel
+    id: texture
+    anchors.fill: prev
+
+CustomNameEffectGrid < ScrollablePanel
+  layout:
+    type: grid
+    cell-size: 245 52
+    cell-spacing: 4
+    flow: true
+
+Panel
+  id: nameEffectsPanel
+
+  CustomNameEffectGrid
+    id: list
+    anchors.fill: parent
+    anchors.right: next.left
+    vertical-scrollbar: scroll
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+    visible: false

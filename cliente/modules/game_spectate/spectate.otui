@@ -1,0 +1,109 @@
+HostPanel < UIWidget
+  height: 36
+  padding: 6
+  background-color: alpha
+  focusable: true
+  
+  &updateOnStates: |
+    function(self)
+      local children = self:getChildren()
+      for i=1,#children do
+        if children[i].setOn then
+          children[i]:setOn(self:isFocused())
+        end
+      end
+    end
+  @onFocusChange: self:updateOnStates()
+  @onSetup: self:updateOnStates()
+
+  $hover:
+    background-color: #69B2FC
+
+  $focus:
+    background-color: #057FFA
+
+  Label-16px-Bold
+    id: name
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.left
+    text-auto-resize: true
+    color: #FFFFFF
+  
+  Label-16px-Regular
+    id: desc
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: name.right
+    margin-left: 10
+    text-auto-resize: true
+    color: #FFFFFF
+
+  Label-16px-Regular
+    id: viewers
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.right: eyeIcon.left
+    margin-right: 4
+    text-auto-resize: true
+    color: #FFFFFF
+
+  Panel
+    id: eyeIcon
+    size: 24 24
+    anchors.right: lockIcon.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 8
+    image-source: /images/game/icons/icon_eye_24px
+
+  Panel
+    id: lockIcon
+    size: 24 24
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    image-source: /images/game/icons/icon_lock
+    visible: false
+    tooltip: Password protected
+
+MainHeadlessWindow
+  id: spectateWindow
+  size: 461 500
+  !text: tr("Spectate Menu")
+  @onEscape: modules.game_spectate.hide()
+
+  VerticalScrollBar
+    id: hostsPanelScrollBar
+    step: 14
+    pixels-scroll: true
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: watchButton.top
+    margin: 12 12 12 0
+
+  ScrollablePanel
+    id: hosts
+    vertical-scrollbar: hostsPanelScrollBar
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: hostsPanelScrollBar.left
+    anchors.bottom: watchButton.top
+    margin: 12 0 12 12
+    padding: 2
+    layout:
+      type: verticalBox
+      spacing: 2
+
+  ButtonBlueSmall
+    id: watchButton
+    !text: tr("Watch")
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin-right: 5
+    @onClick: modules.game_spectate.watchSelectedChannel()
+
+  ButtonRedSmall
+    id: cancelButton
+    !text: tr("Close")
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-left: 5
+    @onClick: modules.game_spectate.hide()

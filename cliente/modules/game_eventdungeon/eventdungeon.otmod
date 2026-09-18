@@ -1,0 +1,8 @@
+Module
+  name: game_eventdungeon
+  description: Eventos de dungeons
+  author: PStory
+  sandboxed: true
+  scripts: [ eventdungeon ]
+  @onLoad: init()
+  @onUnload: terminate()

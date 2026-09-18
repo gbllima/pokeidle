@@ -1,0 +1,8 @@
+Module
+  name: game_helds
+  description: Helds
+  author: PStory
+  sandboxed: true
+  scripts: [ helds ]
+  @onLoad: init()
+  @onUnload: terminate()

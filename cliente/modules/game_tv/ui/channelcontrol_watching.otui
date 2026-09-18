@@ -1,0 +1,45 @@
+MiniWindow
+  id: channelControlWatchingWindow
+  !text: tr("Channel Control")
+  height: 115
+  icon: /images/game/icons/icon_cam
+  icon-clip: 0 48 16 16
+  icon-size: 16 16
+  icon-offset: 2 3
+  @onSetup: |
+    self:disableResize()
+  @onClose: modules.game_tv.sendActionChannel('!tvclose')
+
+  MiniWindowContents
+    padding: 8
+
+    Label-14px-Regular
+      id: channelStatusLabel
+      text: -
+      text-wrap: true
+      text-auto-resize: true
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text-align: center
+      margin-top: 4
+
+    ButtonBlueBase
+      id: previousChannelButton
+      height: 28
+      !text: tr("Previous")
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.horizontalCenter
+      margin-right: 4
+      @onClick: modules.game_tv.sendActionChannel('!tvprev')
+
+    ButtonBlueBase
+      id: nextChannelButton
+      height: 28
+      !text: tr("Next")
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      anchors.left: parent.horizontalCenter
+      margin-left: 4
+      @onClick: modules.game_tv.sendActionChannel('!tvnext')

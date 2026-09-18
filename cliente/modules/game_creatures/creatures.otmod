@@ -1,0 +1,9 @@
+Module
+  name: game_creatures
+  description: creatures module
+  author: Gengo
+  website: http://pokeunion.com.br/
+  sandboxed: true
+  scripts: [ creatures ]
+  @onLoad: init()
+  @onUnload: terminate()

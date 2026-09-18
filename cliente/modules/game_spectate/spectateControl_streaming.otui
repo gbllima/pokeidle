@@ -1,0 +1,79 @@
+MiniWindow
+  id: spectateControlStreamingWindow
+  !text: tr("Control")
+  height: 200
+  icon: /images/game/icons/icon_cam
+  icon-clip: 0 48 16 16
+  icon-size: 16 16
+  icon-offset: 2 3
+  @onSetup: |
+    self:disableResize()
+  @onClose: modules.game_spectate.stopSpectating()
+
+  MiniWindowContents
+    padding: 8
+
+    Label
+      id: hostNameLabel
+      text: -
+      text-wrap: true
+      text-auto-resize: true
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text-align: center
+      margin-top: 4
+      font: verdana-11px-rounded
+
+    Label
+      id: hostTimeLabel
+      text: 00:00:00
+      text-wrap: true
+      text-auto-resize: true
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text-align: center
+      margin-top: 4
+      font: verdana-11px-rounded
+
+    Label
+      id: viewersLabel
+      text: Viewers: 0
+      text-wrap: true
+      text-auto-resize: true
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text-align: center
+      margin-top: 4
+      font: verdana-11px-rounded
+
+    ButtonBlueBase
+      id: changeDescButton
+      height: 28
+      !text: tr("Change Description")
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 8
+      @onClick: modules.game_spectate.showHosting()
+
+    ButtonBlueBase
+      id: manageViewersButton
+      height: 28
+      !text: tr("Manage Viewers")
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 4
+      @onClick: modules.game_spectate.showViewerManager()
+
+    ButtonRedBase
+      id: stopHostingButton
+      height: 28
+      !text: tr("Stop Hosting")
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      @onClick: modules.game_spectate.stopHosting()

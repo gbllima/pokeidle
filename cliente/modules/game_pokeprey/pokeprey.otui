@@ -1,0 +1,385 @@
+PreyChooseCreature < UIWidget
+  image-source: /images/ui/panel_outline
+  image-border: 12
+  image-clip: 0 180 170 60
+  image-color: alpha
+
+  $hover:
+    image-clip: 0 60 170 60
+    image-color: white
+
+  $focus:
+    image-clip: 0 120 170 60
+    image-color: white
+
+  $focus hover:
+    image-clip: 0 60 170 60
+    image-color: white
+
+  UIWidget
+    id: image
+    size: 55 55
+    anchors.centerIn: parent
+    phantom: true
+    image-fixed-ratio: true
+    image-smooth: true
+
+PreyChooseWindow < PanelRoundedSolid
+  image-color: #525252
+  padding: 10
+  anchors.fill: selected
+  phantom: false
+
+  TextEdit
+    id: search
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    !placeholder: tr('Search') .. "..."
+    @onTextChange: |
+      function(self, text)
+        self.placeholderLabel:setVisible(text:len() == 0)
+        modules.game_pokeprey.searchChoosePokemon(text)
+      end
+
+  ScrollablePanel
+    id: list
+    anchors.fill: parent
+    anchors.top: next.top
+    anchors.bottom: next.bottom
+    anchors.right: next.left
+    vertical-scrollbar: listScrollBar
+    auto-focus: first
+    layout:
+      type: grid
+      cell-size: 64 62
+      cell-spacing: 4
+      flow: true
+
+  VerticalScrollBar
+    id: listScrollBar
+    anchors.top: search.bottom
+    anchors.bottom: next.top
+    anchors.right: parent.right
+    margin: 9 0 8 0
+    step: 28
+    pixels-scroll: true
+
+  Label-14px-Medium
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    margin-bottom: 8
+    !text: tr('Selecione um bônus:')
+
+  Panel
+    id: panel
+    height: 40
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 12
+
+    TabButton
+      id: 1
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      !text: tr('Experience')
+
+    TabButton
+      id: 3
+      anchors.bottom: parent.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      !text: tr('Captura')
+
+    TabButton
+      id: 2
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      !text: tr('Saque')
+
+  Label-13px-Bold
+    anchors.bottom: next.bottom
+    anchors.left: next.right
+    margin: 0 0 -3 4
+    icon-source: /images/game/prey/icon_ticket
+    icon-align: left
+    text-offset: 26 0
+    text-auto-resize: true
+    text: 1x
+    phantom: false
+    !tooltip: tr('Prey Ticket')
+
+  Label-13px-Regular
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    margin-bottom: 8
+    !text: tr('Será consumido:')
+
+  ButtonBlueSmall
+    id: buttonChoose
+    !text: tr('Choose')
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    margin-right: 5
+    @onClick: modules.game_pokeprey.onChooseSelectPokemon()
+
+  ButtonRedSmall
+    id: buttonCancel
+    !text: tr('Cancel')
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.horizontalCenter
+    margin-left: 5
+    @onClick: modules.game_pokeprey.onCloseChooseWindow()
+
+PreyTracker < ScoutTracker
+  !text: tr('Poke Prey Tracker')
+
+PreySlot < UIWidget
+  size: 160 230
+  image-source: /images/ui/panel_outline
+  image-border: 12
+  image-clip: 0 0 170 60
+  padding: 12
+  font: DMSans-13px-bold
+  text-align: top
+  text-offset: 0 10
+
+  $hover:
+    image-clip: 0 60 170 60
+
+  $focus:
+    image-clip: 0 120 170 60
+
+  $focus hover:
+    image-clip: 0 60 170 60
+
+  Label-14px-Regular
+    id: name
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 8
+    text-align: center
+    text-wrap: true
+    text-auto-resize: true
+
+  UIWidget
+    id: image
+    size: 60 60
+    anchors.centerIn: parent
+    margin-top: 12
+    phantom: true
+    image-color: #4BA8FD
+
+    $on:
+      size: 110 90
+      image-color: #FFFFFF
+
+  UIWidget
+    id: buffer
+    anchors.top: parent.top
+    anchors.right: parent.right
+    image-source: /images/game/prey/prey_loot
+    phantom: true
+    margin: -10
+
+  UIWidget
+    id: skull
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    image-source: /images/game/prey/icon_skull
+    margin-right: 4
+    image-color: #FF645E
+    phantom: true
+
+  Label-13px-Bold
+    id: defeats
+    anchors.left: prev.right
+    anchors.right: parent.right
+    anchors.verticalCenter: prev.verticalCenter
+    text-align: center
+
+PreySelectedPokemon < PanelRoundedSolid
+  image-color: #525252
+  padding: 23 8
+  text-align: top
+  font: DMSans-20px-bold
+  text-offset: 0 14
+  !text: tr('Defeat')
+
+  ButtonBlueBase
+    id: search
+    size: 30 30
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: -10
+    icon: /images/game/prey/search
+    @onClick: modules.game_pokeprey.sendPreyAction(2) 
+
+  Label-16px-Regular
+    id: name
+    anchors.bottom: next.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 12
+    text-auto-resize: true
+
+  Panel
+    id: image
+    size: 60 60
+    anchors.bottom: next.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 30
+    image-color: #808080
+
+    $on:
+      size: 170 140
+      image-color: #FFFFFF
+
+  PanelRoundedSolid
+    id: panel
+    height: 92
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    image-color: #C8FFC7
+    margin-bottom: 10
+
+    Label-16px-Bold
+      anchors.top: parent.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      text-auto-resize: true
+      !text: tr('Bônus')
+      margin-top: 20
+      color: #1B1B1B
+
+    Label-16px-Regular
+      id: bonus
+      anchors.bottom: parent.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      text-auto-resize: true
+      margin-bottom: 20
+      color: #1B1B1B
+
+  ButtonBlueSmall
+    id: switch
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    margin: 0 4 42 0
+    !text: tr('Trocar bônus')
+    @onClick: modules.game_pokeprey.requestChangeBonus(self:getParent().name:getText())
+
+  ButtonBlueSmall
+    id: start
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    margin: 0 4 42 0
+    !text: tr('Start')
+    @onClick: modules.game_pokeprey.requestStart(self:getParent().name:getText())
+
+  ButtonBlueSmall
+    id: random
+    anchors.bottom: prev.bottom
+    anchors.right: parent.right
+    anchors.left: parent.horizontalCenter
+    margin-left: 4
+    !text: tr('Randomizar Pokémon')
+    @onClick: modules.game_pokeprey.requestRandomPokemon(self:getParent().name:getText())
+
+  ButtonRedSmall
+    id: cancel
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    anchors.left: prev.left
+    !text: tr('Cancel')
+    @onClick: modules.game_pokeprey.requestCancel(self:getParent().name:getText())
+
+    $on:
+      anchors.left: parent.left
+
+  CheckBox
+    id: restart
+    anchors.top: prev.top
+    anchors.left: parent.left
+    !text: tr("Renew")
+
+  Label-13px-Bold
+    id: ticket
+    anchors.bottom: prev.bottom
+    anchors.left: prev.right
+    margin-left: 8
+    icon-source: /images/game/prey/icon_ticket
+    icon-align: left
+    text-offset: 26 0
+    text-auto-resize: true
+    text: 1x
+    phantom: false
+    !tooltip: tr('Prey Ticket')
+
+  ButtonRedSmall
+    id: finish
+    anchors.top: prev.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin-top: 12
+    !text: tr('Finish')
+    @onClick: modules.game_pokeprey.requestFinish(self:getParent().name:getText())
+
+  Label-13px-Bold
+    id: description
+    anchors.bottom: prev.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-wrap: true
+    text-align: center
+    !text: tr('Para liberar este espaço, você deve ir até a loja\ne comprar o item chamado Slot Poke Prey')
+
+    $on:
+      !text: tr('Para liberar este espaço você precisa ser VIP')
+
+  ButtonBlueSmall
+    id: buy
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    !text: tr('Buy')
+    @onClick: modules.game_shop.toggle()
+
+MainWindow
+  size: 778 570
+  !text: tr('Pokeprey')
+  visible: false
+  @onEscape: modules.game_pokeprey.onPreyGameEnd()
+  @onClose: modules.game_pokeprey.onPreyGameEnd()
+
+  Label-14px-Medium
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    !text: tr('Ative a Prey para receber bonus extras')
+    text-auto-resize: true
+    margin-top: 18
+
+  ScrollablePanel
+    id: list
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    anchors.right: parent.horizontalCenter
+    margin: 16 5 0 0
+    layout:
+      type: grid
+      cell-size: 180 230
+      flow: true
+      cell-spacing: 8
+
+  PreySelectedPokemon
+    id: selected
+    anchors.top: prev.top
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    anchors.left: parent.horizontalCenter
+    margin-left: 5

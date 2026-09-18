@@ -1,0 +1,305 @@
+TokenMachineLabel < Label-16px-Regular
+  height: 32
+  anchors.top: parent.top
+  anchors.left: parent.left
+  anchors.right: parent.right
+  focusable: true
+  color: #FFFFFF
+  background-color: alpha
+  text-offset: 4 6
+
+  $focus:
+    background-color: #69B2FC
+
+TokenMachineWindow < MainHeadlessWindow
+  id: channelsWindow
+  !text: tr('Token Machine')
+  size: 365 301
+  @onEscape: self:destroy()
+
+  TokenMachineLabel
+    text: 20 Devoted Token (Tier 1-2)
+    &option: 1
+
+  TokenMachineLabel
+    anchors.top: prev.bottom
+    text: 50 Devoted Token (Tier 2-4)
+    &option: 2
+
+  TokenMachineLabel
+    anchors.top: prev.bottom
+    text: 60 Mighty Token (Tier 1-3)
+    &option: 3
+
+  TokenMachineLabel
+    anchors.top: prev.bottom
+    text: 150 Mighty Token (Tier 2-5)
+    &option: 4
+
+  TokenMachineLabel
+    anchors.top: prev.bottom
+    text: 300 Mighty Token (Tier 3-6)
+    &option: 5
+
+  ButtonBlueSmall
+    id: buttonOpen
+    !text: tr('Confirm')
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    anchors.right: parent.horizontalCenter
+    margin-right: 5
+    @onClick: modules.game_contract.requestToken()
+
+  ButtonRedSmall
+    id: buttonCancel
+    !text: tr('Cancel')
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    anchors.left: parent.horizontalCenter
+    margin-left: 5
+    @onClick: self:getParent():destroy()
+
+
+DifficultyButton < TabButton         
+  width: 168
+  enabled: false
+  @onClick: |
+    if ( not self:isChecked() ) then
+      modules.game_contract.requestDifficulty(self:getId())
+    end
+
+  $!first:
+    margin-left: 4
+
+  $hover !on:
+    color: white
+
+  $!disabled:
+    icon-color: alpha
+
+  $on:
+    color: white
+
+DifficultyPanel < UIWidget
+  image-source: /images/ui/panel_outline
+  image-border: 12
+  image-clip: 0 180 170 60
+  padding: 10
+
+  $hover !focus:
+    image-clip: 0 60 170 60
+
+  $focus:
+    image-clip: 0 120 170 60
+
+  $checked:
+    image-clip: 0 60 170 60
+
+  Panel
+    id: status
+    size: 37 37
+    anchors.top: parent.top
+    anchors.left: parent.left
+    image-source: /images/game/contracts/pin_map
+    image-clip: 0 0 37 37
+    image-color: #FFFFFF
+    visible: false
+
+    $on:
+      image-clip: 0 37 37 37
+      image-color: #47E08D
+
+  UICreature
+    id: outfit
+    size: 34 34
+    anchors.centerIn: prev
+    phantom: true
+
+  Label-20px-Bold
+    id: title
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    text-auto-resize: true
+    margin-left: 14
+    text: Cerulean
+
+  Label-14px-Regular
+    id: description
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 5
+    text-auto-resize: true
+    text-wrap: true
+    !text: tr('Contrato inativo, para iniciar aperta o botão de começar')
+
+  ButtonBlueSmall
+    id: start
+    anchors.bottom: next.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    !text: tr('Start')
+    @onClick: modules.game_contract.requestStart()
+    @onHoverChange: |
+      function(self, hovered)
+        self:getParent():setChecked(hovered)
+      end
+
+    $on:
+      !text: tr('Completed')
+
+  ButtonRedSmall
+    id: finish
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 5
+    !text: tr('Finish')
+    @onClick: modules.game_contract.requestFinish()
+    @onHoverChange: |
+      function(self, hovered)
+        self:getParent():setChecked(hovered)
+      end
+
+    $on:
+      !text: tr('Finish')
+
+  Label-13px-Regular
+    id: count
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+
+MainWindow
+  size: 717 567
+  !text: tr('Investigations')
+  visible: false
+  @onEscape: self:hide()
+  @onClose: self:hide()
+
+  Label-14px-Medium
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 18
+    !text: tr('Encontre os membros da Equipe Rocket e impeça-os o mais rápido possível!')
+
+  Panel
+    id: difficultyPanel
+    height: 40
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin: 18 0
+
+    DifficultyButton
+      id: 1
+      anchors.top: parent.top
+      anchors.left: parent.left  
+      !text: tr('Easy')
+
+    DifficultyButton
+      id: 2
+      anchors.top: prev.top
+      anchors.left: prev.right
+      !text: tr('Medium')
+
+    DifficultyButton
+      id: 3
+      anchors.top: prev.top
+      anchors.left: prev.right
+      !text: tr('Hard')
+
+    DifficultyButton
+      id: 4
+      anchors.top: prev.top
+      anchors.left: prev.right
+      !text: tr('Expert')
+      icon-offset: 12 0
+
+  ScrollablePanel
+    id: panelCitys
+    anchors.top: prev.bottom
+    anchors.bottom: next.bottom
+    anchors.left: parent.left
+    anchors.right: next.left
+    image-source: /images/ui/panel_rounded_solid
+    image-border: 10
+    image-color: #545454
+    margin-top: 10
+    vertical-scrollbar: scrollList
+    padding: 10
+    layout:
+      type: grid
+      cell-size: 321 168
+      flow: true
+      cell-spacing: 10
+
+  VerticalScrollBar
+    id: scrollList
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    anchors.top: difficultyPanel.bottom
+    margin: 8 0 16 0
+    step: 36
+    pixels-scroll: true
+
+  PanelOutline
+    id: panelTotal
+    size: 225 32
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+
+    UIWidget
+      size: 18 18
+      anchors.right: next.left
+      anchors.verticalCenter: next.verticalCenter
+      image-source: /images/game/contracts/count_npc
+      image-clip: 0 0 18 18
+      margin: 0 8 1 0
+
+    Label-13px-Bold
+      id: totalCount
+      anchors.centerIn: parent
+      text-auto-resize: true
+      !text: tr('Rockets Defeat: %s', 0)
+
+  PanelOutline
+    id: panelDaily
+    size: 225 32
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+
+    UIWidget
+      size: 18 18
+      anchors.right: next.left
+      anchors.verticalCenter: next.verticalCenter
+      image-source: /images/game/contracts/count_npc
+      image-clip: 0 18 18 18
+      margin: 0 12 1 0
+
+    Label-13px-Bold
+      id: dailyCount
+      anchors.centerIn: parent
+      text-auto-resize: true
+      !text: tr('Weekly Defeat: %s', 0)
+
+  PanelOutline
+    id: panelLegendary
+    size: 225 32
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+
+    UIWidget
+      size: 18 18
+      anchors.right: next.left
+      anchors.verticalCenter: next.verticalCenter
+      image-source: /images/game/contracts/count_npc
+      image-clip: 0 36 18 18
+      margin: 0 8 1 0
+
+    Label-13px-Bold
+      id: legendaryCount
+      anchors.centerIn: parent
+      text-auto-resize: true
+      !text: tr('Admin Defeat: %s', 0)

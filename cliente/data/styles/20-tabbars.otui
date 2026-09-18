@@ -1,0 +1,180 @@
+MoveableTabBar < UIMoveableTabBar
+  size: 80 33
+MoveableTabBarPanel < Panel
+MoveableTabBarButton < UIButton
+  size: 153 33
+  anchors.top: parent.top
+  anchors.left: parent.left
+  font: DMSans-14px-medium
+  color: #FFFFFF
+  image-source: /images/ui/tabbar_button
+  image-clip: 0 53 153 33
+  image-border: 20
+  image-color: alpha
+  padding: 0 10 0 10
+  change-cursor-image: true
+  cursor: pointer
+
+  $disabled:
+    color: #DFDFDF
+    change-cursor-image: false
+
+  $hover !checked:
+    image-clip: 0 0 153 33
+    image-color: #FFFFFF66
+
+  $checked:
+    image-clip: 0 0 153 33
+    color: #9BCCFD
+    image-color: #FFFFFF
+
+  $on !checked:
+    color: #FA605A
+
+TabBar < UITabBar
+  size: 80 21
+  Panel
+    id: buttonsPanel
+    anchors.fill: parent
+TabBarPanel < Panel
+TabBarButton < UIButton
+  size: 20 21
+  image-border: 3
+  image-border-bottom: 0
+  icon-color: #dfdfdf
+  color: #dfdfdf
+  anchors.top: parent.top
+  padding: 5
+  change-cursor-image: true
+  cursor: pointer
+
+  $first:
+    anchors.left: parent.left
+
+  $!first:
+    anchors.left: prev.right
+    margin-left: 5
+
+  $hover !checked:
+    color: #dfdfdf
+
+  $disabled:
+    image-color: #dfdfdf88
+    icon-color: #dfdfdf
+    change-cursor-image: false
+
+  $checked:
+    color: #dfdfdf
+
+  $on !checked:
+    color: #dfdfdf
+
+TabBarVertical < UITabBar
+  width: 96
+  image-source: /images/ui/panel_rounded_solid
+  image-border: 12
+  image-color: #525252
+  padding: 6
+
+  ScrollablePanel
+    id: buttonsPanel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    vertical-scrollbar: scrollBar
+
+  VerticalScrollBar
+    id: scrollBar
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 16
+    pixels-scroll: true
+
+    $!on:
+      width: 0
+
+TabBarVerticalPanel < Panel
+TabBarVerticalButton < ButtonBlueSmall
+  anchors.left: parent.left
+  anchors.right: parent.right
+  text-align: left
+  text-offset: 10 2
+  font: DMSans-13px-bold
+  icon-align: top
+  icon-offset-y: 5
+  icon-color: #6b6b6b
+  text-only-upper-case: true
+  image-color: #69B2FC
+
+  $first:
+    anchors.top: parent.top
+
+  $!first:
+    anchors.top: prev.bottom
+    margin-top: 2
+
+  $hover !checked:
+    icon-color: #eeeeee
+
+  $disabled:
+    icon-color: #333333
+
+  $checked:
+    image-color: #0466C8
+    icon-color: #eeeeee
+
+  $on !checked:
+    color: #F55E5E
+
+TabBarHorizontal < UITabBar
+  height: 96
+
+  ScrollablePanel
+    id: buttonsPanel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: scrollBar.top
+    horizontal-scrollbar: scrollBar
+    margin-bottom: 1
+    padding-top: 10
+
+  HorizontalScrollBar
+    id: scrollBar
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    step: 16
+    pixels-scroll: true
+
+    $!on:
+      height: 0
+
+TabBarHorizontalPanel < Panel
+TabBarHorizontalButton < UIButton
+  size: 48 48
+  color: #aaaaaa
+  anchors.top: parent.top
+  font: righteous-12px-rounded-solid
+  text-align: bottom
+  icon-align: top
+  icon-offset-y: -6
+  icon-color: #888888
+
+  $first:
+    anchors.left: parent.left
+  $!first:
+    anchors.left: prev.right
+    margin-left: 10
+  $hover !checked:
+    color: white
+    icon-color: #dfdfdf
+  $disabled:
+    icon-color: #333333
+  $checked:
+    icon-color: #ffffff
+    color: #80c7f8
+  $on !checked:
+    color: #F55E5E

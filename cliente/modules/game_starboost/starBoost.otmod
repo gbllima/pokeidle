@@ -1,0 +1,8 @@
+Module
+  name: game_starboost
+  description: Game Star Boost
+  author: Union
+  sandboxed: true
+  scripts: [ starBoost ]
+  @onLoad: onInit()
+  @onUnload: onTerminate()

@@ -1,0 +1,487 @@
+TabButtonDaily < TabButton
+  focusable: true
+  width: 172
+  icon-align: left
+  icon-offset: 12 0
+
+  $focus:
+    image-color: #0466C8
+
+  $!first:
+    margin-left: 4
+
+TabButtonClass < TabButton
+  icon: /images/game/icons/icon_lock
+  icon-color: #686868
+  icon-offset: 10 0
+  icon-align: left
+  focusable: true
+  color: #686868
+
+  $!first:
+    margin-top: 1
+
+  $on:
+    change-cursor-image: false
+
+  $focus !on:
+    image-color: #0466C8
+
+  $!on !disabled:
+    icon-color: alpha
+    color: #FFFFFF
+
+  $disabled !on:
+    icon-color: alpha
+    color: #888888
+
+PanelClassDaily < TextList
+  image-color: #525252
+  width: 250
+  padding: 10
+  image-border: 10
+  image-color: #525252
+  image-source: /images/ui/panel_rounded_solid
+  auto-focus: first
+  @onChildFocusChange: |
+    function(self, focusedChild)
+      modules.game_daily.onSelectedClass(self, focusedChild)
+    end
+
+DailyItem < UIItem
+  id: item
+  size: 24 24
+  virtual: true
+
+  $!first:
+    margin-left: 6
+
+PanelCurrentDaily < PanelRoundedSolid
+  image-color: #525252
+  padding: 14 12
+  height: 162
+
+  PanelRoundedSolid
+    height: 78
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    image-color: #393939
+
+  UIWidget
+    id: image
+    size: 58 58
+    anchors.left: prev.left
+    anchors.verticalCenter: prev.verticalCenter
+    margin: 10
+
+  Label-14px-Medium
+    id: class
+    anchors.top: prev.top
+    anchors.left: prev.right
+    text-auto-resize: true
+    margin-left: 8
+    text: Class 03
+
+  Label-14px-Medium
+    id: name
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    text-auto-resize: true
+    text: Catch Ampharos
+
+  ProgressBar
+    height: 21
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    margin: 4 10 0 0
+    background-color: #545454
+
+  ProgressBar
+    id: progress
+    height: 21
+    anchors.fill: prev
+    background-color: #6DFFB0
+
+  ButtonBlueSmall
+    id: start
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    !text: tr('Confirm')
+    @onClick: modules.game_daily.onConfirmDaily()
+
+    $on:
+      !text: tr('Finish')
+
+  ButtonRedSmall
+    id: finish
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    !text: tr('Finish')
+
+  ButtonRedSmall
+    id: cancel
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    !text: tr('Cancel')
+
+  PanelRoundedSolid
+    id: panel
+    anchors.fill: parent
+    image-color: #525252
+    font: DMSans-14px-medium
+    !text: tr('As missões são reiniciadas após o SS.')
+    phantom: false
+
+    $on:
+      !text: tr('As missões são reiniciadas semanalmente.')
+
+PokemonDaily < UIWidget
+  image-source: /images/ui/panel_outline
+  image-border: 12
+  image-clip: 0 180 170 60
+  icon-size: 43 43
+  icon-offset: 3 3
+  icon-color: #ababab 
+  image-color: alpha
+
+  $hover !on:
+    icon-color: #FFFFFF
+
+  $focus !on:
+    image-clip: 0 120 170 60
+    icon-color: #FFFFFF
+    image-color: white
+
+  $on:
+    icon-color: #4d4d4d
+
+PokemonDaily < UIWidget
+  image-source: /images/ui/panel_outline
+  image-border: 12
+  image-clip: 0 180 170 60
+  icon-size: 43 43
+  icon-offset: 3 3
+  icon-color: #ababab 
+  image-color: alpha
+
+  $hover !disabled:
+    icon-color: #FFFFFF
+
+  $focus !disabled:
+    image-clip: 0 120 170 60
+    icon-color: #FFFFFF
+    image-color: white
+
+  $disabled:
+    icon-color: #4d4d4d
+
+PanelInfoDaily < PanelRoundedSolid
+  image-color: #525252
+  padding: 14 12
+  height: 162
+
+  ButtonBlueBase
+    id: randomize
+    size: 38 38
+    anchors.top: parent.top
+    anchors.right: parent.right
+    icon: /images/game/icons/icon_reset
+    !tooltip: tr('Randomizar tarefa')
+    @onClick: modules.game_daily.onConfirmRandomize()
+
+  Label-20px-Bold
+    id: title
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    !text: tr('Select a task') .. ":"
+
+  Label-13px-Bold
+    id: step
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 4
+
+  ScrollablePanel
+    id: list
+    anchors.top: prev.bottom
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin: 12 0
+    layout:
+      type: grid
+      cell-size: 49 49
+      flow: true
+      cell-spacing: 4
+    @onChildFocusChange: |
+      function(self, focusedChild)
+        modules.game_daily.onSelectedPokemon(self, focusedChild)
+      end
+
+  Label-13px-Bold
+    id: rewards
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    text-auto-resize: true
+    !text: tr('Rewards') .. ':'
+
+  UIWidget
+    id: icon
+    size: 16 16
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/icons/icon_points
+    margin-left: 4
+
+  HorizontalList
+    id: items
+    height: 24
+    anchors.left: prev.right
+    anchors.right: parent.right
+    anchors.verticalCenter: prev.verticalCenter
+    margin: -2 6
+
+  PanelRoundedSolid
+    id: panel
+    anchors.fill: parent
+    image-color: #525252
+    font: DMSans-14px-medium
+    !text: tr('Não há mais tarefas.\nVolte amanhã')
+    phantom: false
+
+    $on:
+      !text: tr('Não há mais tarefas.\nVolte semana que vem')
+
+    UIWidget
+      anchors.centerIn: parent
+      image-source: /images/game/daily/corki
+      opacity: 0.2
+
+PanelDaily < Panel
+
+  PanelClassDaily
+    id: classList
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+
+  PanelInfoDaily
+    id: panelInfo
+    anchors.top: parent.top
+    anchors.left: prev.right
+    anchors.right: parent.right
+    margin-left: 8
+
+  PanelCurrentDaily
+    id: currentDaily
+    anchors.bottom: parent.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+
+PanelShopRow < PanelRoundedSolid
+  image-color: #3C3C3C
+  padding: 10
+  phantom: false
+  @onHoverChange: |
+    function(self, hovered)
+      self.outline:setVisible(hovered)
+    end
+
+  Label-14px-Medium
+    id: name
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-wrap: true
+    text-align: center
+
+  Label-13px-Regular
+    id: points
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    text-align: center
+    margin-top: 8
+    icon: /images/game/icons/icon_points
+    icon-align: left
+    icon-size: 16 16
+    text-offset: 20 0
+
+  UIItem
+    id: item
+    size: 32 32
+    anchors.centerIn: parent
+    virtual: true
+    phantom: true
+
+  Panel
+    id: image
+    size: 60 60
+    anchors.centerIn: parent
+
+  UICreature
+    id: outfit
+    size: 48 48
+    anchors.centerIn: parent
+    phantom: true
+
+  Label-13px-Bold
+    id: count
+    anchors.right: prev.right
+    anchors.bottom: prev.bottom
+    text-auto-resize: true
+    stroke: 1 #000000
+
+  ButtonBlueSmall
+    id: buy
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    !text: tr("Buy")
+    @onHoverChange: |
+      function(self, hovered)
+        self:getParent().outline:setVisible(hovered)
+      end
+
+  PanelOutline
+    id: outline
+    anchors.fill: parent
+    margin: -10
+    image-clip: 0 60 170 60
+    visible: false
+
+PanelShopDaily < Panel
+
+  ScrollablePanel
+    id: list
+    vertical-scrollbar: scroll
+    anchors.fill: parent
+    anchors.bottom: next.bottom
+    anchors.right: next.left
+    layout:
+      type: grid
+      cell-size: 134 177
+      flow: true
+      cell-spacing: 4
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: next.top
+    anchors.right: parent.right
+    margin-bottom: 16
+    step: 14
+    pixels-scroll: true
+
+  Label-16px-Regular
+    id: 3
+    anchors.bottom: next.bottom
+    anchors.left: next.right
+    text-auto-resize: true
+    margin-left: 20
+    text: Points: 0
+    icon: /images/game/icons/icon_points
+    icon-align: left
+    text-offset: 40 0
+    icon-color: #01FFA4
+    phantom: false
+    !tooltip: tr('Weekly Points')
+
+  Label-16px-Regular
+    id: 2
+    anchors.bottom: next.bottom
+    anchors.left: next.right
+    text-auto-resize: true
+    margin-left: 20
+    text: Points: 0
+    icon: /images/game/icons/icon_points
+    icon-align: left
+    text-offset: 40 0
+    icon-color: #FF9401
+    phantom: false
+    !tooltip: tr('Catch Points')
+
+  Label-16px-Regular
+    id: 1
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    text-auto-resize: true
+    text: Points: 0
+    icon: /images/game/icons/icon_points
+    icon-align: left
+    text-offset: 40 0
+    icon-color: #CA35FE
+    margin-bottom: 5
+    phantom: false
+    !tooltip: tr('Defeat Points')
+
+MainWindow
+  size: 734 485
+  visible: false
+  !text: tr('Daily and Weekly')
+  @onClose: modules.game_daily.hide()
+  @onEscape: modules.game_daily.hide()
+
+  UIWidget
+    anchors.right: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    image-source: /images/game/daily/sonia
+    margin: -20 -30 0 0
+
+  Label-14px-Regular
+    anchors.top: closeButton.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 18
+    text-auto-resize: true
+    !text: tr('Olá, eu sou a Professora Sônia. Aqui, você pode fazer todas as suas tarefas diárias em um só lugar.')
+
+  HorizontalList
+    id: panelCategory
+    height: 40
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 12
+    auto-focus: first
+    @onChildFocusChange: |
+      function(self, focusedChild)
+        modules.game_daily.onSelectedCategory(self, focusedChild)
+      end
+
+    TabButtonDaily
+      &dailyType: 1
+      !text: tr('Defeat')
+
+    TabButtonDaily
+      &dailyType: 2
+      !text: tr('Catch')
+
+    TabButtonDaily
+      &dailyType: 3
+      !text: tr('Weekly')
+
+    TabButtonDaily
+      id: 4
+      icon: /images/game/daily/gift
+      &openShop: true
+      !text: tr('Gift Shop')
+
+  PanelDaily
+    id: panelDaily
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    margin-top: 12
+
+
+  PanelShopDaily
+    id: panelShop
+    anchors.fill: prev
+    visible: false

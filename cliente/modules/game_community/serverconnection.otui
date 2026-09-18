@@ -1,0 +1,46 @@
+ServerLoadingContainer < UIWidget
+  id: loadingContainer
+  anchors.centerIn: parent
+  size: 200 200
+  phantom: false
+  visible: true
+
+  layout:
+    type: verticalBox
+    fit-children: true
+    align-center: true
+
+  UIWidget
+    id: loadingImageContainer
+    size: 128 128
+    margin-top: 20
+    image-source: /images/game/community/load
+    image-color: white
+    phantom: true
+
+  Label
+    id: loadingText
+    text: Carregando...
+    text-align: center
+    margin-top: 10
+    text-auto-resize: true
+
+ServerErrorContainer < UIWidget
+  id: errorContainer
+  anchors.centerIn: parent
+  size: 100 150
+  phantom: false
+  visible: true
+
+  layout:
+    type: verticalBox
+    fit-children: true
+    align-center: true
+
+  Label
+    id: errorText
+    text: Erro de conexão
+    text-align: center
+    color: #FF9494
+    text-auto-resize: true
+    margin-top: 30

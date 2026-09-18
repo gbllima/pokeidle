@@ -1,0 +1,34 @@
+SpinBox < TextEdit
+  __class: UISpinBox
+  size: 280 40
+  opacity: 1
+  text-offset: 0 6
+  color: #FFFFFF
+  border: 2 #444444
+  cursor-color: #FFFFFF
+  background-color: #242424
+  font: DMSans-16px-regular
+  padding: 10 5 4 8
+  selection-color: #3C3C3C
+  selection-background-color: #dfdfdf
+
+  $disabled:
+    background-color: #7D7D7D
+
+  ButtonBlueBase
+    id: up
+    size: 32 32
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.right: parent.right
+    icon: /images/game/actionbar/icon_arrow
+    icon-clip: 0 0 14 14
+    margin-bottom: 3
+
+  ButtonBlueBase
+    id: down
+    size: 32 32
+    anchors.verticalCenter: prev.verticalCenter
+    anchors.right: prev.left
+    margin-right: 4
+    icon: /images/game/actionbar/icon_arrow
+    icon-clip: 0 14 14 14

@@ -1,0 +1,255 @@
+ConfirmWorkshopHeadlessWindow < MainHeadlessWindow
+  size: 318 345
+  !text: tr('Confirm')
+
+  UIItem
+    id: uiItem
+    size: 34 34
+    anchors.top: parent.top
+    anchors.left: parent.left
+    virtual: true
+
+  Label-14px-Medium
+    id: uiName
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    text-auto-resize: true
+    margin-left: 8
+
+  Label-13px-Regular
+    anchors.top: uiItem.bottom
+    anchors.left: parent.left
+    margin-top: 10
+    !text: tr('Materials needed')
+
+  ScrollablePanel
+    id: uiMaterialList
+    height: 70
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    margin-top: 10
+    layout:
+      type: grid
+      cell-size: 34 34
+      flow: true
+      cell-spacing: 2
+    @onSetup: |
+      for i = 1, 16 do 
+        g_ui.createWidget('RequiredConfirmItem', self):setId(i) 
+      end
+
+  Label-13px-Regular
+    id: uiUnitLabel
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    !text: tr('Unit total') .. ": 1"
+    text-auto-resize: true
+    margin-top: 10
+
+  Label-13px-Regular
+    id: uiCooldownLabel
+    anchors.top: prev.top
+    anchors.right: parent.right
+    !text: tr('Cooldown') .. ": 0"
+    text-auto-resize: true
+
+  HorizontalScrollBar
+    id: uiScroll
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    show-value: true
+    focusable: false
+    minimum: 1
+    maximum: 1000
+    margin: 14 20
+    step: 1
+    @onConfig: |
+      self.decrementButton:show()
+      self.incrementButton:show()
+      self.valueLabel:show()
+
+  ButtonRedSmall
+    anchors.right: parent.right
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    margin-left: 5
+    !text: tr('Cancel')
+    @onClick: self:getParent():destroy()
+
+  ButtonBlueSmall
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    margin-right: 5
+    !text: tr('Create')
+    @onClick: modules.game_workshop.requestCraft()
+
+WorkshopRequiredItem < UIWidget
+  size: 50 36
+  anchors.top: parent.top
+  anchors.left: parent.left
+
+  $!first:
+    anchors.left: prev.right
+    margin-left: 3
+
+  UIItem
+    id: item
+    size: 28 28
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    virtual: true
+
+  Label-13px-Bold
+    id: count
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    color: #FF0000
+    stroke: 1 #000000
+
+    $on:
+      color: #FFFFFF
+
+RequiredConfirmItem < Item
+  virtual: true
+
+  Label
+    id: count
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    font: verdana-11px-rounded
+    text-auto-resize: true
+    color: #FF0000
+
+    $on:
+      color: #FFFFFF
+
+CraftRowItem < PanelRoundedSolid
+  image-color: #525252
+  padding: 10
+
+  $focus:
+    image-color: #2D7FD3
+
+  UIItem
+    id: item
+    size: 34 34
+    anchors.top: parent.top
+    anchors.left: parent.left
+    virtual: true
+    font: verdana-11px-rounded
+
+  Label-14px-Medium
+    id: name
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    text-auto-resize: true
+    margin-left: 10
+
+  Label-14px-Medium
+    id: cooldown
+    anchors.verticalCenter: prev.verticalCenter
+    anchors.right: parent.right
+    icon: /images/game/icons/icon_timer
+    icon-align: left
+    text: 5s
+    text-auto-resize: true
+    text-offset: 26 1
+    visible: false
+    margin: 5
+
+  ScrollablePanel
+    id: requiredPanel
+    height: 36
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+  Panel
+    id: background
+    height: 16
+    anchors.bottom: prev.top
+    anchors.left: prev.left
+    anchors.right: prev.right
+    margin-bottom: 10
+    background-color: #878787
+
+  ProgressBar
+    id: uiProgress
+    anchors.fill: prev
+    background-color: #6DFFB0
+    border-color: alpha
+
+MainWindow
+  size: 924 562
+  !text: tr('Workshop')
+  visible: false
+  text-offset: 200 14
+  @onEscape: modules.game_workshop.offline()
+  @onClose: modules.game_workshop.offline()
+
+  UIWidget
+    id: banner
+    width: 252
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin: -14 -16 -14 -16
+    image-source: /images/game/workshop/default
+
+  TextEdit
+    id: uiSearchEdit
+    width: 285
+    anchors.top: closeButton.bottom
+    anchors.left: prev.right
+    margin: 18 0 0 16
+    !placeholder: tr('Search') .. "..."
+    @onTextChange: |
+      function(self, text)
+        self.placeholderLabel:setVisible(text:len() == 0)
+        modules.game_workshop.searchWorkShopItem(text)
+      end
+
+  ScrollablePanel
+    id: uiCraftList
+    anchors.top: prev.bottom
+    anchors.bottom: next.bottom
+    anchors.left: prev.left
+    anchors.right: next.left
+    vertical-scrollbar: scrollList
+    margin-top: 8
+    layout:
+      type: grid
+      cell-size: 309 124
+      flow: true
+      cell-spacing: 10
+
+  VerticalScrollBar
+    id: scrollList
+    anchors.top: uiSearchEdit.bottom
+    anchors.bottom: next.top
+    anchors.right: parent.right
+    margin: 12 0
+    step: 50
+    pixels-scroll: true
+
+  ButtonBlueSmall
+    id: uiSpeedButton
+    anchors.bottom: next.bottom
+    anchors.right: next.left
+    margin-right: 4
+    !text: tr('Acelerar')
+    @onClick: modules.game_workshop.requestSpeed()
+
+  ButtonBlueSmall
+    id: uiControltButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin: 2 14
+    !text: tr("Create")
+
+    $on:
+      !text: tr("Collect")

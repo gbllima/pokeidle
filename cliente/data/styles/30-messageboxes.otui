@@ -1,0 +1,24 @@
+MessageBoxWindow < MainHeadlessWindow
+  padding-top: 48
+
+MessageBoxLabel < Label-16px-Regular
+  id: messageBoxLabel
+  anchors.top: parent.top
+  anchors.horizontalCenter: parent.horizontalCenter
+  text-auto-resize: true
+  text-align: center
+  text-wrap: true
+
+MessageBoxButtonHolder < UIWidget
+  id: buttonHolder
+  margin-top: 18
+  anchors.bottom: parent.bottom
+
+ItemMessageBoxButtonHolder < MessageBoxButtonHolder
+  margin-top: 32
+
+MessageBoxButtonBlue < ButtonBlueSmall
+  margin-left: 12
+
+MessageBoxButtonRed < ButtonRedSmall
+  margin-left: 12

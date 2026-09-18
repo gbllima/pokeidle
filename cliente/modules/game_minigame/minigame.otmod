@@ -1,0 +1,9 @@
+Module
+  name: game_minigame
+  description: minigame module
+  author: PStory
+  website: https://pstoryonline.com
+  sandboxed: true
+  scripts: [ minigame, photographer, designer, breeder, researcher ]
+  @onLoad: init() PhotographerGame.init() DesignerGame.init() BreederGame.init() ResearcherGame.init()
+  @onUnload: terminate() PhotographerGame.terminate() DesignerGame.terminate() BreederGame.terminate() ResearcherGame.terminate()

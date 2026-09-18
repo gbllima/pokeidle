@@ -1,0 +1,118 @@
+TradeWindow < MainHeadlessWindow
+  !text: tr('Trade')
+  size: 422 375
+
+  UIItem
+    id: tradeItem
+    virtual: true
+    size: 16 16
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 4
+    margin-left: 4
+    visible: false
+
+  VerticalScrollBar
+    id: ownTradeScrollBar
+    anchors.top: ownTradeContainer.top
+    anchors.bottom: ownTradeContainer.bottom
+    anchors.right: parent.horizontalCenter
+    step: 14
+    pixels-scroll: true
+    visible: false
+
+    $!on:
+      width: 0
+
+  Label-13px-Bold
+    id: ownTradeLabel
+    anchors.bottom: next.top
+    anchors.left: next.left
+    anchors.right: next.right
+    margin-bottom: 6
+
+  ScrollablePanel
+    id: ownTradeContainer
+    height: 75
+    anchors.bottom: next.top
+    anchors.left: next.left
+    anchors.right: next.right
+    margin-bottom: 6
+    background-color: #2F2F2F
+    border: 2 #3A3939
+    layout:
+      type: grid
+      cell-size: 34 34
+      flow: true
+      cell-spacing: 1
+    vertical-scrollbar: ownTradeScrollBar
+
+  Label-13px-Bold
+    id: ownTradeCountLabel
+    anchors.bottom: next.top
+    anchors.left: next.left
+    anchors.right: parent.right
+    text-align: right
+    margin-bottom: 20
+
+  Label-13px-Bold
+    id: counterTradeLabel
+    anchors.bottom: counterTradeContainer.top
+    anchors.left: counterTradeContainer.left
+    anchors.right: counterTradeContainer.right
+    margin-bottom: 6
+
+  VerticalScrollBar
+    id: counterTradeScrollBar
+    anchors.top: counterTradeContainer.top
+    anchors.bottom: counterTradeContainer.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+    visible: false
+
+    $!on:
+      width: 0
+
+  ScrollablePanel
+    id: counterTradeContainer
+    height: 75
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 6
+    background-color: #2F2F2F
+    border: 2 #3A3939
+    layout:
+      type: grid
+      cell-size: 34 34
+      flow: true
+      cell-spacing: 1
+    vertical-scrollbar: counterTradeScrollBar
+
+  Label-13px-Bold
+    id: counterTradeCountLabel
+    anchors.bottom: next.top
+    anchors.left: next.left
+    anchors.right: parent.right
+    margin-bottom: 20
+    text-align: right
+
+  ButtonBlueSmall
+    !text: tr('Accept')
+    id: acceptButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.horizontalCenter
+    anchors.left: parent.left
+    margin-right: 5
+    enabled: false
+    @onClick: g_game.acceptTrade(); self:disable()
+
+  ButtonRedSmall
+    !text: tr('Reject')
+    id: rejectButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.horizontalCenter
+    anchors.right: parent.right
+    margin-left: 5
+    @onClick: g_game.rejectTrade()

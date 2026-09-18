@@ -1,0 +1,140 @@
+LabelHouse < Label
+  text-auto-resize: true
+
+LabelHouseLeft < Label-16px-Bold
+  color: #0466C8
+  text-auto-resize: true
+
+LabelHouseRight < Label-16px-Regular
+  text-auto-resize: true
+
+HouseControls < MainWindow
+  size: 413 300
+  !text: tr('House controls')
+  @onClose: self:hide() modules.game_house.create(self.params)
+
+  TextList
+    id: list
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    margin-top: 18
+
+MainWindow
+  size: 413 268
+  !text: tr('House Information')
+  @onClose: modules.game_house.destroy()
+  @onEscape: modules.game_house.destroy()
+
+  $on:
+    size: 413 292
+
+  $checked:
+    size: 413 222
+
+  LabelHouseLeft
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 18
+    !text: tr('Owner') .. ':'
+
+  LabelHouseRight
+    id: onwerLabel
+    anchors.top: prev.top
+    anchors.right: parent.right
+    !text: tr('Sem dono')
+
+  LabelHouseLeft
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 6
+    !text: tr('Size') .. ':'
+
+  LabelHouseRight
+    id: sizeLabel
+    anchors.top: prev.top
+    anchors.right: parent.right
+    !text: tr('94 Tiles')
+
+  LabelHouseLeft
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 6
+    !text: tr('Home value') .. ':'
+
+  LabelHouseRight
+    id: priceLabel
+    anchors.top: prev.top
+    anchors.right: parent.right
+    !text: tr('$158,000.0')
+
+    $on:
+      visible: true
+
+  LabelHouseLeft
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 6
+    !text: tr('Rent') .. ':'
+
+  LabelHouseRight
+    id: rentLabel
+    anchors.top: prev.top
+    anchors.right: parent.right
+    !text: tr('90k')
+
+  LabelHouseLeft
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 6
+    !text: tr('Billing date') .. ':'
+    visible: false
+
+    $on:
+      visible: true
+
+  UIWidget
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 4
+    image-source: /images/game/icons/icon_info_14px
+    !tooltip: tr('Requisitos:\nSer VIP\nPagar aluguel quinzenal\nManter-se ativo uma vez a cada 30 dias')
+    visible: false
+
+    $on:
+      visible: true
+
+  LabelHouseRight
+    id: dateLabel
+    anchors.top: prev.top
+    anchors.right: parent.right
+    !text: tr('10/02/2024')
+    visible: false
+
+    $on:
+      visible: true
+
+  ButtonBlueSmall
+    id: manageButton
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 10
+    !text: tr('Buy house')
+    @onClick: |
+      function(self)
+        if ( self:isOn() ) then
+          modules.game_house.sellHouse(self:getParent().params)
+        else
+          g_game.talkChannel(MessageModes.None, 0, '!buyhouse')
+        end
+      end
+
+    $on:
+      !text: tr('Manage home')
+
+  ButtonBlueSmall
+    id: copyButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    !text: tr('Copy information')

@@ -1,0 +1,48 @@
+PokemonCustomAddon < PanelRoundedSolid
+  image-color: #626262
+  phantom: false
+  padding: 10
+
+  $focus:
+    image-color: #057FFA
+
+  Creature
+    id: outfit
+    size: 56 56
+    anchors.centerIn: parent
+    margin-top: 5
+    phantom: true
+
+  UIWidget
+    id: locked
+    anchors.top: parent.top
+    anchors.right: parent.right
+    image-source: /images/game/icons/icon_lock
+    image-color: #979797
+    margin: -8
+    phantom: true
+
+PokemonCustomAddonGrid < UIScrollArea
+  layout:
+    type: grid
+    cell-size: 75 89
+    cell-spacing: 3
+    flow: true
+
+Panel
+  id: addonsPanel
+
+  PokemonCustomAddonGrid
+    id: list
+    anchors.fill: parent
+    anchors.right: next.left
+    vertical-scrollbar: scroll
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+    visible: false

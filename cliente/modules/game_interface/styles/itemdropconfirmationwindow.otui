@@ -1,0 +1,49 @@
+DropItemConfirmationWindow < MainHeadlessWindow
+  id: dropItemConfirmationWindow
+  size: 360 216
+  !text: tr("Are you sure?")
+
+  UIItem
+    id: item
+    size: 32 32
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    virtual: true
+    margin-top: -5
+
+  Label-16px-Regular
+    id: messageLabel
+    anchors.top: prev.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    text-wrap: true
+    margin-top: 12
+    text-auto-resize: true
+    text-align: center
+
+  CheckBox
+    id: checkbox
+    anchors.bottom: next.top
+    anchors.left: next.left
+    text-auto-resize: true
+    margin-bottom: 14
+    !text: tr("Don't ask again")
+    @onCheckChange: function(self, checked) modules.client_options.toggleOption(self:getId()) end
+
+  ButtonBlueSmall
+    id: buttonConfirm
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin-left: 8
+    !text: tr("Confirm")
+    tooltip: (Enter)
+
+  ButtonRedSmall
+    id: buttonCancel
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-left: 8
+    !text: tr("Cancel")
+    tooltip: (Esc)

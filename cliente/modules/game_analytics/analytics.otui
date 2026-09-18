@@ -1,0 +1,286 @@
+DualLabel < Label-16px-Regular
+  anchors.right: parent.right
+  anchors.left: parent.left
+  anchors.top: parent.top
+  text-auto-resize: true
+  text-align: left
+  id: label
+  @setValue: |
+    function(self, value)
+      self.value:setText(value)
+    end
+  @setState: |
+    function(self, value)
+      local color = value < 0 and '#EB5757' or
+                    value > 0 and '#A8FF80' or '#FFFFFF'
+
+      self.value:setColor(color)
+    end
+
+  $!first:
+    anchors.top: prev.bottom
+    margin-top: 2
+
+  Label-13px-Regular
+    id: value
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-align: right
+    text-offset: 0 3
+    text: 0
+
+AnalyzerLootItem < UIItem
+  virtual: true
+  size: 34 34
+  show-count: false
+  @setValue: |
+    function(self, value)
+      self.count:setText(value)
+    end
+
+  Label
+    id: count
+    font: verdana-11px-rounded
+    color: white
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-right: 2
+    text-align: right
+
+AnalyzerKill < UICreature
+  size: 34 34
+  @setValue: |
+    function(self, value)
+      self.count:setText(value)
+    end
+
+  Label
+    id: count
+    font: verdana-11px-rounded
+    color: white
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin: 0 -1 -1 0
+    text-align: right
+
+AnalyzerButton < ButtonBlueBase
+  size: 34 34
+  icon: /images/game/icons/icon_analytics
+  icon-color: white
+
+  $on:
+    icon-color: #A8FF80
+
+AnalyzerListPanel < ScrollablePanelFlat
+  id: list
+  padding: 4 3
+  layout:
+    type: grid
+    cell-size: 34 34
+    cell-spacing: 5
+    num-columns: 4
+
+AnalyzerHuntPanel < Panel
+  height: 142
+  id: hunt
+
+  DualLabel
+    id: session
+    !text: tr("Session:")
+
+  DualLabel
+    id: xpGain
+    !text: tr("XP Gain:")
+
+  DualLabel
+    id: hour
+    !text: tr("XP/h:")
+
+  DualLabel
+    id: loot
+    !text: tr("Loot:")
+
+  DualLabel
+    id: supply
+    !text: tr("Supplies:")
+
+  DualLabel
+    id: balance
+    !text: tr("Balance:")
+
+AnalyzerLootPanel < Panel
+  height: 200
+  id: loot
+
+  DualLabel
+    id: balance
+    !text: tr("Balance:")
+
+  DualLabel
+    id: hour
+    !text: tr("Loot/h:")
+
+  AnalyzerListPanel
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    vertical-scrollbar: scroll
+    margin: 5 0
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: prev.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    pixels-scroll: true
+    step: 14
+    margin: 5 1
+
+AnalyzerSupplyPanel < Panel
+  height: 200
+  id: supply
+
+  DualLabel
+    id: balance
+    !text: tr("Balance:")
+
+  DualLabel
+    id: hour
+    !text: tr("Supply/h:")
+
+  AnalyzerListPanel
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    vertical-scrollbar: scroll
+    margin: 8 0
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: prev.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    pixels-scroll: true
+    step: 14
+    margin: 5 1
+
+AnalyzerKillPanel < Panel
+  height: 200
+  id: kill
+
+  DualLabel
+    id: kills
+    !text: tr("Total:")
+
+  DualLabel
+    id: hour
+    !text: tr("Defeats/h") .. ':'
+
+  AnalyzerListPanel
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    vertical-scrollbar: scroll
+    margin: 5 0
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: prev.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    pixels-scroll: true
+    step: 14
+    margin: 5 1
+
+AnalyzerSelectorPanel < PanelFlat
+  size: 0 52
+  padding: 10
+  id: selector
+
+  AnalyzerButton
+    id: hunt
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.left
+    icon-clip: 0 0 25 25
+    !tooltip: tr("Hunt")
+    on: true
+    @onClick: modules.game_analytics.setSelectorPanel(self)
+
+  AnalyzerButton
+    id: supply
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: prev.right
+    icon-clip: 0 24 24 24
+    margin-left: 6
+    tooltip: Supplies
+    @onClick: modules.game_analytics.setSelectorPanel(self)
+
+  AnalyzerButton
+    id: loot
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: prev.right
+    icon-clip: 0 48 25 25
+    margin-left: 6
+    !tooltip: tr("Loot")
+    @onClick: modules.game_analytics.setSelectorPanel(self)
+
+  AnalyzerButton
+    id: kill
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: prev.right
+    icon-clip: 0 71 25 25
+    margin-left: 6
+    tooltip: Defeats
+    @onClick: modules.game_analytics.setSelectorPanel(self)
+
+AnalyzerPanel < Panel
+  height: 140
+  id: analyzer
+
+  AnalyzerHuntPanel
+    anchors.fill: parent
+
+  AnalyzerSupplyPanel
+    anchors.fill: parent
+    visible: false
+
+  AnalyzerLootPanel
+    anchors.fill: parent
+    visible: false
+
+  AnalyzerKillPanel
+    anchors.fill: parent
+    visible: false
+
+MiniWindow
+  id: analyzerWindow
+  !text: tr('Analytics')
+  height: 248
+  visible: false
+  &save: true
+  &autoOpen: true
+  icon: /images/game/icons/inventory
+  icon-clip: 0 96 24 24
+  @onSetup: |
+    self:disableResize()
+
+  UIButton
+    id: menuButton
+    anchors.top: lockButton.top
+    anchors.right: lockButton.left
+    size: 25 25
+    image-source: /images/game/icons/icons_tree
+    image-clip: 714 1 25 25
+    margin-right: 3
+    change-cursor-image: true
+    cursor: pointer
+    @onClick: modules.game_analytics.onCreateMenu()
+
+  MiniWindowContents
+    padding: 8
+    layout: verticalBox
+
+    AnalyzerSelectorPanel
+
+    AnalyzerPanel
+      margin-top: 12

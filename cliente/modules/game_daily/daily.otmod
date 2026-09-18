@@ -1,0 +1,8 @@
+Module
+  name: game_daily
+  description: Daily and Weekly
+  author: Union
+  sandboxed: true
+  scripts: [ daily ]
+  @onLoad: init()
+  @onUnload: terminate()

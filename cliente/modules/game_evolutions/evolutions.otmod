@@ -1,0 +1,8 @@
+Module
+  name: game_evolutions
+  description: Evoluções Pokemon
+  author: Gengo
+  sandboxed: true
+  scripts: [ evolutions ]
+  @onLoad: init()
+  @onUnload: terminate()

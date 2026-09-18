@@ -1,0 +1,137 @@
+ShowcaseCollectionItem < UIWidget
+  size: 34 34
+  draggable: true
+
+  Item
+    id: itemIcon
+    virtual: true
+    anchors.centerIn: parent
+    size: 34 34
+    phantom: true
+
+  UIWidget
+    id: ownedIndicator
+    anchors.top: parent.top
+    anchors.right: parent.right
+    size: 34 34
+    image-source: /images/ui/item
+    visible: false
+    phantom: true
+
+ShowcaseSlot < Item
+  size: 34 34
+  virtual: true
+  border-color: #404040
+  draggable: true
+  focusable: false
+
+  $hover:
+    border-color: #69B2FC
+
+  $selected:
+    border-color: #00ff00
+
+MainWindow
+  id: showcaseWindow
+  !text: tr('Showcase Collection')
+  size: 395 350
+  @onEscape: modules.game_community.cancelShowcaseCollection()
+  @onClose: modules.game_community.cancelShowcaseCollection()
+
+  Label-13px-Bold
+    id: titleLabel
+    !text: tr('Select items for your showcase')
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 18
+    text-auto-resize: true
+
+  ScrollablePanel
+    id: itemsScrollPanel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 140
+    margin-top: 4
+    vertical-scrollbar: itemsScrollBar
+    layout:
+      type: grid
+      cell-size: 34 34
+      cell-spacing: 5
+      num-columns: 9
+
+  VerticalScrollBar
+    id: itemsScrollBar
+    anchors.top: itemsScrollPanel.top
+    anchors.bottom: itemsScrollPanel.bottom
+    anchors.right: parent.right
+    width: 16
+    step: 20
+    pixels-scroll: true
+
+  Label-13px-Bold
+    id: selectedLabel
+    !text: tr('Showcase Slots (drag items or click the item)')
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 8
+    text-auto-resize: true
+
+  Panel
+    id: selectedItemsPanel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 5
+    height: 34
+
+    Panel
+      id: selectedContainer
+      anchors.fill: parent
+      layout:
+        type: horizontalBox
+        spacing: 4
+        align-horizontal: center
+
+      ShowcaseSlot
+        id: showcaseSlot1
+      ShowcaseSlot
+        id: showcaseSlot2
+      ShowcaseSlot
+        id: showcaseSlot3
+      ShowcaseSlot
+        id: showcaseSlot4
+      ShowcaseSlot
+        id: showcaseSlot5
+      ShowcaseSlot
+        id: showcaseSlot6
+      ShowcaseSlot
+        id: showcaseSlot7
+      ShowcaseSlot
+        id: showcaseSlot8
+      ShowcaseSlot
+        id: showcaseSlot9
+
+  Panel
+    id: buttonsPanel
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 50
+
+    ButtonBlueSmall
+      id: saveButton
+      !text: tr('Save')
+      anchors.bottom: parent.bottom
+      anchors.right: parent.horizontalCenter
+      margin-right: 5
+      @onClick: modules.game_community.saveShowcaseCollection()
+
+    ButtonRedSmall
+      id: cancelButton
+      !text: tr('Cancel')
+      anchors.bottom: parent.bottom
+      anchors.left: parent.horizontalCenter
+      margin-left: 5
+      @onClick: modules.game_community.cancelShowcaseCollection()

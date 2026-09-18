@@ -1,0 +1,8 @@
+Module
+  name: game_bank
+  description: Game Bank
+  author: Union
+  scripts: [ bank ]
+  sandboxed: true
+  @onLoad: init()
+  @onUnload: terminate()

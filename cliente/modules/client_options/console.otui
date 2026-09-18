@@ -1,0 +1,47 @@
+Panel
+  id: consolePanel
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+
+  PanelOption
+    anchors.fill: parent
+    anchors.right: prev.left
+    vertical-scrollbar: scroll
+
+    OptionCheckBox
+      id: showInfoMessagesInConsole
+      !text: tr('Show info messages in console')
+
+    OptionCheckBox
+      id: showEventMessagesInConsole
+      !text: tr('Show event messages in console')
+
+    OptionCheckBox
+      id: showStatusMessagesInConsole
+      !text: tr('Show status messages in console')
+
+    OptionCheckBox
+      id: showTimestampsInConsole
+      !text: tr('Show timestamps in console')
+
+    OptionCheckBox
+      id: showLevelsInConsole
+      !text: tr('Show levels in console')
+
+    OptionCheckBox
+      id: showPrivateMessagesInConsole
+      !text: tr('Show private messages in console')
+
+    OptionCheckBox
+      id: showDamageMessagesInConsole
+      !text: tr('Show damage messages in console')
+
+    OptionCheckBox
+      id: showPrivateMessagesOnScreen
+      !text: tr('Show private messages on screen')

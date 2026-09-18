@@ -1,0 +1,48 @@
+MainHeadlessWindow
+  id: hostWindow
+  size: 358 240
+  !text: tr('Enter Information')
+  @onEscape: modules.game_spectate.cancelHost()
+  @onEnter: modules.game_spectate.confirmHost()
+
+  TextEdit
+    id: description
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin: 12 12 0 12
+    !placeholder: tr('Description')
+
+  TextEdit
+    id: password
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin: 8 12 0 12
+    !placeholder: tr('Password')
+
+  Label
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 8
+    !text: tr('Leave blank to let anyone watch you')
+    text-auto-resize: true
+    color: #c0c0c0
+
+  ButtonBlueSmall
+    id: hostButton
+    !text: tr("Host")
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin-right: 5
+    @onClick: modules.game_spectate.confirmHost()
+
+  ButtonRedSmall
+    id: cancelButton
+    !text: tr("Cancel")
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-left: 5
+    @onClick: modules.game_spectate.cancelHost()

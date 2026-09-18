@@ -1,0 +1,8 @@
+Module
+  name: game_community
+  description: Interface para alterar a foto de perfil do jogador
+  author: Evermel
+  website: https://github.com/AntonioMarlilson/PokeUnionClient
+  scripts: [ achievementPanel, serverconnection, profilephotomodel, profilephoto, profile, profilepanel, showCaseCollectionModel, showCaseCollectionPanel, rankingModel, rankingPanel, community ]
+  @onLoad: init()
+  @onUnload: terminate()

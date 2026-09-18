@@ -1,0 +1,8 @@
+Module
+  name: game_workshop
+  description: Workshop
+  author: Gengo
+  sandboxed: true
+  scripts: [ workshop ]
+  @onLoad: init()
+  @onUnload: terminate()

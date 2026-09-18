@@ -1,0 +1,153 @@
+HotkeySection < Panel
+  id: section
+  height: 40
+  layout:
+    type: verticalBox
+
+  $!first:
+    margin-top: 2
+
+HotkeyHeader < ButtonBlueSmall
+  font: DMSans-16px-bold
+  text-offset: 14 0
+  text-align: left
+  id: header
+  icon: /images/game/icons/icon_arrows
+  icon-clip: 0 24 24 24
+  icon-align: left
+  icon-offset: 8 0
+  text-offset: 42 0
+  @onClick: |
+    local section = self:getParent()
+    if ( not self:isOn() ) then
+      section:getLayout():setFitChildren(true)
+    else
+      section:getLayout():setFitChildren(false)
+      section:setHeight(40)
+    end
+    self:setOn(not self:isOn())
+
+  $on:
+    icon-clip: 0 0 24 24
+
+HotkeyContent < Panel
+  height: 32
+  border: 1 #9A9A9A
+
+  $!first:
+    margin-top: 2
+
+  Panel
+    id: leftCompartment
+    anchors.left: parent.left
+    width: 380
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+
+    Label-14px-Medium
+      id: hotkeyName
+      text: hotkeyName
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      text-auto-resize: true
+      text-align: left
+      text-wrap: true
+      margin-left: 10
+
+  Panel
+    id: middleCompartment
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    border: 1 #525252
+    width: 250
+
+    ButtonBlueSmall
+      id: keyCombo
+      anchors.left: parent.left
+      anchors.right: parent.horizontalCenter
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      text: keyCombo
+      margin-right: 1
+
+    ButtonBlueSmall
+      id: altKeyCombo
+      anchors.right: parent.right
+      anchors.left: parent.horizontalCenter
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      text: altKeyCombo
+      margin-left: 1
+
+Panel
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+
+  PanelOption
+    id: panel
+    anchors.fill: parent
+    anchors.right: prev.left
+    vertical-scrollbar: scroll
+    padding: 8
+
+    PanelRoundedSolid
+      id: profilesPanel
+      image-color: #393939
+      padding: 8 12 12 8
+      height: 82
+
+      Label-14px-Medium
+        anchors.top: parent.top
+        anchors.left: parent.left
+        !text: tr('Profile')
+        margin-left: 4
+
+      ComboBox
+        id: profilePicker
+        anchors.left: prev.left
+        anchors.bottom: next.bottom
+        anchors.right: next.left
+        margin: 8 8 0 -1
+
+      ButtonBlueBase
+        id: createProfile
+        size: 38 38
+        anchors.right: next.left
+        anchors.bottom: next.bottom
+        icon: /images/game/icons/icon_add
+        margin-right: 8
+
+      ButtonRedBase
+        id: deleteProfile
+        size: 38 38
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        icon: /images/game/icons/icons_one
+        icon-clip: 48 0 23 23
+
+    Panel
+      height: 40
+      margin-top: 8
+
+      ButtonRedSmall
+        id: resetAllButton
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        !text: tr('Reset All')
+
+    ScrollablePanel
+      image-color: #393939
+      margin-top: 8
+      id: content
+      layout:
+        type: verticalBox
+        fit-children: true

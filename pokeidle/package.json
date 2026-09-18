@@ -1,0 +1,17 @@
+{
+  "name": "pokeidle",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "cc": "node packages/content-compiler/src/cli.ts",
+    "test": "node --test \"packages/*/test/*.test.ts\"",
+    "dev": "node packages/client/server.ts"
+  }
+}

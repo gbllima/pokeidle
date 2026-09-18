@@ -1,0 +1,8 @@
+Module
+  name: game_scout
+  description: Scout Club
+  author: Gengo
+  sandboxed: true
+  scripts: [ scout ]
+  @onLoad: init()
+  @onUnload: terminate()

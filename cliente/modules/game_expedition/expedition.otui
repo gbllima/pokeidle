@@ -1,0 +1,127 @@
+ExpeditionTravel < UIWidget
+  image-clip: 0 0 131 176
+  padding: 6 8
+
+  $hover:
+    image-clip: 131 0 131 176
+
+  $focus:
+    image-clip: 262 0 131 176
+
+  ButtonBlueBase
+    id: favorite
+    size: 24 24
+    anchors.top: parent.top
+    anchors.right: parent.right
+    icon: /images/game/icons/icon_favorite
+    !tooltip: tr('Favorite')
+    @onClick: modules.game_expedition.toggleFavorite(self)
+
+    $hover:
+      icon-color: #FFE159
+
+    $on:
+      icon-color: #FFDE00
+      !tooltip: tr('Unfavorite')
+
+  ButtonBlueSmall
+    id: start
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    !text: tr("Travel")
+
+MainWindow
+  size: 624 431
+  !text: tr('Expeditions')
+  visible: false
+  @onClose: modules.game_expedition.onGameEnd()
+  @onEscape: modules.game_expedition.onGameEnd()
+
+  Label-14px-Regular
+    id: description
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 18
+    !text: tr('Explore diferentes regiões com as expedições e encontre os Pokémon Ace de cada local.')
+
+  ScrollablePanel
+    id: listPanel
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    image-color: #525252
+    image-source: /images/ui/panel_rounded_solid
+    margin-top: 12
+    vertical-scrollbar: scroll
+    image-border: 10
+    padding: 12
+    visible: false
+    layout:
+      type: grid
+      cell-size: 131 176
+      flow: true
+      cell-spacing: 10
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: prev.top
+    anchors.right: prev.right
+    anchors.bottom: prev.bottom
+    margin: 8 4
+    step: 36
+    pixels-scroll: true
+
+  PanelRoundedSolid
+    id: buyPanel
+    anchors.fill: parent
+    anchors.top: listPanel.top
+    image-color: #525252
+    padding: 48 86
+    visible: false
+
+    Label-20px-Bold
+      id: descriptionLabel
+      anchors.top: parent.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      !text: tr('Para liberar as expedições é necessário\nestar nível %d+ e possuir um DAILY PASS', 300)
+      text-auto-resize: true
+      text-align: center
+
+    Label-16px-Bold
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      text-auto-resize: true
+      margin-top: 20
+      !text: tr("Daily Pass") .. ":"
+
+    UIWidget
+      anchors.left: prev.right
+      anchors.verticalCenter: prev.verticalCenter
+      image-source: /images/game/icons/icon_info_14px
+      image-color: #F7FF96
+      margin: 0 0 4 4
+      !tooltip: tr("Ao adquirir um Daily Pass é possível viajar por todas as regiões das Expedições.\nApós cada SS é necessário adquirir um novo Daily Pass.")
+
+    UIWidget
+      anchors.centerIn: parent
+      image-source: /images/game/icons/daily_pass
+
+    Label-16px-Bold
+      id: priceLabel
+      anchors.right: buyButton.right
+      anchors.bottom: next.bottom
+      text-auto-resize: true
+      !text: tr("$ 100k")
+
+    Label-16px-Regular
+      anchors.bottom: next.top
+      anchors.left: next.left
+      text-auto-resize: true
+      margin-bottom: 10
+      !text: tr("Value")
+
+    ButtonBlueLarge
+      id: buyButton
+      anchors.bottom: parent.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      !text: tr("Buy")

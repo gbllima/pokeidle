@@ -1,0 +1,179 @@
+HeldFragmentWindow < MainWindow
+  size: 320 380
+  !text: tr('Fragment Helds')
+  @onClose: modules.game_helds.onGameEnd()
+  @onEscape: modules.game_helds.onGameEnd()
+
+  Label-16px-Regular
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 28
+    !text: tr('Held Item') .. ':'
+    text-auto-resize: true
+
+  Item
+    id: heldItem
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 8
+    &onDrop: modules.game_helds.onDrop
+
+  ButtonClose
+    size: 16 16
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    margin: 0 -6 -6 0
+    @onClick: modules.game_helds.onClearSlot()
+
+  Label-16px-Regular
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 18
+    !text: tr('Received') .. ':'
+    text-auto-resize: true
+
+  Item
+    id: dustItem
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 8
+    virtual: true
+
+  Label
+    id: countLabel
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    font: verdana-11px-rounded
+    text-auto-resize: true
+    color: #FF0000
+
+    $on:
+      color: #FFFFFF
+
+  Fossil-Label-16px-Bold
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 16
+    !text: tr('Additional Information')
+
+  UIWidget
+    size: 22 22
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/icons/info
+    margin-left: 4
+    !tooltip: tr('Held  podem ser fragmentados para obtenção de Sparkling Dust.\nA quantidade de Sparkling Dust obtida varia de acordo com o held item e sua raridade.')
+
+  Label-16px-Regular
+    anchors.left: parent.left
+    anchors.bottom: next.bottom
+    !text: tr('Cost') .. ':'
+    text-auto-resize: true
+
+  Label-16px-Bold
+    id: priceLabel
+    anchors.right: next.right
+    anchors.bottom: next.top
+    margin-bottom: 12
+    text: 0
+    text-auto-resize: true
+
+  ButtonBlueMedium
+    id: start
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin-bottom: 4
+    enabled: false
+    !text: tr('Fragment')
+    @onClick: modules.game_helds.onStart()
+
+HeldImprovimentWindow < MainWindow
+  size: 350 360
+  !text: tr('Improvements Helds')
+  @onClose: modules.game_helds.onGameEnd()
+  @onEscape: modules.game_helds.onGameEnd()
+
+  Label-16px-Regular
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 28
+    !text: tr('Secondary Held') .. ':'
+    text-auto-resize: true
+
+  Item
+    id: heldItem
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 8
+    &onDrop: modules.game_helds.onDrop
+
+  ButtonClose
+    size: 16 16
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    margin: 0 -6 -6 0
+    @onClick: modules.game_helds.onClearSlot()
+
+  Label-16px-Regular
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 18
+    !text: tr('Sparklig dust') .. ':'
+    text-auto-resize: true
+
+  Item
+    id: dustItem
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 8
+    virtual: true
+
+  Label
+    id: countLabel
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    font: verdana-11px-rounded
+    text-auto-resize: true
+    color: #FF0000
+
+    $on:
+      color: #FFFFFF
+
+  Fossil-Label-16px-Bold
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 16
+    !text: tr('Additional Information')
+
+  UIWidget
+    size: 22 22
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/icons/info
+    margin-left: 4
+    !tooltip: tr('Sparkling Dusts podem ser utilizados para tentar aprimorar alguns Helds secundários em um nível de raridade.\nSe a tentativa falhar, o Held é mantido em sua raridade atual, mas os Sparkling Dusts serão perdidos.')
+
+  Label-16px-Regular
+    anchors.left: parent.left
+    anchors.bottom: next.bottom
+    !text: tr('Cost') .. ':'
+    text-auto-resize: true
+
+  Label-16px-Bold
+    id: priceLabel
+    anchors.right: next.right
+    anchors.bottom: next.top
+    margin-bottom: 12
+    text: 0
+    text-auto-resize: true
+
+  ButtonBlueMedium
+    id: start
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin-bottom: 4
+    enabled: false
+    !text: tr('Improve')
+    @onClick: modules.game_helds.onStart()

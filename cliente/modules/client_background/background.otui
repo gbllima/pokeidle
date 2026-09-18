@@ -1,0 +1,43 @@
+UIWidget
+  id: background
+  anchors.fill: parent
+  focusable: false
+  image-source: /images/background
+  image-smooth: true
+  image-fixed-ratio: true
+  margin-top: 1
+
+  UILabel
+    id: clientVersionLabel
+    background-color: #00000099
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    text-align: center
+    text-auto-resize: false
+    width: 220
+    height: 90
+    padding: 2
+    color: #ffffff
+    font: terminus-14px-bold
+    visible: false
+
+  ButtonBlueBase
+    size: 40 40
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin: 12
+    icon: /images/game/icons/icon_settings
+    @onClick: modules.client_options.toggle()
+
+  ButtonRedSmall
+    id: logoutButton
+    width: 115
+    anchors.right: prev.left
+    anchors.verticalCenter: prev.verticalCenter
+    margin-right: 10
+    !text: tr('Logout')
+    on: true
+    @onClick: modules.client_entergame.CharacterList.hide(true)
+
+    $on:
+      width: 0

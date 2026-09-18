@@ -1,0 +1,250 @@
+Panel
+  id: interfacePanel
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+
+  PanelOption
+    anchors.fill: parent
+    anchors.right: prev.left
+    vertical-scrollbar: scroll
+
+  //Label
+  //  width: 130
+  //  id: layoutLabel
+  //  !text: tr("Layout (change requiries client restart)")
+  //  $mobile:
+  //    visible: false
+  //
+  //ComboBox
+  //  id: layout
+  //  margin-top: 3
+  //  margin-right: 2
+  //  margin-left: 2
+  //  $mobile:
+  //    visible: false
+  //  @onOptionChange: modules.client_options.setOption(self:getId(), self:getCurrentOption().text)
+  //  @onSetup: |
+  //    self:addOption("Default")
+  //    for _, file in ipairs(g_resources.listDirectoryFiles("/layouts", false, true)) do
+  //      if g_resources.directoryExists("/layouts/" .. file) then
+  //        self:addOption(file:gsub("^%l", string.upper))
+  //      end
+  //    end
+
+    OptionCheckBox
+      id: actionBar1
+      !text: tr("Show first action bar")
+
+    OptionCheckBox
+      id: actionBar2
+      !text: tr("Show second action bar")
+      visible: false
+
+  //OptionCheckBox
+  //  id: showPing
+  //  !text: tr('Show connection ping')
+  //  !tooltip: tr('Display connection speed to the server (milliseconds)')
+
+    OptionCheckBox
+      id: displayNames
+      !text: tr('Display creature names')
+
+    OptionCheckBox
+      id: displayHealth
+      !text: tr('Display creature health bars')
+
+    OptionCheckBox
+      id: displayPlayerBars
+      !text: tr('Display player health bar')
+
+    OptionCheckBox
+      id: displayCreatureTitles
+      !text: tr('Display creatures titles')
+
+    OptionCheckBox
+      id: displayNameEffects
+      !text: tr('Display name effects')
+
+    OptionCheckBox
+      id: displayItemCountOnMap
+      !text: tr('Display item count on map')
+
+    OptionCheckBox
+      id: displayPokemonIcons
+      !text: tr('Display pokemon icons')
+
+    OptionCheckBox
+      id: correctCreatureInformation
+      !text: tr('Correct creature information position')
+
+  //OptionCheckBox
+  //  id: highlightThingsUnderCursor
+  //  !text: tr('Highlight things under cursor')
+
+    OptionCheckBox
+      id: animationWindow
+      !text: tr("Window animations")
+      text-auto-resize-vertical: true
+      text-wrap: true
+      margin-top: 5
+
+    OptionCheckBox
+      id: displayShakeScreen
+      !text: tr("Enable screen shake")
+      text-auto-resize-vertical: true
+      text-wrap: true
+      margin-top: 5
+
+    OptionCheckBox
+      id: floorFading
+      !text: tr("Floor Fading")
+      text-auto-resize-vertical: true
+      text-wrap: true
+      margin-top: 5
+    
+      $mobile:
+        visible: false
+
+    Label-13px-Regular
+      id: floorFadingLabel
+      !text: tr("(floor fading doesn't work with enabled lights)")
+      text-auto-resize: true
+      margin-top: 5
+      color: #AAAAAA
+
+    Panel
+      height: 190
+      margin-top: 12
+
+      Label-14px-Medium
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.right: parent.horizontalCenter
+        margin-right: 3
+        id: leftPanelsLabel
+        !text: tr("Left panels")
+        text-auto-resize: true
+
+      Label-14px-Medium
+        anchors.right: parent.right
+        anchors.top: prev.top
+        anchors.left: parent.horizontalCenter
+        margin-left: 3
+        id: rightPanelsLabel
+        !text: tr("Right panels")
+        text-auto-resize: true
+
+      ComboBox
+        id: leftPanels
+        anchors.left: leftPanelsLabel.left
+        anchors.right: leftPanelsLabel.right
+        anchors.top: leftPanelsLabel.bottom
+        margin-top: 2
+        @onOptionChange: modules.client_options.setOption(self:getId(), self.currentIndex)
+        @onSetup: |
+          self:addOption("0")
+          self:addOption("1")
+          self:addOption("2")
+          self:addOption("3")
+
+      ComboBox
+        id: rightPanels
+        anchors.left: rightPanelsLabel.left
+        anchors.right: rightPanelsLabel.right
+        anchors.top: rightPanelsLabel.bottom
+        margin-top: 2
+        @onOptionChange: modules.client_options.setOption(self:getId(), self.currentIndex)
+        @onSetup: |
+          self:addOption("1")
+          self:addOption("2")
+          self:addOption("3")
+
+      Label-14px-Medium
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: prev.bottom
+        margin-top: 6
+        id: backpackPanelLabel
+        !text: tr("Container's panel")
+        !tooltip: tr("Open new containers in selected panel")
+        text-auto-resize: true
+
+      ComboBox
+        id: containerPanel
+        anchors.left: backpackPanelLabel.left
+        anchors.right: backpackPanelLabel.right
+        anchors.top: backpackPanelLabel.bottom
+        margin-top: 2
+        @onOptionChange: modules.client_options.setOption(self:getId(), self.currentIndex)
+        @onSetup: |
+          self:addOption("1st left panel")
+          self:addOption("2nd left panel")
+          self:addOption("3rd left panel")
+          self:addOption("4th left panel")
+          self:addOption("1st right panel")
+          self:addOption("2nd right panel")
+          self:addOption("3rd right panel")
+          self:addOption("4th right panel")
+
+      Label-14px-Medium
+        id: viewModeLabel
+        anchors.top: prev.bottom
+        anchors.left: parent.left
+        anchors.right: parent.horizontalCenter
+        margin-top: 8
+        !text: tr("View mode")
+
+      ComboBox
+        id: viewMode
+        anchors.top: prev.bottom
+        anchors.left: prev.left
+        anchors.right: prev.right
+        margin-top: 5
+        @onOptionChange: modules.client_options.setOption(self:getId(), self.currentIndex)
+        @onSetup: |
+          self:addOption(tr("Classic"))
+          self:addOption(tr("Extended"))
+
+      Label-14px-Medium
+        id: visionModeLabel
+        anchors.top: viewModeLabel.top
+        anchors.left: prev.right
+        anchors.right: parent.right
+        margin-left: 8
+        !text: tr("Vision mode")
+
+      ComboBox
+        id: visionMode
+        anchors.top: prev.bottom
+        anchors.left: prev.left
+        anchors.right: parent.right
+        margin-top: 5
+        @onOptionChange: modules.client_options.setOption(self:getId(), self.currentIndex)
+        @onSetup: |
+          self:addOption(tr("Small"))
+          self:addOption(tr("Medium"))
+          self:addOption(tr("Big"))
+
+    Label-14px-Medium
+      margin-top: 3
+      id: crosshairLabel
+      !text: tr("Crosshair")
+      visible: false
+
+    ComboBox
+      id: crosshair
+      margin-top: 3
+      margin-right: 2
+      margin-left: -4
+      visible: false
+      @onOptionChange: modules.client_options.setOption(self:getId(), self.currentIndex)
+      @onSetup: |
+        self:addOption("None")
+        self:addOption("Default")
+        self:addOption("Full")

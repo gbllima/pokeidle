@@ -1,0 +1,37 @@
+effects:
+  129:
+    effect-displacement: x: -4.0, y: -5.0, opacity: 1.0, top: false
+  130:
+    effect-displacement: x: -13.0, y: 16.0, opacity: 1.0, top: false
+  131:
+    effect-displacement: x: -1.0, y: -19.0, opacity: 1.0, top: false
+  132:
+    effect-displacement: x: -7.0, y: -23.0, opacity: 1.0, top: false
+  182:
+    effect-displacement: x: 0.0, y: -5.0, opacity: 1.0, top: false
+  313:
+    effect-displacement: x: 10.0, y: -41.0, opacity: 0.5, top: false
+  804:
+    effect-displacement: x: 18.0, y: -43.0, opacity: 1.0, top: false
+  805:
+    effect-displacement: x: -9.0, y: -39.0, opacity: 1.0, top: false
+  806:
+    effect-displacement: x: 33.0, y: 4.0, opacity: 1.0, top: false
+  807:
+    effect-displacement: x: -32.0, y: -24.0, opacity: 1.0, top: false
+  1527:
+    effect-displacement: x: 10.0, y: 0.0, opacity: 1.0, top: false
+  1965:
+    effect-displacement: x: -7.0, y: 43.0, opacity: 1.0, top: false
+  1966:
+    effect-displacement: x: -12.0, y: 0.0, opacity: 1.0, top: false
+  1967:
+    effect-displacement: x: 6.0, y: 4.0, opacity: 1.0, top: true
+  1968:
+    effect-displacement: x: 0.0, y: 7.0, opacity: 1.0, top: false
+  2199:
+    effect-displacement: x: 0.0, y: -107.0, opacity: 1.0, top: false
+  2391:
+    effect-displacement: x: 0.0, y: 0.0, opacity: 1.0, top: true
+  2414:
+    effect-displacement: x: 62.0, y: -55.0, opacity: 1.0, top: false

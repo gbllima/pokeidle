@@ -1,0 +1,219 @@
+ImagePortrait < UIWidget
+  id: portrait
+  size: 38 38
+  border-width: 0
+
+ButtonPokeInfo < UIButton
+  size: 22 22
+  image-source: /images/game/icons/pokeinfo
+  change-cursor-image: true
+  cursor: pointer
+
+ButtonPokePrey < ButtonPokeInfo
+  image-clip: 0 66 22 22
+  image-color: #FFFFFF
+
+  $hover:
+    image-color: #69B2FC
+
+  $pressed:
+    image-color: #057FFA
+
+ButtonWalk < ButtonPokeInfo
+  image-clip: 0 44 22 22
+  image-color: #FFFFFF
+
+  $hover:
+    image-color: #69B2FC
+
+  $pressed:
+    image-color: #057FFA
+
+  $on:
+    image-color: #A8FF80
+
+ButtonHappy < ButtonPokeInfo
+  image-clip: 0 22 22 22
+  visible: false
+
+ButtonLove < ButtonPokeInfo
+  image-clip: 0 0 22 22
+  visible: false
+
+PokeHealthBar < ProgressBar
+  id: pokeHealthBar
+  size: 122 21
+  anchors.verticalCenter: slot7.verticalCenter
+  anchors.left: slot7.right
+  anchors.right: parent.right
+  margin: 0 4 0 12
+  background-color: #427afa
+  font: DMSans-13px-bold
+
+ConditionWidget < UIWidget
+  size: 32 32
+  phantom: true
+
+InventoryItem < Item
+  size: 32 32
+
+HeadSlot < InventoryItem
+  id: slot1
+  &position: {x=65535, y=1, z=0}
+
+BodySlot < InventoryItem
+  id: slot4
+  size: 16 18
+  !tooltip: tr('Order Pokemon')
+  opacity: 0
+  &position: {x=65535, y=4, z=0}
+
+PortraitSlot < InventoryItem
+  id: slot7
+  image-color: #FFFFFF00
+  &position: {x=65535, y=7, z=0}
+
+  UIWidget
+    id: overWidget
+    anchors.fill: parent
+
+FeetSlot < InventoryItem
+  id: slot8
+  &position: {x=65535, y=8, z=0}
+
+NeckSlot < InventoryItem
+  id: slot2
+  &position: {x=65535, y=2, z=0}
+
+LeftSlot < InventoryItem
+  id: slot6
+  &position: {x=65535, y=6, z=0}
+
+FingerSlot < InventoryItem
+  id: slot9
+  &position: {x=65535, y=9, z=0}
+
+BackSlot < InventoryItem
+  id: slot3
+  &position: {x=65535, y=3, z=0}
+
+RightSlot < InventoryItem
+  id: slot5
+  &position: {x=65535, y=5, z=0}
+
+AmmoSlot < InventoryItem
+  id: slot10
+  &position: {x=65535, y=10, z=0}
+
+MiniWindow
+  id: pokemonWindow
+  !text: tr('Pokémon')
+  size: 100 108
+  icon: /images/game/icons/inventory
+  icon-clip: 0 72 24 24
+  @onClose: self:setVisible(false)
+  @onUnlock: self:disableResize()
+  @onSetup: self:disableResize()
+  &save: true
+  visible: false
+  padding-bottom: 2
+  MiniWindowContents
+    id: contentsPanel
+
+    Panel
+      anchors.fill: next
+      background-color: #575757
+
+    PokeHealthBar
+
+    HeadSlot
+      anchors.top: parent.top
+      anchors.right: parent.right
+      visible: false
+
+    BodySlot
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      margin: 0 1 2 0
+
+    ButtonWalk
+      id: autoWalkButton
+      anchors.verticalCenter: slot10.verticalCenter
+      anchors.left: slot10.right
+      margin-left: 10
+      !tooltip: tr('Auto Walk Off')
+      @onClick: modules.game_pokeinfo.onWalking()
+
+      $on:
+        !tooltip: tr('Auto Walk On')
+
+    ButtonHappy
+      anchors.bottom: prev.bottom
+      anchors.right: prev.left
+      margin-right: 7
+      @onClick: g_game.talk('!check')
+
+    ButtonLove
+      id: loveButton
+      anchors.bottom: prev.bottom
+      anchors.right: prev.left
+      margin-right: 7
+      @onClick: g_game.talk('!love')
+
+    PortraitSlot
+      anchors.top: parent.top
+      anchors.left: parent.left
+      margin-top: 1
+      margin-left: 1
+      virtual: true
+      focusable: false
+
+    ImagePortrait
+      anchors.top: parent.top
+      anchors.left: parent.left
+      margin: 1
+
+    NeckSlot
+      anchors.top: parent.top
+      anchors.left: parent.left
+      visible: false
+
+    LeftSlot
+      anchors.top: parent.top
+      anchors.left: parent.left
+      visible: false
+
+    FingerSlot
+      anchors.top: parent.top
+      anchors.left: parent.left
+      visible: false
+
+    BackSlot
+      anchors.top: parent.top
+      anchors.left: parent.left
+      visible: false
+
+    RightSlot
+      anchors.top: parent.top
+      anchors.left: parent.left
+      visible: false
+
+    AmmoSlot
+      anchors.bottom: next.bottom
+      anchors.left: next.right
+      margin-left: 4
+
+    FeetSlot
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      margin: 0 0 2 2
+
+    Panel
+      id: conditionPanel
+      layout:
+        type: horizontalBox
+      size: 32 32
+      anchors.top: slot7.top
+      anchors.left: slot7.left
+      margin-top: 1
+      margin-left: 1

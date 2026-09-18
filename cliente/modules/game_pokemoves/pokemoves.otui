@@ -1,0 +1,62 @@
+CooldownLabel < UILabel
+  size: 32 32
+  anchors.centerIn: parent
+  font: righteous-12px-rounded-solid
+  text-align: center
+  color: #FFFFFF
+
+MoveIcon < UIButton
+  size: 32 32
+  focusable: false
+  anchors.left: parent.left
+  anchors.top: parent.top
+  image-color: #ffffffC2
+  border: 0 #FFFFFF
+  margin: 0
+  draggable: true
+  font: righteous-12px-rounded-solid
+  &moveIcon: true
+  &moving: false
+
+  $hover:
+    image-color: #ffffffff
+
+  $on:
+    anchors.left: parent.left
+    anchors.top: parent.top
+
+  $!first:
+    margin: 0 0 0 3
+    anchors.left: prev.right
+
+  $!first on:
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin: 3 0 0 0
+
+  Label
+    id: index
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    font: verdana-11px-rounded
+    margin-bottom: -2
+
+UIWindow
+  id: movesWindow
+  height: 48
+  image-source:/images/game/movesbar/movebar
+  image-clip: 0 0 216 48
+  image-border: 18
+  padding: 8
+  anchors.bottom: actionBottomPanel.top
+  anchors.horizontalCenter: actionBottomPanel.horizontalCenter
+
+  $on:
+    image-clip: 0 48 216 48
+
+  Panel
+    id: moves
+    size: 0 32
+
+    $on:
+      size: 32 0

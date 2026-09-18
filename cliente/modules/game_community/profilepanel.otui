@@ -1,0 +1,404 @@
+PokemonSidebarIcon < Panel
+  size: 31 31
+  image-source: /images/game/portrait/none
+
+CollectionShowCaseIcon < Item
+  virtual: true
+  anchors.top: parent.top
+
+  $first:
+    anchors.left: parent.left
+
+  $!first:
+    anchors.left: prev.right
+    margin-left: 4
+  
+Panel
+  id: profilePanel
+  anchors.fill: parent
+  
+  TextEdit 
+    id: searchInput
+    anchors.top: parent.top
+    anchors.left: parent.left
+    width: 250
+    !placeholder: tr('%s %s...', tr('Search'), tr('Player'))
+    &delay: 0
+    @onKeyPress: |
+      function(self, keyCode, keyboardModifiers)
+        if os.time() > self.delay and keyboardModifiers == KeyboardNoModifier and keyCode == KeyEnter then
+          self.delay = os.time() + 1.4
+          local text = self:getText():trim()
+          modules.game_community.searchPlayer(text:lower())
+          return true
+        end
+        return false
+      end
+
+  UIButton
+    id: searchButton
+    size: 32 32
+    anchors.right: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/market/icone
+    image-clip: 31 1 32 33
+    image-color: #A1A1A1
+    change-cursor-image: true
+    cursor: pointer
+    &delay: 0
+    @onClick: |
+      function(self)
+        if os.time() > self.delay then
+          self.delay = os.time() + 1.4
+          local text = self:getParent().searchInput:getText():trim()
+          modules.game_community.searchPlayer(text:lower())
+        end
+      end
+
+    $hover:
+      image-color: white
+
+    $pressed:
+      image-color: #a1a1a1
+
+  UIButton
+    id: clearButton
+    size: 32 32
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/icons/arrow_back
+    margin-left: 5
+    cursor: pointer
+    !tooltip: tr('Back')
+    &delay: 0
+    @onClick: |
+      function(self)
+        if os.time() > self.delay then
+          self.delay = os.time() + 1.4
+          local searchInput = self:getParent().searchInput
+          searchInput:setText("")
+          modules.game_community.searchPlayer(g_game.getCharacterName())
+        end
+      end
+
+    $hover:
+      image-color: white
+
+    $pressed:
+      image-color: #a1a1a1
+
+  PanelRoundedSolid
+    id: contentContainer
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    height: 335
+    padding: 10
+    image-color: #525252
+    margin-top: 10
+
+    Panel
+      id: profilePanel
+      anchors.fill: parent
+      visible: true
+      
+      Panel
+        id: profilePanelLeft
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        width: 280
+        padding: 17 0 0 0
+
+        Panel
+          id: pokemonSidebarBackground
+          anchors.left: photoPanel.right
+          anchors.verticalCenter: photoPanel.verticalCenter
+          padding: 6 4 0 4
+          width: 40
+          height: 223
+          layout:
+            type: verticalBox
+          
+          PokemonSidebarIcon
+            id: 1
+          PokemonSidebarIcon
+            id: 2
+            margin-top: 5
+          PokemonSidebarIcon
+            id: 3
+            margin-top: 5
+          PokemonSidebarIcon
+            id: 4
+            margin-top: 5
+          PokemonSidebarIcon
+            id: 5
+            margin-top: 5
+          PokemonSidebarIcon
+            id: 6
+            margin-top: 5
+
+        UIWidget
+          id: pokemonSidebarFrame
+          anchors.left: pokemonSidebarBackground.left  
+          anchors.top: pokemonSidebarBackground.top
+          anchors.right: pokemonSidebarBackground.right
+          anchors.bottom: pokemonSidebarBackground.bottom
+          image-source: /images/game/community/showcasepoke
+          phantom: true
+        
+        Panel
+          id: photoPanel
+          anchors.top: parent.top
+          anchors.left: parent.left
+          width: 197
+          height: 270
+
+          UIWidget
+            id: profileImageWidget
+            anchors.centerIn: parent
+            size: 197 270
+            image-source: /images/game/community/avatars/default_avatar
+            image-fixed-ratio: true
+            image-smooth: true
+            phantom: true
+            
+          UIWidget
+            id: borderImageWidget
+            anchors.centerIn: parent
+            size: 197 270
+            visible: false
+            image-source: /images/game/community/borders/default_border
+            image-fixed-ratio: true
+            image-smooth: true
+            phantom: true
+
+          ButtonBlueSmall
+            id: editPhotoButton
+            anchors.top: parent.top
+            anchors.left: parent.left
+            margin: 10          
+            icon: /images/game/icons/switch_avatar
+            size: 24 24
+            !tooltip: tr('Customize')
+            @onClick: modules.game_community.openPhotoEditor()
+
+        Panel
+          id: playerInfoPanel
+          anchors.top: prev.bottom
+          anchors.horizontalCenter: prev.horizontalCenter
+          margin-top: 7
+          height: 21
+          layout:
+            type: horizontalBox
+            align-vertical: center
+            align-horizontal: center
+            fit-children: true
+
+          Label-16px-Regular
+            id: playerNameLabel
+            text-align: right
+            !text: tr('Player name') .. ': '
+            text-auto-resize: true
+
+      Panel
+        id: profilePanelRight
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.left: prev.right
+        padding: 10
+
+        Label-16px-Bold
+          id: infoTitle
+          !text: tr('Information')
+          anchors.left: parent.left
+          anchors.top: parent.top
+          text-auto-resize: true
+        
+        Label-16px-Regular
+          id: levelLabel
+          !text: tr('Level') .. ': '
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 10
+          text-auto-resize: true
+          
+        Label-14px-Medium
+          id: levelValue
+          text: 400
+          anchors.top: prev.top
+          anchors.right: parent.right
+          margin-right: 20
+          text-auto-resize: true
+
+        Label-16px-Regular
+          id: clanLabel
+          !text: 'Team: '
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text-auto-resize: true
+
+        Panel
+          id: clanInfoPanel
+          anchors.top: prev.top
+          anchors.right: parent.right
+          margin-right: 20
+          width: 120
+          height: 20
+          layout:
+            type: horizontalBox
+            spacing: 5
+            fit-children: true
+
+          UIWidget
+            id: playerInfoClanIcon
+            size: 20 20
+            image-source: /images/game/icons/icon_no_clan_20px
+            image-fixed-ratio: true
+            image-smooth: true
+
+          Label-14px-Medium
+            id: clanNameValue
+            !text: tr('None')
+            text-auto-resize: true
+
+        Label-16px-Regular
+          id: professionLabel
+          !text: tr('PokéJob') .. ': '
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text-auto-resize: true
+          
+        Label-14px-Medium
+          id: professionValue
+          text: 30
+          anchors.top: prev.top
+          anchors.right: parent.right
+          margin-right: 20
+          text-auto-resize: true
+
+        Label-16px-Regular
+          id: fishingLabel
+          !text: tr('Fishing') .. ': '
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text-auto-resize: true
+          
+        Label-14px-Medium
+          id: fishingValue
+          text: 30
+          anchors.top: prev.top
+          anchors.right: parent.right
+          margin-right: 20
+          text-auto-resize: true
+
+        Label-16px-Regular
+          id: outfitsLabel
+          !text: tr('Skins') .. ': '
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text-auto-resize: true
+          
+        Label-14px-Medium
+          id: outfitsValue
+          text: 30
+          anchors.top: prev.top
+          anchors.right: parent.right
+          margin-right: 20
+          text-auto-resize: true
+
+        Label-16px-Regular
+          id: profileIcons
+          !text: tr('Profile Icons') .. ': '
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text-auto-resize: true
+          
+        Label-14px-Medium
+          id: profileIconsCount
+          text: 1
+          anchors.top: prev.top
+          anchors.right: parent.right
+          margin-right: 20
+          text-auto-resize: true
+
+        Label-16px-Regular
+          id: profileTitle
+          !text: tr('Titles') .. ': '
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text-auto-resize: true
+          
+        Label-14px-Medium
+          id: profileTitleIconCount
+          text: 30
+          anchors.top: prev.top
+          anchors.right: parent.right
+          margin-right: 20
+          text-auto-resize: true
+
+        Label-16px-Bold
+          id: collectionsShowCase
+          !text: tr('Colections')
+          anchors.top: prev.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          text-auto-resize: true
+          margin-top: 10
+
+        PanelRounded
+          id: collectionShowCaseContainer
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          anchors.right: parent.right
+          padding: 10
+          height: 54
+          
+          CollectionShowCaseIcon
+            id: 1
+          CollectionShowCaseIcon
+            id: 2
+          CollectionShowCaseIcon
+            id: 3
+          CollectionShowCaseIcon
+            id: 4
+          CollectionShowCaseIcon
+            id: 5
+          CollectionShowCaseIcon
+            id: 6
+          CollectionShowCaseIcon
+            id: 7
+          CollectionShowCaseIcon
+            id: 8
+          CollectionShowCaseIcon
+            id: 9
+
+        PanelRounded
+          id: iconsLinks
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 4
+          padding: 9
+          height: 40
+          width: 74
+
+          UIButton
+            id: twitchButton
+            anchors.top: parent.top
+            anchors.left: parent.left       
+            image-source: /images/game/icons/logo_twitch
+
+          UIButton
+            id: youtubeButton
+            anchors.top: parent.top
+            anchors.left: prev.right       
+            image-source: /images/game/icons/logo_youtube
+            margin-left: 10

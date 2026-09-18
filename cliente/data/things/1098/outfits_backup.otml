@@ -1,0 +1,69 @@
+creatures:
+  1:
+    target-displacement: West: 0 0, South: 2 11, East: 0 0, North: 0 0
+    outfit-displacement: opacity: 1.0, West: 0 0, South: 0 0, East: 0 0, North: 0 0
+  3:
+    target-displacement: West: 0 0, South: 0 0, East: 0 0, North: 0 0
+    name-displacement: West: -4 -54, South: -4 -54, East: -4 -54, North: -4 -54
+    outfit-displacement: opacity: 1.0, West: 10 0, South: 10 0, East: 10 0, North: 10 0
+  4:
+    name-displacement: West: 0 0, South: 0 0, East: 0 0, North: 0 0
+    outfit-displacement: opacity: 1.0, West: 0 0, South: 0 0, East: 0 0, North: 0 0
+  6:
+    target-displacement: West: 0 0, South: 0 0, East: 0 0, North: 0 0
+    name-displacement: West: -42 -88, South: -42 -88, East: -42 -88, North: -42 -88
+    outfit-displacement: opacity: 1.0, West: 0 0, South: 0 0, East: 0 0, North: 0 0
+  38:
+    name-displacement: West: 3 -67, South: 3 -67, East: 3 -67, North: 3 -67
+    outfit-displacement: opacity: 1.0, West: 31 1, South: 31 1, East: 31 1, North: 31 1
+  45:
+    name-displacement: West: -2 -32, South: -2 -32, East: -2 -32, North: -2 -32
+    outfit-displacement: opacity: 1.0, West: 13 0, South: 13 0, East: 13 0, North: 13 0
+  54:
+    name-displacement: West: 14 11, South: 10 13, East: 16 8, North: 8 13
+    outfit-displacement: opacity: 1.0, West: 0 0, South: 1 -3, East: 0 0, North: 0 0
+  93:
+    name-displacement: West: -43 -81, South: -43 -81, East: -43 -81, North: -43 -81
+  123:
+    name-displacement: West: -4 -32, South: -4 -32, East: -4 -32, North: -4 -32
+    outfit-displacement: opacity: 1.0, West: 2 -2, South: 2 -2, East: 2 -2, North: 2 -2
+  157:
+    name-displacement: West: -3 -78, South: -3 -78, East: -3 -78, North: -3 -78
+    outfit-displacement: opacity: 1.0, West: 28 0, South: 28 0, East: 28 0, North: 28 0
+  161:
+    name-displacement: West: -7 -116, South: -7 -116, East: -7 -116, North: -7 -116
+    outfit-displacement: opacity: 1.0, West: 9 0, South: 9 0, East: 9 0, North: 9 0
+  185:
+    name-displacement: West: -63 -102, South: -63 -102, East: -63 -102, North: -63 -102
+    outfit-displacement: opacity: 1.0, West: 0 0, South: 0 0, East: 0 0, North: 0 0
+  214:
+    name-displacement: West: -42 -84, South: -42 -84, East: -42 -84, North: -42 -84
+  253:
+    name-displacement: West: 0 -17, South: 0 -17, East: 0 -17, North: 0 -17
+    outfit-displacement: opacity: 1.0, West: 13 0, South: 13 0, East: 13 0, North: 13 0
+  496:
+    name-displacement: West: -4 -32, South: -4 -32, East: -4 -32, North: -4 -32
+    outfit-displacement: opacity: 1.0, West: 2 -2, South: 2 -2, East: 2 -2, North: 2 -2
+  925:
+    target-displacement: West: -52 -15, South: -76 -20, East: -40 -5, North: -44 -13
+    name-displacement: West: 0 0, South: -136 -255, East: 0 0, North: 0 0
+  1082:
+    name-displacement: West: 0 -38, South: 0 -38, East: 0 -38, North: 0 -38
+    outfit-displacement: opacity: 1.0, West: 10 11, South: 30 0, East: 15 10, North: 30 0
+  1112:
+    name-displacement: West: 0 0, South: 0 0, East: 0 0, North: 0 0
+  2071:
+    name-displacement: West: -42 -86, South: -42 -86, East: -42 -86, North: -42 -86
+  2072:
+    name-displacement: West: -68 -85, South: -68 -85, East: -68 -85, North: -68 -85
+  2910:
+    name-displacement: West: -69 -84, South: -69 -84, East: -69 -84, North: -69 -84
+  3134:
+    target-displacement: West: 0 0, South: -18 -10, East: 0 0, North: 0 0
+    name-displacement: West: -97 -95, South: -97 -95, East: -97 -95, North: -97 -95
+  3203:
+    name-displacement: West: -36 -62, South: -36 -62, East: -36 -62, North: -36 -62
+  3205:
+    name-displacement: West: -41 -114, South: -41 -114, East: -41 -114, North: -41 -114
+  3207:
+    name-displacement: West: -65 -98, South: -65 -98, East: -65 -98, North: -65 -98

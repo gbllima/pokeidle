@@ -1,0 +1,240 @@
+﻿-- chunkname: @/modules/game_containers/containers.lua
+
+function init()
+	connect(Container, {
+		onOpen = onContainerOpen,
+		onClose = onContainerClose,
+		onSizeChange = onContainerChangeSize,
+		onUpdateItem = onContainerUpdateItem
+	})
+	connect(g_game, {
+		onGameEnd = clean
+	})
+	reloadContainers()
+end
+
+function terminate()
+	disconnect(Container, {
+		onOpen = onContainerOpen,
+		onClose = onContainerClose,
+		onSizeChange = onContainerChangeSize,
+		onUpdateItem = onContainerUpdateItem
+	})
+	disconnect(g_game, {
+		onGameEnd = clean
+	})
+end
+
+function reloadContainers()
+	clean()
+
+	for _, container in pairs(g_game.getContainers()) do
+		onContainerOpen(container)
+	end
+end
+
+function clean()
+	for containerid, container in pairs(g_game.getContainers()) do
+		destroy(container)
+	end
+end
+
+function destroy(container)
+	if container.window then
+		container.window:destroy()
+
+		container.window = nil
+		container.itemsPanel = nil
+	end
+end
+
+function refreshContainerItems(container)
+	for slot = 0, container:getCapacity() - 1 do
+		local itemWidget = container.itemsPanel:getChildById("item" .. slot)
+
+		itemWidget:setItem(container:getItem(slot))
+	end
+
+	if container:hasPages() then
+		refreshContainerPages(container)
+	end
+end
+
+function toggleContainerPages(containerWindow, hasPages)
+	if hasPages == containerWindow.pagePanel:isOn() then
+		return
+	end
+
+	containerWindow.pagePanel:setOn(hasPages)
+
+	if hasPages then
+		containerWindow.miniwindowScrollBar:setMarginTop(containerWindow.miniwindowScrollBar:getMarginTop() + containerWindow.pagePanel:getHeight())
+		containerWindow.contentsPanel:setMarginTop(containerWindow.contentsPanel:getMarginTop() + containerWindow.pagePanel:getHeight())
+	else
+		containerWindow.miniwindowScrollBar:setMarginTop(containerWindow.miniwindowScrollBar:getMarginTop() - containerWindow.pagePanel:getHeight())
+		containerWindow.contentsPanel:setMarginTop(containerWindow.contentsPanel:getMarginTop() - containerWindow.pagePanel:getHeight())
+	end
+end
+
+function refreshContainerPages(container)
+	local currentPage = 1 + math.floor(container:getFirstIndex() / container:getCapacity())
+	local pages = 1 + math.floor(math.max(0, container:getSize() - 1) / container:getCapacity())
+
+	container.window:recursiveGetChildById("pageLabel"):setText(tr("Page %i of %i", currentPage, pages))
+
+	local prevPageButton = container.window:recursiveGetChildById("prevPageButton")
+
+	if currentPage == 1 then
+		prevPageButton:setEnabled(false)
+	else
+		prevPageButton:setEnabled(true)
+
+		function prevPageButton.onClick()
+			g_game.seekInContainer(container:getId(), container:getFirstIndex() - container:getCapacity())
+		end
+	end
+
+	local nextPageButton = container.window:recursiveGetChildById("nextPageButton")
+
+	if pages <= currentPage then
+		nextPageButton:setEnabled(false)
+	else
+		nextPageButton:setEnabled(true)
+
+		function nextPageButton.onClick()
+			g_game.seekInContainer(container:getId(), container:getFirstIndex() + container:getCapacity())
+		end
+	end
+end
+
+function onContainerOpen(container, previousContainer)
+	local containerWindow
+
+	if previousContainer then
+		containerWindow = previousContainer.window
+		previousContainer.window = nil
+		previousContainer.itemsPanel = nil
+	else
+		containerWindow = g_ui.createWidget("ContainerWindow", modules.game_interface.getContainerPanel())
+	end
+
+	containerWindow:setId("container" .. container:getId())
+
+	local containerPanel = containerWindow:getChildById("contentsPanel")
+	local containerItemWidget = containerWindow:getChildById("containerItemWidget")
+
+	function containerWindow.onClose()
+		g_game.close(container)
+		containerWindow:hide()
+	end
+
+	function containerWindow.onDrop(container, widget, mousePos)
+		if containerPanel:getChildByPos(mousePos) then
+			return false
+		end
+
+		local child = containerPanel:getChildByIndex(-1)
+
+		if child then
+			child:onDrop(widget, mousePos, true)
+		end
+	end
+
+	local scrollbar = containerWindow:getChildById("miniwindowScrollBar")
+
+	scrollbar:mergeStyle({
+		["$!on"] = {}
+	})
+
+	local upButton = containerWindow:getChildById("upButton")
+
+	function upButton.onClick()
+		g_game.openParent(container)
+	end
+
+	upButton:setVisible(container:hasParent())
+
+	local name = container:getName()
+
+	name = name:sub(1, 1):upper() .. name:sub(2)
+
+	if name:len() > 12 then
+		name = string.sub(name, 1, #name - (container:hasParent() and 10 or 8))
+		name = name .. "..."
+	end
+
+	containerWindow:setText(name)
+
+	local item = container:getContainerItem()
+
+	if item:getId() == 2853 then
+		containerItemWidget:setIcon("/images/game/icons/icon_bag")
+		containerItemWidget:setItem(nil)
+	else
+		containerItemWidget:setIcon("")
+		containerItemWidget:setItem(container:getContainerItem())
+	end
+
+	containerPanel:destroyChildren()
+
+	for slot = 0, container:getCapacity() - 1 do
+		local itemWidget = g_ui.createWidget("Item", containerPanel)
+
+		itemWidget:setId("item" .. slot)
+		itemWidget:setItem(container:getItem(slot))
+		itemWidget:setMargin(0)
+
+		itemWidget.position = container:getSlotPosition(slot)
+		itemWidget.isUnlocked = container:isUnlocked()
+	end
+
+	container.window = containerWindow
+	container.itemsPanel = containerPanel
+
+	toggleContainerPages(containerWindow, container:hasPages())
+	refreshContainerPages(container)
+
+	local layout = containerPanel:getLayout()
+	local cellSize = layout:getCellSize()
+
+	containerWindow:setContentMinimumHeight(cellSize.height)
+	containerWindow:setContentMaximumHeight(cellSize.height * layout:getNumLines() + layout:getNumLines() * 2)
+
+	if container:hasPages() then
+		local height = containerWindow.miniwindowScrollBar:getMarginTop() + containerWindow.pagePanel:getHeight() + 17
+
+		if height > containerWindow:getHeight() then
+			containerWindow:setHeight(height)
+		end
+	end
+
+	if not previousContainer then
+		local filledLines = math.max(math.ceil(container:getItemsCount() / layout:getNumColumns()), 1)
+
+		containerWindow:setContentHeight(filledLines * 2 + filledLines * cellSize.height)
+	end
+
+	containerWindow:setup()
+end
+
+function onContainerClose(container)
+	destroy(container)
+end
+
+function onContainerChangeSize(container, size)
+	if not container.window then
+		return
+	end
+
+	refreshContainerItems(container)
+end
+
+function onContainerUpdateItem(container, slot, item, oldItem)
+	if not container.window then
+		return
+	end
+
+	local itemWidget = container.itemsPanel:getChildById("item" .. slot)
+
+	itemWidget:setItem(item)
+end

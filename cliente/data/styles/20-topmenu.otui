@@ -1,0 +1,134 @@
+TopButton < UIButton
+  size: 30 30
+  icon-color: #8A8A8A
+  change-cursor-image: true
+  cursor: pointer
+  @onSetup: |
+    connect(self, {
+      onHoverChange = function(self, hovered)
+        self:getParent():getParent().hideMenu:setChecked(hovered)
+      end
+    })
+
+  $on:
+    icon-color: #057FFA
+
+  $hover !disabled:
+    icon-color: #69B2FC
+
+  $pressed:
+    icon-color: #057FFA
+
+  $disabled:
+    icon-color: ##595959
+    change-cursor-image: false
+
+TopMenuButtonsPanel < Panel
+  layout:
+    type: horizontalBox
+    spacing: 10
+    fit-children: true
+
+TopMenuPanel < UIWidget
+  size: 280 47
+  image-source: /images/ui/topmenu
+  image-border: 20
+  focusable: false
+  margin-top: 0
+  @onHoverChange: |
+    function(self, hovered)
+      self.hideMenu:setChecked(hovered)
+    end
+
+  $on:
+    margin-top: -47
+
+TopMenuHide < UIWidget
+  size: 62 24
+  anchors.top: topMenu.bottom
+  anchors.horizontalCenter: topMenu.horizontalCenter
+  image-source: /images/ui/topmenu_hide
+  focusable: false
+  opacity: 0
+  @onClick: modules.client_topmenu.showAndHide()
+  icon: /images/ui/scroll_arrow
+  icon-clip: 0 38 19 19
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover:
+    opacity: 1
+
+  $on:
+    opacity: 0.4
+    icon-clip: 0 57 19 19
+
+  $on hover:
+    opacity: 1
+
+  $checked:
+    opacity: 1
+
+  $disabled:
+    change-cursor-image: false
+
+TopMenuFrameCounterLabel < Label
+  anchors.top: parent.top
+  anchors.left: parent.left
+  font: righteous-12px-rounded-solid
+  text-auto-resize: true
+  color: alpha
+  margin: 5
+  visible: false
+
+  $on:
+    color: white
+
+TopMenuPingLabel < Label
+  font: righteous-12px-rounded-solid
+
+TopMenu < TopMenuPanel
+  id: topMenu
+  anchors.horizontalCenter: parent.horizontalCenter
+  anchors.top: parent.top
+  padding: 12
+
+  TopMenuButtonsPanel
+    id: leftButtonsPanel
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+
+  TopMenuButtonsPanel
+    id: leftGameButtonsPanel
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: prev.right
+    visible: false
+
+  VerticalSeparator
+    anchors.left: prev.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    margin-left: 22
+
+  TopMenuButtonsPanel
+    id: rightButtonsPanel
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: prev.right
+    margin-left: 10
+
+  VerticalSeparator
+    anchors.left: prev.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    margin-left: 10
+
+  TopMenuButtonsPanel
+    id: rightGameButtonsPanel
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: prev.right
+    margin-left: 10
+    visible: false

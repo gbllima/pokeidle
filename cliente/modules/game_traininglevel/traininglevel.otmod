@@ -1,0 +1,8 @@
+Module
+  name: game_traininglevel
+  description: Game Training Level
+  author: Union
+  sandboxed: true
+  scripts: [ const, traininglevel ]
+  @onLoad: init()
+  @onUnload: terminate()

@@ -1,0 +1,9 @@
+Module
+  name: game_pokeinfo
+  description: Displays of your pokemon
+  author: Wiger
+  website: pokeunion.com.br
+  sandboxed: true
+  scripts: [ pokeinfo ]
+  @onLoad: init()
+  @onUnload: terminate()

@@ -1,0 +1,9 @@
+Module
+  name: game_pokemonseller
+  description: Pokemon seller module
+  author: Snowsz
+  website: http://pokeunion.com.br/
+  sandboxed: true
+  scripts: [ pokemonseller ]
+  @onLoad: init()
+  @onUnload: terminate()

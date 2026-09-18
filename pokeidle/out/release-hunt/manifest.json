@@ -1,0 +1,142 @@
+{
+  "releaseId": "b559b2886615f2de",
+  "createdAt": "2026-09-05T18:06:15.505Z",
+  "clientVersion": 1098,
+  "source": {
+    "map": "map.otbm",
+    "box": {
+      "minX": 2492,
+      "maxX": 2661,
+      "minY": 2505,
+      "maxY": 2629,
+      "minZ": 7,
+      "maxZ": 7
+    }
+  },
+  "counts": {
+    "tiles": 21246,
+    "chunks": 12,
+    "atlases": 4,
+    "sprites": 12731,
+    "appearances": 892,
+    "creatures": 242
+  },
+  "datasets": [
+    "hunts",
+    "npcs",
+    "spawns",
+    "species"
+  ],
+  "budget": {
+    "bytes": 5958538,
+    "limit": 12582912,
+    "ok": true
+  },
+  "files": [
+    {
+      "path": "appearances.json",
+      "bytes": 508023,
+      "sha256": "962f5105cf2a223338ef52f575bc2b5e333881df84e6221881a3bd931d57be52"
+    },
+    {
+      "path": "atlas/atlas-000.png",
+      "bytes": 2028249,
+      "sha256": "16a80f837401de6a200dd77167d2a19e0d7666d7a6116a683f12d595b4393560"
+    },
+    {
+      "path": "atlas/atlas-001.png",
+      "bytes": 1034383,
+      "sha256": "dc184acc5524426775d69c50aa2f664b6c7a5295c584e63cb21e8ab15b114ddc"
+    },
+    {
+      "path": "atlas/atlas-002.png",
+      "bytes": 1084143,
+      "sha256": "f86c549b9d27ba6e0a725895991a028147e28a0a463ed50b46f71eed01070e54"
+    },
+    {
+      "path": "atlas/atlas-003.png",
+      "bytes": 94683,
+      "sha256": "e770033ba87c1a9b35641abf44ac0052e0dca1e90dba16b92080c4c769c18ba5"
+    },
+    {
+      "path": "chunks/7/38_39.json",
+      "bytes": 6418,
+      "sha256": "60e7ab2288fe6f8839409a7833b5c5ac9b5f806bbde55fae1ff46821a3a76502"
+    },
+    {
+      "path": "chunks/7/38_40.json",
+      "bytes": 6394,
+      "sha256": "7da46ca67fb8ff0247bde89ac382349e629c843114b1e1fb7ffa8c90875b6add"
+    },
+    {
+      "path": "chunks/7/38_41.json",
+      "bytes": 619,
+      "sha256": "5f3ee67d819b1273c6b398b221567267c5bd11634ec0a2c4d7e863905fe223f2"
+    },
+    {
+      "path": "chunks/7/39_39.json",
+      "bytes": 102442,
+      "sha256": "ea00d7d3f60cfba4f2eb0130ea2c51f566881863851fc4fe0d0062e08d000887"
+    },
+    {
+      "path": "chunks/7/39_40.json",
+      "bytes": 118696,
+      "sha256": "2ccec82637a17c176a82f994fe1e2ee4cbe095837a2393f543a0807ec3afcd30"
+    },
+    {
+      "path": "chunks/7/39_41.json",
+      "bytes": 9674,
+      "sha256": "e0797c13005b6f98352309a3130b9a3177579b7c0712c0ac446c05ce5e512370"
+    },
+    {
+      "path": "chunks/7/40_39.json",
+      "bytes": 112542,
+      "sha256": "f84ffa9eab665e35896cc4d03aab4def7e892d90c4265abe7bf47c3698a16dd9"
+    },
+    {
+      "path": "chunks/7/40_40.json",
+      "bytes": 123486,
+      "sha256": "1afdeb33d776750a28499752c7b5d8dac3cde923754863b44106e952e30dd961"
+    },
+    {
+      "path": "chunks/7/40_41.json",
+      "bytes": 10452,
+      "sha256": "901a302c144ff3d47b4b9ad6b5200edd04c685685159f7fb6ee476e3509e120e"
+    },
+    {
+      "path": "chunks/7/41_39.json",
+      "bytes": 67410,
+      "sha256": "3e3b91692bfcc67c1e38608ce28ae006237fa267e34eaa9a5d99c18d20ce081a"
+    },
+    {
+      "path": "chunks/7/41_40.json",
+      "bytes": 70859,
+      "sha256": "d5b599a956f78195629a81c46d7adda00852c44ed0c1be821255463486d4011e"
+    },
+    {
+      "path": "chunks/7/41_41.json",
+      "bytes": 5999,
+      "sha256": "8d90cb4d0dbc50d2c328890d3a11281ca2a5f67013b2b966fb54dcd14885025f"
+    },
+    {
+      "path": "hunts.json",
+      "bytes": 327742,
+      "sha256": "4f3906787d0e9ad59bd2dfae7559e497bfc15c6009b7cb0009c59c7fe83b8f8c"
+    },
+    {
+      "path": "npcs.json",
+      "bytes": 1227,
+      "sha256": "e5361cfa973f140cb8d243cb85009a743c2dc4636bf3a0fd0939bb2ded38f914"
+    },
+    {
+      "path": "spawns.json",
+      "bytes": 16449,
+      "sha256": "d7ee6043aa86d224e49f0273d2f3ca15b10adea0fa2087e78db89e643bd3e3d4"
+    },
+    {
+      "path": "species.json",
+      "bytes": 228648,
+      "sha256": "3476283d3c29122ffc64e9056805dfa7aa9291c02355799d896d5ff310bfcf8e"
+    }
+  ]
+}

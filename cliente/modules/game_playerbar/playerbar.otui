@@ -1,0 +1,82 @@
+PlayerBar < UIWindow
+  size: 283 88
+  image-source: /images/game/playerbar/default
+  focusable: false
+  pos: 10 45
+
+  UIWidget
+    id: profile
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    image-source: /images/game/playerbar/boy_player_bar
+    margin: 8 0 19 0
+    phantom: true
+
+  UIWidget
+    id: iconHealth
+    size: 16 16
+    anchors.right: next.left
+    anchors.verticalCenter: next.verticalCenter
+    image-source: /images/game/playerbar/icon_xp_hp
+    image-clip: 0 0 16 16
+    margin-right: 4
+    image-color: #199954
+    phantom: true
+
+  Panel
+    anchors.fill: next
+    background-color: #4B4B4B
+
+  ProgressBar
+    id: healthBar
+    size: 120 12
+    anchors.right: expBar.right
+    anchors.bottom: expBar.top
+    margin-bottom: 5
+    background-color: #199954
+    font: DMSans-13px-bold
+
+  UIWidget
+    id: iconExp
+    size: 16 16
+    anchors.right: next.left
+    anchors.verticalCenter: next.verticalCenter
+    image-source: /images/game/playerbar/icon_xp_hp
+    image-clip: 0 16 16 16
+    margin-right: 4
+    image-color: #32BBE7
+    phantom: true
+
+  Panel
+    anchors.fill: next
+    background-color: #4B4B4B
+
+  ProgressBar
+    id: expBar
+    size: 120 12
+    anchors.right: next.right
+    anchors.bottom: next.top
+    margin-bottom: 4
+    background-color: #32BBE7
+    font: DMSans-13px-bold
+
+  Label-14px-Medium
+    id: lvlLabel
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    text-auto-resize: true
+    margin: 0 50 18 0
+
+  UIWidget
+    id: pokeballs
+    size: 82 12
+    anchors.top: iconExp.bottom
+    anchors.left: iconExp.left
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/playerbar/pokeballs
+    image-clip: 0 0 82 12
+    phantom: true
+
+PlayerBar
+  id: playerBarWindow
+  visible: false

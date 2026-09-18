@@ -1,0 +1,8 @@
+Module
+  name: game_minitask
+  description: Game Mini Task Expedition
+  author: PStory
+  sandboxed: true
+  scripts: [ minitask ]
+  @onLoad: init()
+  @onUnload: terminate()

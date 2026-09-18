@@ -1,0 +1,39 @@
+TooltipLabel < Label-14px-Regular
+  image-source: /images/ui/panel
+  image-border: 12
+  visible: false
+  border: 1 #3A3939
+
+TooltipRewardItem < Panel
+  height: 34
+
+  UIItem
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.left
+    font: verdana-11px-rounded
+    text-align: right
+    text-offset: 0 14
+    virtual: true
+    phantom: true
+    size: 34 34
+    id: item
+
+  Label-14px-Medium
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: prev.right
+    text-auto-resize: true
+    margin-left: 12
+    id: name
+
+TooltipRewardWindow < PanelRounded
+  font: DMSans-20px-bold
+  padding: 54 16 16 16
+  text-offset: 0 14
+  text-align: top
+  focusable: false
+  color: #FFFFFF
+  width: 205
+  !text: tr("Rewards")
+  layout:
+    type: verticalBox
+    fit-children: true

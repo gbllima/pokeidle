@@ -1,0 +1,39 @@
+Panel
+  id: accountsPanel
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+
+  PanelOption
+    anchors.fill: parent
+    anchors.right: prev.left
+    vertical-scrollbar: scroll
+
+    ButtonBlueSmall
+      id: changePassword
+      !text: tr('Change your password')
+      @onClick: modules.game_accounts.showPasswordPanel()
+
+    ButtonBlueSmall
+      id: changeEmail
+      margin-top: 6
+      !text: tr('Change e-mail')
+      @onClick: |
+        function()
+          if ( G.characterAccount.daysToEmailChange ) then
+            modules.game_accounts.onCancelChangeEmail()
+          else
+            modules.game_accounts.showEmailPanel()
+          end
+        end
+
+    ButtonBlueSmall
+      id: authentication
+      margin-top: 6
+      enabled: false
+      !text: tr('Enable 2FA')

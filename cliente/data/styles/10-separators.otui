@@ -1,0 +1,12 @@
+HorizontalSeparator < UIWidget
+  size: 150 2
+  border: 2 #444444
+  focusable: false
+  phantom: true
+
+VerticalSeparator < UIWidget
+  size: 2 150
+  border: 2
+  border: 2 #444444
+  focusable: false
+  phantom: true

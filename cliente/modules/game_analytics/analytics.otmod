@@ -1,0 +1,9 @@
+Module
+  name: game_analytics
+  description: analytics module statistic
+  author: PStory
+  website: https://pstoryonline.com
+  sandboxed: true
+  scripts: [ analyzer, analyzerPanel, analytics ]
+  @onLoad: init()
+  @onUnload: terminate()

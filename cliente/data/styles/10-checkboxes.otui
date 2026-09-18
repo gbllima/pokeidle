@@ -1,0 +1,110 @@
+CheckBox < UICheckBox
+  size: 24 24
+  image-source: /images/ui/checkbox
+  image-clip: 0 0 24 24
+  image-rect: 0 0 24 24
+  image-color: #CCCCCC
+  text-auto-resize: true
+  text-align: left
+  text-offset: 29 3
+  font: DMSans-13px-bold
+  color: #CCCCCC
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !checked:
+    image-clip: 0 0 24 24
+    image-color: #FFFFFF
+    color: #FFFFFF
+
+  $checked:
+    image-clip: 0 24 24 24
+    image-color: #0466C8
+
+  $hover checked:
+    image-clip: 0 24 24 24
+    image-color: #69B2FC
+    color: #FFFFFF
+
+  $disabled:
+    change-cursor-image: false
+
+ColorBox < UICheckBox
+  size: 16 16
+  image-color: #dfdfdfff
+  image-source: /images/ui/colorbox
+  change-cursor-image: true
+  cursor: pointer
+
+  $checked:
+    image-clip: 16 0 16 16
+
+  $!checked:
+    image-clip: 0 0 16 16
+
+  $disabled:
+    change-cursor-image: false
+
+ButtonBox < UICheckBox
+  font: damas
+  color: #a8a8a8
+  size: 106 23
+  text-offset: 0 0
+  text-align: center
+  padding: 4
+  background-color: #020202
+  border-width: 1
+  border-color: alpha
+  change-cursor-image: true
+  cursor: pointer
+
+  @onCheckChange: |
+    function(self, checked)
+      self.checkbox:setChecked(checked)
+    end
+
+  $hover !disabled:
+    color: #dfdfdf
+
+  $checked:
+    border-color: #427efa
+    color: #dfdfdf
+
+  $disabled:
+    color: #dfdfdf88
+    image-color: #dfdfdf88
+    change-cursor-image: false
+
+  CheckBoxBase
+    id: checkbox
+    width: 32
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    phantom: true
+
+ObjectiveCheckBox < UICheckBox
+  size: 24 24
+  image-source: /images/ui/checkbox
+  image-clip: 0 0 24 24
+  image-rect: 0 0 24 24
+  image-color: #CCCCCC
+  text-auto-resize: true
+  text-align: left
+  text-offset: 29 3
+  font: DMSans-13px-bold
+  color: #CCCCCC
+  @onClick:
+
+  $hover !checked:
+    image-clip: 0 0 24 24
+    image-color: #FFFFFF
+    color: #FFFFFF
+
+  $checked:
+    image-clip: 0 24 24 24
+    image-color: #6DFFB0
+
+  $hover checked:
+    image-clip: 0 24 24 24
+    image-color: #C1FBDC
+    color: #FFFFFF

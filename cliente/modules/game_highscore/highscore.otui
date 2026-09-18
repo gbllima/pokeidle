@@ -1,0 +1,600 @@
+
+HighscoreComboBoxPopupMenu < UIPopupMenu
+  image-source: /images/ui/combobox_square_retro
+  image-clip: 0 69 141 23
+  image-border: 1
+
+HighscoreComboBoxPopupMenuButton < UIButton
+  height: 23
+  font: verdana-11px-antialised
+  color: #dfdfdf
+  text-align: left
+  text-offset: 4 0
+  background-color: alpha
+  margin: 1
+
+  $hover !disabled:
+    color: #dfdfdf88
+    background-color: #355d89
+
+  $disabled:
+    color: #dfdfdf88
+
+HighscoreComboBoxPopupScrollMenu < UIPopupScrollMenu
+  image-source: /images/ui/combobox_square_retro
+  image-clip: 0 69 141 23
+  image-border: 1
+
+HighscoreComboBoxPopupScrollMenuButton < UIButton
+  height: 23
+  font: verdana-11px-antialised
+  color: #dfdfdf
+  text-align: left
+  text-offset: 4 0
+  background-color: alpha
+  margin: 1
+
+  $hover !disabled:
+    color: #dfdfdf88
+    background-color: #355d89
+
+  $disabled:
+    color: #dfdfdf88
+
+HighscoreComboBox < UIComboBox
+  font: verdana-11px-antialised
+  color: #dfdfdf
+  size: 100 23
+  text-align: left
+  image-source: /images/ui/combobox_square_retro
+  image-border: 3
+  image-border-right: 25
+  image-clip: 0 0 141 23
+
+  $hover !disabled:
+    image-clip: 0 23 141 23
+
+  $on:
+    image-clip: 0 46 141 23
+
+  $disabled:
+    color: #dfdfdf88
+    opacity: 0.8
+
+HighscoreTopMark < UIWidget
+  height: 14
+  text-align: top
+  text-offset: 0 -2
+  background-color: #363636ff
+
+  UIWidget
+    height: 1
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #2a2a2aff
+
+  UIWidget
+    height: 1
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #2a2a2aff
+
+  UIWidget
+    width: 1
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    background-color: #2a2a2aff
+
+  UIWidget
+    id: brightColumn
+    width: 2
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    background-color: #646464ff
+    opacity: 1
+    $on:
+      opacity: 1
+
+    $!on:
+      opacity: 0
+
+HighscoreElement < UIWidget
+  height: 20
+
+  Label-14px-Medium
+    id: rank
+    width: 45
+    font: verdana-11px-monochrome
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: left
+    text-offset: 5 0
+    !text: '?'
+    opacity: 0.8
+    phantom: true
+
+  Label-14px-Medium
+    id: character
+    width: 155
+    margin-left: 2
+    font: verdana-11px-monochrome
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: left
+    text-offset: 5 0
+    !text: '?'
+    opacity: 0.8
+    phantom: true
+
+  Label-14px-Medium
+    id: vocation
+    width: 100
+    margin-left: 2
+    font: verdana-11px-monochrome
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+    !text: 'None'
+    opacity: 0.8
+    phantom: true
+
+  Label-14px-Medium
+    id: level
+    width: 60
+    margin-left: 2
+    font: verdana-11px-monochrome
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+    !text: '?'
+    opacity: 0.8
+    phantom: true
+
+  Label-14px-Medium
+    id: points
+    width: 100
+    margin-left: 2
+    font: verdana-11px-monochrome
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: right
+    !text: '?'
+    opacity: 0.8
+    phantom: true
+
+HighscorePageButton < UIButton
+  size: 18 18
+  image-clip: 0 0 18 18
+  image-border: 3
+  image-color: #ffffffff
+  icon-color: #ffffffff
+  phantom: true
+  change-cursor-image: true
+
+  $on:
+    image-clip: 0 18 18 18
+    phantom: false
+    cursor: pointer
+
+  $!on:
+    phantom: true
+    cursor: ''
+
+  $pressed:
+    image-clip: 0 36 18 18
+
+MainWindow
+  !text: tr('Highscore')
+  size: 678 525
+
+  MiniPanel
+    id: leaderboard
+    width: 160
+    height: 220
+    anchors.left: parent.left
+    anchors.top: parent.top
+    !text: 'Leaderboard'
+    margin-top: 5
+
+    ComboBox
+      id: skills
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: parent.top
+      margin-left: -5
+      margin-right: -3
+      margin-top: 5
+      text-align: center
+      text-offset: -22 0
+      @onOptionChange: onSkillChange()
+
+    PanelFlat
+      id: creatureBackground
+      size: 71 71
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: skills.bottom
+      image-source: /images/ui/nobarminipanel
+      margin-top: 15
+
+    UICreature
+      id: creature
+      anchors.top: creatureBackground.top
+      anchors.left: creatureBackground.left
+      size: 64 64
+      padding: 2
+      animate: true
+      virtual: true
+      phantom: true
+
+    Label-14px-Medium
+      id: position
+      font: verdana-11px-monochrome
+      anchors.left: creatureBackground.left
+      anchors.right: creatureBackground.right
+      anchors.bottom: creatureBackground.bottom
+      text-align: right
+      margin-right: 5
+      margin-bottom: 5
+      text: ?
+      opacity: 0.8
+
+    Label-14px-Medium
+      id: name
+      font: verdana-11px-monochrome
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: creatureBackground.bottom
+      text-align: center
+      margin-top: 5
+      text: ?
+      opacity: 0.8
+
+    Label-14px-Medium
+      id: vocation
+      font: verdana-11px-monochrome
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: name.bottom
+      text-align: center
+      margin-top: 3
+      visible: false
+      text: ?
+      opacity: 0.8
+
+    Label-14px-Medium
+      id: level
+      font: verdana-11px-monochrome
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: vocation.bottom
+      text-align: center
+      margin-top: -10
+      text: ?
+      opacity: 0.8
+
+    PanelFlat
+      id: points
+      padding: 1
+      height: 20
+      font: verdana-11px-monochrome
+      anchors.left: skills.left
+      anchors.right: skills.right
+      anchors.top: level.bottom
+      margin-top: 5
+
+      Panel
+        id: box
+        image-source: /images/ui/dark_background
+        anchors.fill: parent
+        layout:
+          type: horizontalBox
+
+      UIWidget
+        id: text
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text-align: center
+        color: #ffffff
+        text: ?
+
+  MiniPanel
+    id: filters
+    width: 160
+    height: 210
+    anchors.left: parent.left
+    anchors.top: leaderboard.bottom
+    !text: 'Filters'
+    margin-top: 8
+
+    Label-14px-Medium
+      id: vocations
+      font: verdana-11px-monochrome
+      anchors.left: parent.left
+      anchors.top: parent.top
+      margin-left: 5
+      text-align: left
+      !text: 'Vocations:'
+      opacity: 0.8
+
+    CheckBox
+      id: knight
+      anchors.left: parent.left
+      anchors.top: vocations.bottom
+      margin-left: 8
+      margin-top: 6
+      width: 90
+      opacity: 0.7
+      phantom: false
+      !text: 'Knight'
+      auto-focus: first
+      checked: true
+      @onCheckChange: onFilterChange()
+
+    CheckBox
+      id: druid
+      anchors.left: parent.left
+      anchors.top: knight.bottom
+      margin-left: 8
+      margin-top: 5
+      width: 90
+      opacity: 0.7
+      phantom: false
+      !text: 'Druid'
+      auto-focus: first
+      checked: true
+      @onCheckChange: onFilterChange()
+
+    CheckBox
+      id: paladin
+      anchors.left: parent.left
+      anchors.top: druid.bottom
+      margin-left: 8
+      margin-top: 5
+      width: 90
+      opacity: 0.7
+      phantom: false
+      !text: 'Paladin'
+      auto-focus: first
+      checked: true
+      @onCheckChange: onFilterChange()
+
+    CheckBox
+      id: sorcerer
+      anchors.left: parent.left
+      anchors.top: paladin.bottom
+      margin-left: 8
+      margin-top: 5
+      width: 90
+      opacity: 0.7
+      phantom: false
+      !text: 'Sorcerer'
+      auto-focus: first
+      checked: true
+      @onCheckChange: onFilterChange()
+
+    CheckBox
+      id: none
+      anchors.left: parent.left
+      anchors.top: sorcerer.bottom
+      margin-left: 8
+      margin-top: 5
+      width: 90
+      opacity: 0.7
+      phantom: false
+      !text: 'None'
+      auto-focus: first
+      checked: true
+      @onCheckChange: onFilterChange()
+
+    Label-14px-Medium
+      id: groups
+      font: verdana-11px-monochrome
+      anchors.left: parent.left
+      anchors.top: none.bottom
+      margin-left: 5
+      margin-top: 5
+      text-align: left
+      !text: 'Rank:'
+      opacity: 0.8
+
+    CheckBox
+      id: own
+      anchors.left: parent.left
+      anchors.top: groups.bottom
+      anchors.right: parent.right
+      margin-left: 8
+      margin-top: 6
+      opacity: 0.7
+      phantom: false
+      !text: 'Own Characters'
+      auto-focus: first
+      checked: false
+      @onCheckChange: onGroupFilterChange(self)
+
+    Label-14px-Medium
+      id: page
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.bottom: parent.bottom
+      margin-bottom: 7
+      text-align: center
+      text: 99 / 99
+      opacity: 0.8
+
+    HighscorePageButton
+      id: previous
+      image-source: /images/game/cyclopedia/button_prev_page
+      anchors.bottom: parent.bottom
+      anchors.right: page.left
+      margin-right: 10
+      margin-bottom: 5
+      @onClick: onClickPreviousPage()
+
+    HighscorePageButton
+      id: next
+      image-source: /images/game/cyclopedia/button_next_page
+      anchors.bottom: parent.bottom
+      anchors.left: page.right
+      margin-left: 10
+      margin-bottom: 5
+      @onClick: onClickNextPage()
+
+  PanelFlat
+    id: main
+    height: 435
+    anchors.left: leaderboard.right
+    anchors.right: parent.right
+    anchors.top: leaderboard.top
+    margin-left: 10
+    phantom: false
+    image-repeated: true
+
+    UIWidget
+      id: topmark
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 14
+      padding: 1
+
+      HighscoreTopMark
+        !text: tr('Rank')
+        text-align: left
+        text-offset: 5 0
+        anchors.top: parent.top
+        anchors.left: parent.left
+        color: #c0c0c0ff
+        width: 45
+
+      HighscoreTopMark
+        !text: tr('Character')
+        text-align: left
+        text-offset: 5 0
+        anchors.top: parent.top
+        anchors.left: prev.right
+        margin-left: 2
+        color: #c0c0c0ff
+        width: 155
+
+      HighscoreTopMark
+        !text: tr('Vocation')
+        text-align: center
+        anchors.top: parent.top
+        anchors.left: prev.right
+        margin-left: 2
+        color: #c0c0c0ff
+        width: 100
+
+      HighscoreTopMark
+        !text: tr('Level')
+        text-align: center
+        anchors.top: parent.top
+        anchors.left: prev.right
+        margin-left: 2
+        color: #c0c0c0ff
+        width: 60
+
+      HighscoreTopMark
+        anchors.top: parent.top
+        anchors.left: prev.right
+        anchors.right: parent.right
+        margin-left: 2
+        color: #c0c0c0ff
+
+      UIWidget
+        id: pointsMark
+        !text: tr('Points')
+        text-align: right
+        margin-right: 10
+        anchors.verticalCenter: prev.verticalCenter
+        anchors.left: prev.left
+        anchors.right: prev.right
+        color: #c0c0c0ff
+
+    UIWidget
+      id: list
+      anchors.top: topmark.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      margin-top: 1
+      margin-left: 1
+      margin-bottom: 1
+      background-color: #484848
+
+    UIWidget
+      id: mask
+      height: 19
+      phantom: true
+      anchors.left: list.left
+      anchors.right: list.right
+      anchors.top: list.top
+      background-color: #ffffff
+      opacity: 0.15
+
+    HorizontalSeparator
+      anchors.left: topmark.left
+      anchors.right: topmark.right
+      anchors.top: topmark.bottom
+
+    VerticalSeparator
+      anchors.top: topmark.top
+      anchors.bottom: list.bottom
+      anchors.left: parent.left
+      margin-left: 45
+
+    VerticalSeparator
+      anchors.top: topmark.top
+      anchors.bottom: list.bottom
+      anchors.left: prev.right
+      margin-left: 155
+
+    VerticalSeparator
+      anchors.top: topmark.top
+      anchors.bottom: list.bottom
+      anchors.left: prev.right
+      margin-left: 100
+
+    VerticalSeparator
+      anchors.top: topmark.top
+      anchors.bottom: list.bottom
+      anchors.left: prev.right
+      margin-left: 60
+
+    VerticalSeparator
+      anchors.top: topmark.top
+      anchors.bottom: list.bottom
+      anchors.right: parent.right
+
+  ButtonBlueLarge
+    id: closeButton
+    !text: tr('Close')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: close()
+
+  ButtonBlueLarge
+    id: redirect
+    anchors.right: closeButton.left
+    anchors.bottom: parent.bottom
+    !text: 'Show Own Rank'
+    margin-right: 60
+    width: 128
+    enabled: false
+    @onClick: onClickRedirect()
+
+  Label-14px-Medium
+    id: update
+    font: verdana-11px-monochrome
+    anchors.verticalCenter: closeButton.verticalCenter
+    anchors.left: parent.left
+    anchors.right: closeButton.left
+    text-align: left
+    margin-top: -15
+    !text: 'Last Update: last minute'
+    opacity: 0.4

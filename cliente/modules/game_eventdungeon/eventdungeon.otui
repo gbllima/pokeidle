@@ -1,0 +1,147 @@
+EventDungeonButton < ButtonBlueMedium
+
+  $!first:
+    margin-left: 18
+
+EventDungeonItem < UIItem
+  size: 34 34
+  virtual: true
+
+EventDungeonPanel < Panel
+  image-source: /images/ui/panel_rounded
+  font: DMSans-16px-bold
+  image-border: 21
+  text-offset: 0 6
+  text-align: top
+  padding: 28 8 8 8
+
+EventDungeonWindow < MainHeadlessWindow
+  size: 720 320
+  !text: tr('Slowpoke Well')
+  @onEscape: modules.game_eventdungeon.onHide()
+
+  Label-16px-Regular
+    id: description
+    anchors.fill: parent
+    anchors.bottom: next.top
+    text-auto-resize: true
+    text-wrap: true
+    text-align: center
+    !text: tr('A Team Rocket invadiu o Slowpoke Well e prendeu os pobres Slowpokes em jaulas! Eles estão planejando roubar suas caudas para algum esquema criminoso. O corajoso Kurt está contando com você para ajudá-lo a libertar esses Slowpokes antes que seja tarde demais.')
+
+  EventDungeonPanel
+    id: rewards
+    anchors.bottom: next.bottom
+    anchors.right: parent.right
+    anchors.left: next.right
+    margin-left: 12
+    size: 200 100
+    !text: tr('Possible rewards') .. ':'
+
+    HorizontalList
+      id: list
+      height: 36
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      horizontal-scrollbar: scroll
+      margin-top: 12
+
+    HorizontalScrollBar
+      id: scroll
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      visible: false
+
+  EventDungeonPanel
+    id: required
+    anchors.bottom: next.top
+    anchors.left: parent.left
+    margin-bottom: 12
+    size: 200 100
+    !text: tr('Requirements') .. ':'
+
+    Label-14px-Regular
+      id: cost
+      anchors.top: parent.top
+      anchors.left: parent.left
+      text-auto-resize: true
+      margin-top: 2
+      !text: tr('Cost') .. ':'
+
+    Label-14px-Regular
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      text-auto-resize: true
+      margin-top: 4 
+      !text: tr('Players') .. ':'
+
+    Panel
+      anchors. top: prev.top
+      anchors.bottom: prev.bottom
+      anchors.left: prev.right
+      anchors.right: parent.right
+      margin-left: 4
+
+      layout:
+        type: horizontalBox
+
+      UIWidget
+        image-source: /images/game/icons/person
+
+    Label-14px-Regular
+      id: level
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      text-auto-resize: true
+      margin-top: 4
+      !text: tr('Level') .. ': 275+'
+
+  ButtonRedMedium
+    id: cancel
+    anchors.bottom: parent.bottom
+    anchors.left: parent.horizontalCenter
+    anchors.right: parent.right
+    margin-left: 5
+    !text: tr('Cancel')
+    @onClick: modules.game_eventdungeon.onHide()
+
+  ButtonBlueMedium
+    id: start
+    anchors.bottom: parent.bottom
+    anchors.right: parent.horizontalCenter
+    anchors.left: parent.left
+    margin-right: 5
+    !text: tr('Start')
+    @onClick: modules.game_eventdungeon.doStart()
+
+ChristimasWindow < MainWindow
+  size: 694 236
+  @onEscape: modules.game_eventdungeon.onHide()
+  @onClose: modules.game_eventdungeon.onHide()
+
+  UIWidget
+    id: image
+    anchors.fill: parent
+    margin: -11 -13 -11 -13
+    phantom: true
+
+  Label-16px-Regular
+    id: description
+    anchors.fill: parent
+    anchors.top: closeButton.bottom
+    anchors.bottom: next.top
+    margin: 18 85 18 85
+    text-wrap: true
+    text-align: center
+    text-auto-resize: true
+    text: No meio dos salões opulentos de uma grandiosa cerimônia matrimonial, desenrola-se um choque de forças psíquicas. Enfrente Gardevoir e seu noivo Gallade em um combate por recompensas.
+
+  HorizontalList
+    id: difficultyList
+    height: 50
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin: 6 4 6 4

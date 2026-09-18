@@ -1,0 +1,28 @@
+Item < UIItem
+  size: 34 34
+  image-source: /images/ui/item
+  font: verdana-11px-rounded
+  color: white
+  border: 0 white
+  background-color: alpha
+
+  $checked:
+    border: 1 #ED4C4C
+
+  $on !checked:
+    border: 1 #69B2CF
+
+  $hover !checked:
+    border: 1 white
+    background-color: #FFFFFF1A
+
+  $disabled:
+    color: #646464
+
+UIDraggingItem < UIItem
+  size: 34 34
+  font: verdana-11px-rounded
+  border-color: alpha
+  &draggingItem: true
+  focusable: false
+  phantom: true

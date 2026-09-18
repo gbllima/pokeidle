@@ -1,0 +1,8 @@
+Module
+  name: game_memory
+  description: Ditto memory
+  author: Gengo
+  sandboxed: true
+  scripts: [ memory ]
+  @onLoad: init()
+  @onUnload: terminate()

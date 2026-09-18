@@ -1,0 +1,38 @@
+Panel
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+    visible: false
+
+  ScrollablePanel
+    anchors.fill: parent
+    vertical-scrollbar: scroll
+    layout:
+      type: verticalBox
+
+    OptionCheckBox
+      id: enableAudio
+      !text: tr('Enable audio')
+
+    OptionCheckBox
+      id: enableMusicSound
+      !text: tr('Enable music sound')
+
+    Label
+      id: musicSoundVolumeLabel
+      !text: tr('Music volume: %d', 100)
+      margin-top: 6
+      @onSetup: |
+        local value = modules.client_options.getOption('musicSoundVolume')
+        self:setText(tr('Music volume: %d', value))
+
+    OptionScrollbar
+      id: musicSoundVolume
+      margin-top: 3
+      minimum: 0
+      maximum: 100

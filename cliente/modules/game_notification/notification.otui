@@ -1,0 +1,115 @@
+ItemNotify < UIItem
+  size: 34 34
+  virtual: true
+
+OutfitNotify < UICreature
+  size: 34 34
+
+ImageNotify < UIWidget
+  size: 34 34
+
+PanelNotify < PanelRounded
+  anchors.left: parent.left
+  anchors.right: parent.right
+  padding: 6
+  phantom: false
+
+  $first:
+    anchors.top: parent.top
+
+  $!first:
+    anchors.top: prev.bottom
+    margin-top: 4
+
+  ButtonClose
+    id: closeButton
+    size: 22 22
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 4
+    margin-top: 10
+    @onClick: self:getParent():destroy()
+
+  UIProgressBar
+    height: 7
+    id: progress
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin: 2 4 0 4
+    background-color: #0466C8
+    value: 100
+    phantom: true
+
+  UIWidget
+    id: icon
+    size: 0 34
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 4
+    margin-top: 10
+    phantom: true
+
+    $on:
+      width: 34
+
+  Label-13px-Regular
+    id: title
+    height: 0
+    text-auto-resize: true
+    text-align: center
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: progress.bottom
+    margin-top: 6
+    margin-left: 6
+    margin-right: 6
+    text-wrap: true
+
+  UISprite
+    id: separator1
+    image-source: /images/ui/separator_horizontal.png
+    height: 2
+    anchors.left: title.left
+    anchors.right: title.right
+    anchors.top: title.bottom
+    margin-top: 4
+
+  Label-13px-Regular
+    id: message
+    height: 0
+    text-auto-resize: true
+    anchors.left: icon.right
+    anchors.right: closeButton.left
+    anchors.top: separator1.bottom
+    margin-top: 4
+    margin-left: 6
+    margin-right: 6
+    text-wrap: true
+
+  UIButton
+    id: link
+    height: 0
+    text-auto-resize: true
+    text-wrap: true
+    anchors.left: message.left
+    anchors.right: message.right
+    anchors.top: message.bottom
+    margin-top: 10
+    visible: false
+    opacity: 1.0
+
+    @onHoverChange:
+      self:setOpacity(self:isHovered() and 0.7 or 1.0)
+
+    @onPressedChange:
+      self:setOpacity(self:isPressed() and 0.5 or (self:isHovered() and 0.7 or 1.0))
+
+PanelNotification < Panel
+  width: 290
+  id: panelNotification
+  anchors.top: parent.top
+  anchors.bottom: gameBottomPanel.top
+  anchors.right: parent.right
+  margin-top: 100
+  margin-right: 200

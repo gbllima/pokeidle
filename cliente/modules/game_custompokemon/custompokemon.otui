@@ -1,0 +1,103 @@
+PokemonCustomPreviewPanel < PanelRoundedSolid
+  width: 155
+  padding: 18 17
+  image-color: #6E6E6E
+
+  UIWidget
+    id: locked
+    anchors.top: parent.top
+    anchors.right: parent.right
+    image-source: /images/game/icons/icon_lock
+    image-color: #DEDEDE
+    phantom: true
+    margin: -8
+
+  Label-13px-Bold
+    id: name
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-align: center
+    text-wrap: true
+    text: Default
+
+  Creature
+    id: outfit
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.bottom: next.top
+    margin-bottom: 18
+    &direction: 2
+
+  ButtonBlueBase
+    size: 28 28
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: next.bottom
+    icon: /images/game/outfits/icon_rotate
+    margin-right: 4
+    !tooltip: tr('Rotate')
+    @onClick: |
+      local parent = self:getParent()
+      parent.outfit.direction = (parent.outfit.direction + 1) % 4
+      parent.outfit:setDirection(parent.outfit.direction)
+
+  ButtonBlueBase
+    size: 28 28
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: next.top
+    icon: /images/game/icons/pokeinfo
+    icon-clip: 0 44 22 22
+    icon-color: #FFFFFF
+    margin: 0 4 16 0
+    !tooltip: tr('Walking')
+    @onClick: |
+      local parent = self:getParent()
+      self:setOn(not self:isOn())
+      parent.outfit:setAnimate(self:isOn())
+
+    $on:
+      icon-color: #A8FF80
+
+  ButtonBlueSmall
+    id: confirm
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    !text: tr('Confirm')
+    enabled: false
+    @onClick: modules.game_custompokemon.confirmChoose()
+
+PokemonCustomTabBarVertical < TabBarVertical
+PokemonCustomTabBarVerticalPanel < TabBarVerticalPanel
+PokemonCustomTabBarVerticalButton < TabBarVerticalButton
+  text-only-upper-case: false
+  text-align: center
+  text-offset: 0 0
+
+MainWindow
+  size: 748 353
+  visible: false
+  !text: tr('Pokemon Customization')
+  @onEscape: modules.game_custompokemon.hide()
+  @onClose: modules.game_custompokemon.hide()
+
+  PokemonCustomPreviewPanel
+    id: previewPanel
+    anchors.top: prev.bottom
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin: 18 0 10 0
+
+  PokemonCustomTabBarVertical
+    id: mainTabBar
+    width: 132
+    anchors.top: prev.top
+    anchors.left: parent.left
+    anchors.bottom: prev.bottom
+
+  Panel
+    id: mainTabContent
+    anchors.top: prev.top
+    anchors.left: prev.right
+    anchors.right: previewPanel.left
+    anchors.bottom: prev.bottom
+    margin: 0 10 0 16

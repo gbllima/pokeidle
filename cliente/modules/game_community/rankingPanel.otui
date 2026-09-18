@@ -1,0 +1,186 @@
+RankingHeader < Panel
+  height: 32
+
+  Label-14px-Medium
+    id: position
+    width: 70
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+    !text: tr('#')
+
+  Label-14px-Medium
+    id: playerName
+    width: 180
+    anchors.top: parent.top
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+    !text: tr('Player')
+
+  Label-14px-Medium
+    id: categoryValue
+    width: 120
+    anchors.top: parent.top
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+    !text: tr('Level')
+
+  Label-14px-Medium
+    id: team
+    width: 120
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+    !text: tr('Team')
+
+  Label-14px-Medium
+    id: job
+    width: 120
+    anchors.top: parent.top
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+    !text: tr('Job')
+
+RankingItem < Panel
+  height: 32
+  background-color: #323232
+  &onMousePress: modules.game_community.onRankingItemMousePress
+
+  $alternate:
+    background-color: #212121
+
+  $!focus:
+    border-color: alpha
+
+  $focus:
+    background-color: #057FFA
+
+  Label-14px-Medium
+    id: position
+    width: 70
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+
+  Label-14px-Medium
+    id: playerName
+    width: 180
+    anchors.left: prev.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    text-align: center
+
+  Label-14px-Medium
+    id: categoryValue
+    width: 120
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: center
+
+  UIWidget
+    id: team
+    width: 120
+    height: 30
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    image-source: /images/game/icons/icon_no_clan_20px
+    image-size: 42 30
+    image-offset: 38 0
+
+  UIWidget
+    id: job
+    width: 120
+    height: 30
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    image-size: 25 25
+    image-offset: 45 0
+
+Panel
+  id: rankingPanel
+  anchors.fill: parent
+  visible: false
+
+  Label-13px-Bold
+    id: categoryLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 16
+    text-auto-resize: true
+    !text: tr('Category')
+
+  ComboBoxGame
+    id: categoryComboBox
+    width: 180
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    margin-left: 10
+    @onOptionChange: modules.game_community.onRankingCategoryChange()
+
+  Label-13px-Bold
+    id: worldLabel
+    anchors.top: parent.top
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    margin-left: 20
+    text-auto-resize: true
+    !text: tr('World')
+
+  ComboBoxGame
+    id: worldComboBox
+    width: 130
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    margin-left: 10
+    @onOptionChange: modules.game_community.onRankingWorldChange()
+
+  RankingHeader
+    id: headerRanking
+    anchors.top: categoryLabel.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 18
+
+  TextList
+    id: rankingList
+    anchors.top: headerRanking.bottom
+    anchors.bottom: next.bottom
+    anchors.left: parent.left
+    anchors.right: next.left
+    vertical-scrollbar: scroll
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: headerRanking.bottom
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 26
+    pixels-scroll: true
+
+  PanelFlat
+    id: loadingPanel
+    anchors.fill: parent
+    anchors.top: categoryComboBox.bottom
+    border-color: alpha
+    phantom: false
+    visible: false
+
+    UIWidget
+      id: loadingImageContainer
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
+      size: 64 64
+      image-source: /images/game/community/load
+      
+    UILabel
+      id: loadingText
+      text: Carregando...
+      anchors.horizontalCenter: parent.horizontalCenter  
+      anchors.top: prev.bottom
+      margin-top: 10
+      text-auto-resize: true
+      text-align: center

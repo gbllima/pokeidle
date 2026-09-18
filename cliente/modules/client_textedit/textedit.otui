@@ -1,0 +1,81 @@
+TextEditButtons < Panel
+  id: buttons
+  height: 40
+
+  ButtonBlueSmall
+    id: ok
+    !text: tr('Ok')
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    margin-right: 5
+
+  ButtonRedSmall
+    id: cancel
+    !text: tr('Cancel')
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.horizontalCenter
+    margin-left: 5
+
+TextEditWindow < MainHeadlessWindow
+  id: textedit
+  height: 300
+  !text: tr("Edit text")
+  layout:
+    type: verticalBox
+    fit-children: true
+    
+  Label-16px-Regular
+    id: description
+    text-align: center
+    visible: false
+    text-wrap: true
+    text-auto-resize: true
+
+  ComboBox
+    id: examples
+    margin-top: 4
+    visible: false
+
+SinglelineTextEditWindow < TextEditWindow
+  width: 355
+
+  TextEdit
+    id: text
+    margin-top: 6
+
+  Label-13px-Regular
+    id: helperText
+    text-auto-resize: true
+    text-wrap: true
+    margin-top: 2
+
+  TextEditButtons
+    margin-top: 10
+
+MultilineTextEditWindow < TextEditWindow
+  width: 400
+
+  Panel
+    id: textPanel
+    height: 180
+    margin: 12 0 15 0
+
+    MultilineTextEdit
+      id: text
+      anchors.fill: parent
+      margin-right: 12
+      text-wrap: true
+      vertical-scrollbar: textScroll
+
+    VerticalScrollBar
+      id: textScroll
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      pixels-scroll: true
+      step: 10
+    
+  TextEditButtons
+

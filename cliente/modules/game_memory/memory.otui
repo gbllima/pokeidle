@@ -1,0 +1,122 @@
+MemorySlot < UIWidget
+  size: 40 40
+
+  $!first:
+    margin-left: 4
+
+  UIWidget
+    id: locked
+    size: 19 19
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    image-source: /images/ui/miniwindow_buttons
+    image-size: 19 19
+    image-clip: 68 0 19 19
+    margin-top: 7
+
+  UIItem
+    id: portrait
+    size: 32 32
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    border: 1 #6b6b6b
+    virtual: true
+
+  UIButton
+    id: remove
+    size: 19 19
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    image-source: /images/ui/miniwindow_buttons
+    image-clip: 0 0 19 19
+    image-color: #ed5042
+    margin: 0 -6 7 0
+    visible: false
+    !tooltip: tr('Remove')
+    change-cursor-image: true
+    cursor: pointer
+
+    $hover:
+      image-color: #f25f52
+
+    $pressed:
+      image-color: #ed5042
+
+  Label
+    id: level
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-bottom: -2
+    font: verdana-9px
+
+MiniWindow
+  id: dittoMemory
+  height: 178
+  icon: /images/game/icons/inventory
+  icon-clip: 0 72 24 24
+  &save: true
+  &forceOpen: true
+  @onUnlock: self:disableResize()
+  @onSetup: |
+    self:disableResize()
+
+  MiniWindowContents
+    id: contentsPanel
+    padding: 6
+
+    UIWidget
+      id: uiDittoImage
+      size: 65 52
+      anchors.top: parent.top
+      anchors.left: parent.left
+
+      ButtonBlueBase
+        id: uiRevertButton
+        size: 40 15
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        padding: 2 6
+        !text: tr("Revert")
+        text-auto-resize: true
+
+
+    UIWidget
+      size: 18 18
+      anchors.verticalCenter: prev.verticalCenter
+      anchors.horizontalCenter: parent.horizontalCenter
+      image-source: /images/ui/button_pagination
+      image-color: #FFFFFF
+      image-clip: 19 22 18 18
+
+    UIWidget
+      id: uiTransformImage
+      size: 65 52
+      anchors.right: parent.right
+      anchors.top: parent.top
+      image-source: /images/game/pokedex/pokemon/none
+
+    HorizontalSeparator
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin: 12 -6 -6 -6
+
+    Label-13px-Regular
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      margin: 8 0 0 4
+      !text: tr("Ditto Memory")
+
+    Label-13px-Regular
+      anchors.top: prev.top
+      anchors.right: parent.right
+      margin-right: 12
+      !text: tr("Extra Slots")
+
+    ScrollablePanel
+      id: uiMemoryList
+      anchors.fill: parent
+      anchors.top: prev.bottom
+      layout: horizontalBox
+      margin-top: 4

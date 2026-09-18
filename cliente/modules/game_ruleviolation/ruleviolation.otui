@@ -1,0 +1,106 @@
+RVListLabel < Label
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+RVLabel < Label-14px-Medium
+  anchors.left: parent.left
+  anchors.right: parent.right
+  margin-top: 18
+
+  $first:
+    anchors.top: parent.top
+
+  $!first:
+    anchors.top: prev.bottom
+
+RVTextEdit < MultilineTextEdit
+  anchors.left: parent.left
+  anchors.right: parent.right
+  margin-top: 18
+
+  $first:
+    anchors.top: prev.bottom
+
+  $!first:
+    anchors.top: prev.bottom
+
+MainWindow
+  id: ruleViolationWindow
+  size: 485 630
+  text: Rule Violation
+  @onEscape: hide()
+
+  RVTextEdit
+    id: nameText
+    margin-top: 18
+    !placeholder: tr('Name')
+
+  RVTextEdit
+    id: statementText
+    enabled: false
+    !placeholder: tr('Statement')
+
+  RVLabel
+    !text: tr('Reason') .. ':'
+
+  ComboBoxGame
+    id: reasonCombo
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 8
+    menu-scroll: true
+    menu-scroll-step: 12
+    menu-height: 120
+
+  RVLabel
+    !text: tr('Action') .. ':'
+
+  ComboBoxGame
+    id: actionCombo
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    menu-scroll: true
+    menu-scroll-step: 12
+    margin-top: 8
+    menu-height: 120
+
+  CheckBox
+    id: ipBanCheckBox
+    !text: tr('IP Address Banishment')
+    margin-top: 18
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+  RVTextEdit
+    id: commentText
+    anchors.bottom: next.top
+    anchors.top: prev.bottom
+    margin: 18 0 18 0
+    !placeholder: tr('Comment')
+    @onSetup: |
+      self.placeholderLabel:addAnchor(AnchorTop, 'parent', AnchorTop)
+      self.placeholderLabel:setMargin(3)
+
+  ButtonBlueSmall
+    !text: tr('Ok')
+    anchors.right: parent.horizontalCenter
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin-right: 5
+    @onClick: report()
+
+  ButtonRedSmall
+    !text: tr('Cancel')
+    anchors.left: parent.horizontalCenter
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 5
+    @onClick: hide()

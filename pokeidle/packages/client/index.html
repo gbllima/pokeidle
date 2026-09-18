@@ -1,0 +1,1952 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>PokeIdle</title>
+<style>
+  :root {
+    --ink: #e6ece9;
+    --dim: #8fa39d;
+    --faint: #5d6f6a;
+    --panel: rgba(10, 18, 17, 0.86);
+    --edge: rgba(120, 200, 185, 0.22);
+    --accent: #4fbcab;
+    --hp: #56b45f;
+    --exp: #d8a13d;
+  }
+
+  * { box-sizing: border-box; }
+
+  /* An id selector setting `display` outbids the browser's own
+     `[hidden] { display: none }`, so hiding has to be made to stick. */
+  [hidden] { display: none !important; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #0b100f;
+    color: var(--ink);
+    font: 13px/1.5 ui-monospace, "JetBrains Mono", Consolas, monospace;
+    overscroll-behavior: none;
+    user-select: none;
+  }
+
+  #stage {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    cursor: grab;
+    image-rendering: pixelated;
+    touch-action: none;
+  }
+  #stage.dragging { cursor: grabbing; }
+
+  /*
+   * One chrome for every panel: a dark pane lifted off the map by a shadow,
+   * with a hairline of light along the top edge so it reads as a surface
+   * rather than as a hole cut in the world.
+   */
+  .panel {
+    position: fixed;
+    background:
+      linear-gradient(180deg, rgba(19, 30, 29, .93), rgba(9, 15, 14, .96));
+    border: 1px solid var(--edge);
+    border-radius: 11px;
+    box-shadow:
+      0 14px 34px rgba(0, 0, 0, .55),
+      0 2px 8px rgba(0, 0, 0, .4),
+      inset 0 1px 0 rgba(255, 255, 255, .06);
+    backdrop-filter: blur(9px) saturate(1.1);
+  }
+
+  /* A section label, with a short accent rule to anchor it. */
+  .lead {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--accent);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .lead::before {
+    content: "";
+    width: 3px;
+    height: 11px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--accent), rgba(79, 188, 171, .25));
+    box-shadow: 0 0 8px rgba(79, 188, 171, .5);
+  }
+  /* Where a lead is only a word inside a row, the rule would be clutter. */
+  .depot-col .lead::before,
+  #capture header .lead::before,
+  .row .lead::before { display: none; }
+
+  button {
+    font: inherit;
+    color: var(--ink);
+    background: rgba(79, 188, 171, .16);
+    border: 1px solid var(--edge);
+    border-radius: 5px;
+    padding: 6px 11px;
+    cursor: pointer;
+  }
+  button:hover { background: rgba(79, 188, 171, .3); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ── party ───────────────────────────────────────────────────────────── */
+
+  #party {
+    top: 12px;
+    left: 12px;
+    width: 262px;
+    padding: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  #party .name { font-weight: 600; }
+  #party .cash { color: var(--exp); font-variant-numeric: tabular-nums; font-size: 11.5px; }
+
+  /* The trainer reads as one of the team: same card, same bars. Not a
+     control, though — there is nobody to send them out of. */
+  .mon.trainer {
+    border-color: rgba(255, 255, 255, .14);
+    background: rgba(255, 255, 255, .05);
+    cursor: default;
+  }
+  .mon.trainer:hover { border-color: rgba(255, 255, 255, .14); background: rgba(255, 255, 255, .05); }
+  .mon.trainer .avatar { width: 36px; height: 36px; }
+  .mon.trainer .avatar canvas { width: 36px; height: 36px; image-rendering: pixelated; }
+
+  .mon {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 9px;
+    align-items: center;
+    padding: 7px 8px;
+    border: 1px solid rgba(255, 255, 255, .05);
+    border-radius: 9px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .02));
+  }
+  /* A team row is the control that sends that Pokemon out. */
+  .mon {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .12s ease, background .12s ease;
+  }
+  .mon:hover { border-color: rgba(79, 188, 171, .55); background: rgba(79, 188, 171, .1); }
+  .mon.lead-mon {
+    border-color: rgba(79, 188, 171, .4);
+    background: rgba(79, 188, 171, .13);
+    cursor: default;
+  }
+  .mon.lead-mon:hover { background: rgba(79, 188, 171, .13); }
+  .mon canvas, .mon img {
+    width: 36px;
+    height: 36px;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .6));
+  }
+  .mon .info { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .mon .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .mon .nm {
+    text-transform: capitalize;
+    font-size: 12.5px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mon .lv {
+    color: var(--dim);
+    font-size: 10px;
+    white-space: nowrap;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .07);
+  }
+  /* Bars: rounded, sunk into the card, with a sheen along the fill. */
+  .mon .bar {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .45);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .6);
+    overflow: hidden;
+  }
+  .mon .bar i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, 0));
+    transition: width .3s ease;
+  }
+  .mon .bar.hp i { background-color: var(--hp); box-shadow: 0 0 8px rgba(86, 180, 95, .45); }
+  .mon .bar.exp i { background-color: var(--exp); box-shadow: 0 0 8px rgba(216, 161, 61, .35); }
+  .mon .nums { color: var(--faint); font-size: 9.5px; font-variant-numeric: tabular-nums; }
+
+  /* ── dock ────────────────────────────────────────────────────────────── */
+
+  /*
+   * The bottom bar used to be five separate buttons pinned by hand at
+   * `left: 12px`, `92px`, `178px`… — flat text on a translucent slab, easy to
+   * miss and impossible to add to without measuring the one before it. One
+   * flex row, with the base's own icons, does the spacing itself.
+   */
+  #dock {
+    position: fixed;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    padding: 8px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(22, 34, 33, .94), rgba(8, 14, 13, .97));
+    border: 1px solid var(--edge);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .06);
+    backdrop-filter: blur(8px);
+    z-index: 20;
+  }
+
+  .dock-btn {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: 70px;
+    padding: 8px 4px 7px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .04);
+    color: var(--dim);
+    font-size: 10px;
+    letter-spacing: .05em;
+    letter-spacing: .04em;
+    cursor: pointer;
+    transition: transform .13s ease, background .13s ease, color .13s ease,
+      border-color .13s ease, box-shadow .13s ease;
+  }
+
+  .dock-btn img { width: 28px; height: 28px; }
+  /* An item sprite spends part of its cell on empty space, so it is drawn a
+     little larger to carry the same weight as a purpose-drawn icon. */
+  .dock-btn canvas { width: 34px; height: 34px; margin: -3px 0; }
+  .dock-btn img, .dock-btn canvas {
+    object-fit: contain;
+    image-rendering: pixelated;
+    /* The base's icons are drawn for a lighter panel; a drop shadow keeps
+       their edges off this background without recolouring them. */
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .9)) saturate(1.1);
+    transition: transform .16s cubic-bezier(.34, 1.6, .64, 1), filter .16s ease;
+  }
+
+  .dock-btn:hover {
+    transform: translateY(-4px);
+    color: var(--ink);
+    background: rgba(79, 188, 171, .17);
+    border-color: rgba(120, 200, 185, .5);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .5), 0 0 0 1px rgba(79, 188, 171, .18);
+  }
+  .dock-btn:hover img, .dock-btn:hover canvas {
+    transform: scale(1.16) translateY(-1px);
+    filter: drop-shadow(0 0 6px rgba(79, 188, 171, .75)) saturate(1.3);
+  }
+  .dock-btn:active { transform: translateY(-1px); }
+  .dock-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* The panel this button opens is on screen. */
+  .dock-btn.on {
+    color: var(--ink);
+    background: rgba(79, 188, 171, .26);
+    border-color: var(--accent);
+  }
+  .dock-btn.on::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    transform: translateX(-50%);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* A slow breath so the bar does not read as a dead strip when idle. */
+  @keyframes dock-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(79, 188, 171, 0); }
+    50% { box-shadow: 0 0 0 3px rgba(79, 188, 171, .16); }
+  }
+  .dock-btn.nudge { animation: dock-pulse 2.4s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dock-btn, .dock-btn img { transition: none; }
+    .dock-btn.nudge { animation: none; }
+  }
+
+  /* ── floating world labels ───────────────────────────────────────────── */
+
+  #labels { position: fixed; inset: 0; pointer-events: none; }
+
+  .label {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+  }
+  .label .tag {
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(8, 14, 13, .8);
+    text-shadow: 0 1px 2px #000;
+  }
+  /* Only npcs keep a chip: theirs carries a button, so it has to be a real
+     element. Creature names moved onto the canvas — outlined text with the
+     health bar right under it, drawn in world space so it cannot drift out of
+     step with the map. */
+  .label .tag.npc { color: #ffd98a; }
+  .label button {
+    pointer-events: auto;
+    font-size: 11px;
+    padding: 3px 9px;
+    background: rgba(10, 18, 17, .9);
+  }
+
+  /* ── bottom right ────────────────────────────────────────────────────── */
+
+  #market {
+    right: 14px;
+    bottom: 14px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    align-items: stretch;
+  }
+  #market .where { color: var(--dim); font-size: 11.5px; }
+
+  /* ── info drawer ─────────────────────────────────────────────────────── */
+
+  #drawer {
+    right: 14px;
+    bottom: 96px;
+    width: 288px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  #drawer header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  #drawer .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #drawer .close:hover { color: var(--ink); }
+  #drawer .body { color: var(--dim); font-size: 12px; }
+  #drawer .body b { color: var(--ink); font-weight: 600; }
+  #drawer .note {
+    color: var(--faint);
+    font-size: 11px;
+    border-left: 2px solid var(--edge);
+    padding-left: 8px;
+  }
+
+  /* ── hunts ───────────────────────────────────────────────────────────── */
+
+
+  #browser {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(1020px, 96vw);
+    height: min(82vh, 780px);
+    padding: 14px;
+    display: grid;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 10px;
+  }
+  #browser .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #browser .close:hover { color: var(--ink); }
+
+  #regions { display: flex; gap: 6px; flex-wrap: wrap; }
+  #regions button { text-transform: capitalize; }
+  #regions button.on { background: rgba(79, 188, 171, .34); border-color: var(--accent); }
+  #regions .count { color: var(--faint); font-size: 10px; margin-left: 5px; }
+
+  #types { display: flex; gap: 4px; flex-wrap: wrap; }
+  #types button {
+    padding: 2px 8px;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    opacity: .5;
+    border-color: transparent;
+  }
+  #types button.on { opacity: 1; border-color: currentColor; }
+
+  #map-wrap {
+    position: relative;
+    overflow: auto;
+    cursor: grab;
+    /* The map is dragged, so text selection would fight the drag. */
+    user-select: none;
+    background: #0a0f0e;
+    border: 1px solid var(--edge);
+    border-radius: 6px;
+    min-height: 0;
+  }
+  #map-wrap.panning { cursor: grabbing; }
+  #map-img { display: block; image-rendering: pixelated; transform-origin: 0 0; }
+  #pins { position: absolute; inset: 0; }
+
+  /*
+   * A pin has to be findable against a minimap that is mostly green and blue
+   * at one pixel per tile, and big enough to aim at. A 30px disc with a
+   * hairline border was a smudge; this is a portrait in a ring, with the name
+   * and level under it the way the reference client lays them out.
+   */
+  .pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 3px solid #c8a44e;
+    background: radial-gradient(circle at 50% 30%, #223a3a 0%, #0a1211 75%);
+    padding: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    overflow: visible;
+    box-shadow:
+      0 0 0 2px rgba(0, 0, 0, .8),
+      0 4px 10px rgba(0, 0, 0, .65),
+      inset 0 0 12px rgba(0, 0, 0, .55);
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .pin canvas { width: 42px; height: 42px; image-rendering: pixelated; }
+  .pin img { width: 42px; height: 42px; }
+
+  /* Name and level sit outside the disc, so they must not swallow the click. */
+  .pin .cap {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 3px;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+    text-shadow: 0 0 3px #000, 0 1px 2px #000, 0 0 6px #000;
+  }
+  .pin .cap b {
+    display: block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-variant: small-caps;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: .03em;
+    color: #f4f7f5;
+  }
+  .pin .cap i {
+    display: block;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+    color: #7ee08a;
+  }
+
+  .pin:hover {
+    border-color: #ffdf87;
+    z-index: 6;
+    transform: translate(-50%, -50%) scale(1.14);
+    box-shadow:
+      0 0 0 2px rgba(0, 0, 0, .8),
+      0 0 16px rgba(255, 223, 135, .55),
+      0 6px 14px rgba(0, 0, 0, .7);
+  }
+
+  /* Listed and searchable, but its tiles are not in this release, so the
+     trainer cannot stand in it yet. */
+  .pin.locked img, .pin.locked canvas { filter: grayscale(1) brightness(.55); }
+  .pin.locked .cap i { color: #f0674a; }
+  .pin.far {
+    opacity: .5;
+    border-color: rgba(200, 164, 78, .45);
+    border-style: dashed;
+    box-shadow: none;
+  }
+  .pin.far .cap b { color: #cdd6d2; }
+  .pin.far:hover { opacity: .95; }
+
+  .zoomer { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+  .zoomer button { padding: 4px 9px; min-width: 30px; }
+  #z-zoom {
+    min-width: 48px;
+    text-align: center;
+    color: var(--dim);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+  .pin .lv {
+    position: absolute;
+    bottom: -4px;
+    right: -7px;
+    font-size: 9.5px;
+    font-weight: 600;
+    background: rgba(8, 14, 13, .97);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .7);
+    border-radius: 3px;
+    padding: 0 2px;
+    color: var(--accent);
+  }
+  #map-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--faint);
+    pointer-events: none;
+  }
+  #browser header { display: flex; justify-content: space-between; align-items: baseline; }
+  #browser .filters { display: flex; gap: 6px; }
+  #browser input {
+    font: inherit;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid var(--edge);
+    border-radius: 5px;
+    padding: 5px 8px;
+    min-width: 0;
+  }
+  #browser input:focus-visible { outline: 1px solid var(--accent); }
+  #browser #z-q { flex: 1; }
+  #browser #z-min, #browser #z-max { width: 64px; }
+  #zones { overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+
+  .zone {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 7px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, .03);
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-align: left;
+  }
+  .zone:hover { border-color: var(--edge); background: rgba(79, 188, 171, .12); }
+  .zone .lvl {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    font-size: 11px;
+  }
+  .zone .nm { text-transform: capitalize; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .zone .meta { color: var(--faint); font-size: 10.5px; }
+  .zone .pop { color: var(--dim); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+  #z-count { color: var(--faint); font-size: 11px; }
+
+  #run {
+    right: 14px;
+    top: 12px;
+    width: 296px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  #run header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  #run .zone-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 13.5px;
+  }
+  /* A hunt is running: a small light that says so without a word. */
+  #run .zone-name::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--hp);
+    box-shadow: 0 0 0 3px rgba(86, 180, 95, .18), 0 0 10px rgba(86, 180, 95, .8);
+    animation: run-pulse 2s ease-in-out infinite;
+  }
+  @keyframes run-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .45; }
+  }
+  #run #r-stop { padding: 5px 13px; border-radius: 999px; font-size: 11.5px; }
+
+  #run dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 12px;
+    margin: 0;
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, .28);
+    border: 1px solid rgba(255, 255, 255, .04);
+  }
+  #run dt { color: var(--dim); padding: 3px 0; }
+  #run dd {
+    margin: 0;
+    padding: 3px 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  /* A rule between rows, but not above the first or below the last. */
+  #run dt:not(:nth-of-type(1)), #run dd:not(:nth-of-type(1)) {
+    border-top: 1px solid rgba(255, 255, 255, .05);
+  }
+  #run .drops { color: var(--faint); font-size: 10.5px; line-height: 1.5; }
+
+  /* Bottom of the right column, and the first thing to give up room: it is a
+     tail of what just happened, not something to read at length. */
+  #log {
+    right: 14px;
+    top: 452px;
+    width: 296px;
+    max-height: 22vh;
+    padding: 8px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  #log-lines {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 10.5px;
+    /* The oldest line fades out at the top instead of being clipped flat. */
+    mask-image: linear-gradient(180deg, transparent, #000 14px);
+  }
+  #log-lines::-webkit-scrollbar { width: 6px; }
+  #log-lines::-webkit-scrollbar-thumb {
+    background: rgba(120, 200, 185, .22);
+    border-radius: 999px;
+  }
+  .kill {
+    border-left: 2px solid rgba(79, 188, 171, .45);
+    padding: 1px 0 1px 8px;
+  }
+  .kill .who { color: var(--ink); text-transform: capitalize; }
+  .kill .gain { color: var(--exp); }
+  .kill .drop { color: var(--dim); }
+  .kill .catch { color: var(--accent); }
+
+  /* ── pokedex ─────────────────────────────────────────────────────────── */
+
+
+  #dex {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(760px, 94vw);
+    height: min(78vh, 720px);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #dex header { display: flex; justify-content: space-between; align-items: baseline; }
+  #dex .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #dex .close:hover { color: var(--ink); }
+
+  #dex .tally { display: flex; gap: 8px; }
+  #dex .tally div {
+    flex: 1;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid var(--edge);
+    border-radius: 5px;
+    padding: 7px 9px;
+    text-align: center;
+  }
+  #dex .tally b { display: block; font-size: 17px; font-variant-numeric: tabular-nums; }
+  #dex .tally span { color: var(--faint); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+
+  #dex .filters { display: flex; gap: 6px; }
+  #dex input, #dex select {
+    font: inherit;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid var(--edge);
+    border-radius: 5px;
+    padding: 6px 9px;
+    min-width: 0;
+  }
+  #dex #d-q { flex: 1; }
+  #dex select { max-width: 170px; }
+
+  #dex-grid {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 6px;
+    align-content: start;
+  }
+
+  .dexmon {
+    background: rgba(255, 255, 255, .03);
+    border: 1px solid rgba(255, 255, 255, .06);
+    border-radius: 6px;
+    padding: 7px 4px 6px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+  }
+  .dexmon.caught { border-color: rgba(79, 188, 171, .45); background: rgba(79, 188, 171, .08); }
+  .dexmon canvas { width: 48px; height: 48px; image-rendering: pixelated; }
+  /* Species the trainer has never caught show as silhouettes. */
+  .dexmon:not(.caught) canvas { filter: brightness(0) opacity(.42); }
+  .dexmon .no { color: var(--faint); font-size: 9.5px; font-variant-numeric: tabular-nums; }
+  .dexmon .nm {
+    font-size: 10.5px;
+    text-transform: capitalize;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dexmon .tp { color: var(--faint); font-size: 9px; text-transform: uppercase; letter-spacing: .04em; }
+  .dexmon .mark { position: absolute; top: 3px; right: 5px; font-size: 10px; }
+
+  /* ── bag ─────────────────────────────────────────────────────────────── */
+
+
+  #bag {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(560px, 94vw);
+    height: min(70vh, 620px);
+    padding: 14px;
+    display: grid;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 10px;
+  }
+  #bag header { display: flex; justify-content: space-between; align-items: baseline; }
+  #bag .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #bag .close:hover { color: var(--ink); }
+  #bag-sum { color: var(--faint); font-size: 11px; }
+
+  #bag-grid {
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+    gap: 6px;
+    align-content: start;
+  }
+  .slot {
+    position: relative;
+    background: rgba(255, 255, 255, .035);
+    border: 1px solid rgba(255, 255, 255, .07);
+    border-radius: 6px;
+    padding: 8px 4px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-height: 74px;
+  }
+  .slot canvas { width: 32px; height: 32px; image-rendering: pixelated; }
+  .slot .ghost {
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    color: var(--faint); font-size: 16px;
+  }
+  .slot .nm {
+    font-size: 9.5px;
+    color: var(--dim);
+    text-align: center;
+    line-height: 1.25;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .slot .qty {
+    position: absolute;
+    right: 4px;
+    bottom: 3px;
+    font-size: 10px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    background: rgba(8, 14, 13, .85);
+    border-radius: 3px;
+    padding: 0 3px;
+  }
+  .slot.mon { border-color: rgba(79, 188, 171, .35); }
+  .slot.mon canvas { width: 40px; height: 40px; }
+  .slot.missing { border-style: dashed; border-color: rgba(215, 113, 111, .4); }
+  #bag-empty { color: var(--faint); grid-column: 1 / -1; padding: 18px 4px; }
+
+  /* ── profile ─────────────────────────────────────────────────────────── */
+
+
+  #prof {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(430px, 94vw);
+    max-height: 84vh;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+  }
+  #prof header { display: flex; justify-content: space-between; align-items: baseline; }
+  #prof .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #prof .close:hover { color: var(--ink); }
+
+  #prof .card { display: grid; grid-template-columns: 72px 1fr; gap: 12px; align-items: center; }
+  #prof .avatar {
+    width: 72px; height: 72px;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--edge);
+    border-radius: 6px;
+  }
+  #prof .avatar canvas { width: 56px; height: 56px; image-rendering: pixelated; }
+  #prof .who { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  #prof .who .nm { font-size: 16px; font-weight: 600; }
+  #prof .who .sub { color: var(--faint); font-size: 11px; }
+  #prof .xp { height: 7px; border-radius: 4px; background: rgba(255,255,255,.09); overflow: hidden; }
+  #prof .xp i { display: block; height: 100%; background: var(--exp); }
+
+  #prof .chips { display: flex; gap: 5px; flex-wrap: wrap; }
+  #prof .chip {
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--edge);
+    color: var(--dim);
+  }
+  #prof .chip b { color: var(--ink); font-weight: 600; }
+
+  #prof section { display: flex; flex-direction: column; gap: 5px; }
+  #prof dl {
+    display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; font-size: 12.5px;
+  }
+  #prof dt { color: var(--dim); }
+  #prof dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+  #prof .rule { border-top: 1px solid var(--edge); }
+
+  /* ── depot ───────────────────────────────────────────────────────────── */
+
+  #depot {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(760px, 96vw);
+    height: min(78vh, 680px);
+    padding: 14px;
+    /* Flex rather than fixed grid rows: the filter bar is only there on the
+       Pokemon tab, and the columns should take whatever is left either way. */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #depot-cols { flex: 1; min-height: 0; }
+  #depot header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  #depot .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #depot .close:hover { color: var(--ink); }
+  #depot-tabs { display: flex; gap: 6px; }
+  #depot-tabs button.on { background: rgba(79,188,171,.34); border-color: var(--accent); }
+
+  #depot-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 0; }
+
+  /* ── depot filters ── */
+
+  #depot-filters { display: flex; flex-direction: column; gap: 6px; }
+  #depot-filters .frow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  #depot-filters input, #depot-filters select {
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--edge);
+    border-radius: 5px;
+    color: var(--ink);
+    font: inherit;
+    font-size: 11.5px;
+    padding: 4px 7px;
+  }
+  #depot-filters input:focus, #depot-filters select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  #depot-search { flex: 1 1 150px; min-width: 120px; }
+  #depot-filters .range {
+    display: flex; align-items: center; gap: 4px;
+    color: var(--dim); font-size: 11px;
+  }
+  #depot-filters .range input { width: 52px; text-align: center; }
+  #depot-filters .range input::-webkit-outer-spin-button,
+  #depot-filters .range input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  #depot-rarity { display: flex; flex-wrap: wrap; gap: 4px; }
+  #depot-rarity .chip {
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--edge);
+    background: rgba(255,255,255,.03);
+    color: var(--dim);
+    cursor: pointer;
+  }
+  #depot-rarity .chip:hover { border-color: var(--rank); color: var(--ink); }
+  #depot-rarity .chip.on {
+    border-color: var(--rank);
+    color: var(--rank);
+    background: color-mix(in srgb, var(--rank) 16%, transparent);
+  }
+  .depot-col { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+  .depot-col .lead { display: flex; justify-content: space-between; }
+  .depot-list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border: 1px solid var(--edge);
+    border-radius: 5px;
+    padding: 5px;
+    min-height: 0;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 26px 1fr auto;
+    gap: 7px;
+    align-items: center;
+    padding: 4px 6px;
+    border-radius: 4px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+  }
+  .row:hover { border-color: var(--edge); background: rgba(79,188,171,.13); }
+  .row canvas { width: 26px; height: 26px; image-rendering: pixelated; }
+  .row .ghost { width: 26px; text-align: center; color: var(--faint); }
+  .row .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; }
+  .row .qty { color: var(--dim); font-size: 11px; font-variant-numeric: tabular-nums; }
+  /* ── a Pokemon in a depot column ── */
+
+  .row.mon {
+    grid-template-columns: 30px 1fr 14px;
+    align-items: center;
+    padding: 5px 7px;
+    gap: 8px;
+  }
+  .row.mon img { width: 30px; height: 30px; image-rendering: pixelated; }
+  .row.mon .col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .row.mon .nm {
+    font-size: 12px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .row.mon .meta {
+    color: var(--dim);
+    font-size: 10.5px;
+    font-variant-numeric: tabular-nums;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .row.mon .meta b { color: var(--rank); font-weight: 600; }
+  .row.mon .gauge {
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,.08);
+    overflow: hidden;
+  }
+  .row.mon .gauge i { display: block; height: 100%; background: var(--rank); }
+  .row.mon .arrow { color: var(--faint); font-size: 11px; }
+  .row.mon:hover { border-color: var(--rank); }
+  .row.mon:hover .arrow { color: var(--rank); }
+
+  .depot-empty { color: var(--faint); font-size: 11.5px; padding: 10px 4px; line-height: 1.5; }
+  #depot-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  #depot-foot .hint { color: var(--faint); font-size: 11px; }
+
+  /* ── diamond shop ────────────────────────────────────────────────────── */
+
+  #diamond {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(680px, 96vw);
+    height: min(72vh, 620px);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #diamond header { display: flex; justify-content: space-between; align-items: center; }
+  #diamond header .lead { display: flex; align-items: center; gap: 7px; font-size: 13px; }
+  #diamond .gem { width: 16px; height: 16px; }
+  #diamond .close { cursor: pointer; color: var(--dim); padding: 0 6px; }
+  #diamond .close:hover { color: var(--ink); }
+  #diamond .purse {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    margin-right: 6px;
+    border-radius: 999px;
+    border: 1px solid var(--edge);
+    background: rgba(255, 255, 255, .05);
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+  }
+  #diamond .purse canvas { width: 16px; height: 16px; image-rendering: pixelated; }
+  #dm-tabs { display: flex; gap: 6px; }
+  #dm-tabs button.on { background: rgba(79, 188, 171, .34); border-color: var(--accent); }
+
+  #dm-grid {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+    align-content: start;
+    padding-right: 4px;
+  }
+  .dm-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 8px;
+    border: 1px solid var(--edge);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .03);
+    text-align: center;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .dm-card:hover { border-color: var(--accent); background: rgba(79, 188, 171, .12); }
+  .dm-card:disabled { opacity: .45; cursor: not-allowed; }
+  .dm-card:disabled:hover { border-color: var(--edge); background: rgba(255, 255, 255, .03); }
+  .dm-card canvas, .dm-card img { image-rendering: pixelated; }
+  .dm-card .nm { font-size: 11.5px; line-height: 1.3; }
+  .dm-card .cost {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 600; color: var(--exp);
+    font-variant-numeric: tabular-nums;
+  }
+  .dm-card .cost img { width: 13px; height: 13px; }
+  .dm-card .sub { color: var(--faint); font-size: 10px; }
+  #dm-foot .hint { color: var(--faint); font-size: 11px; line-height: 1.45; }
+
+  /* ── auto-helper ─────────────────────────────────────────────────────── */
+
+  #helper {
+    right: 14px;
+    bottom: 92px;
+    width: 320px;
+    padding: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  #helper header { display: flex; justify-content: space-between; align-items: center; }
+  #helper header .lead { display: flex; align-items: center; gap: 7px; font-size: 13px; }
+  #helper .gear { width: 16px; height: 16px; }
+  #helper .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #helper .close:hover { color: var(--ink); }
+
+  .hrow {
+    display: grid;
+    grid-template-columns: auto 24px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border: 1px solid var(--edge);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .03);
+    cursor: pointer;
+  }
+  .hrow:hover { border-color: rgba(79, 188, 171, .45); }
+  /* A helper that is doing something says so. */
+  .hrow:has(input:checked) {
+    border-color: var(--accent);
+    background: rgba(79, 188, 171, .12);
+  }
+  .hrow input { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+  .hrow .ic { display: flex; justify-content: center; }
+  .hrow .ic canvas, .hrow .ic img { width: 22px; height: 22px; image-rendering: pixelated; }
+  .hrow .nm { font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+  .hrow .vip { width: 13px; height: 13px; }
+  .hrow .sub { color: var(--faint); font-size: 10.5px; text-align: right; line-height: 1.35; }
+
+  #helper .hbox {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 9px 10px;
+    border: 1px solid var(--edge);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, .22);
+  }
+  /* The form styling elsewhere stacks a label over its field; here the label
+     sits beside it, so the direction is stated rather than inherited. */
+  #helper .pick {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  #helper .pick span { color: var(--dim); font-size: 11.5px; }
+  #helper select {
+    flex: 1;
+    max-width: 170px;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid var(--edge);
+    border-radius: 5px;
+    color: var(--ink);
+    font: inherit;
+    font-size: 11.5px;
+    padding: 4px 7px;
+  }
+  #helper select:focus { outline: none; border-color: var(--accent); }
+  #helper .hfoot { color: var(--faint); font-size: 10.5px; line-height: 1.4; }
+
+  /* ── stacking ────────────────────────────────────────────────────────────
+     Corner furniture — the team, the run, the bodies waiting for a ball, the
+     log — reports on what is happening and is never what the player is
+     reading. Anything they opened on purpose goes over it.
+
+     The capture panel used to be the one panel with a z-index while every
+     dialog sat at auto, which is exactly backwards: it covered the bag, the
+     depot and the pokedex. Every layer is named here instead of being spread
+     across the rules it belongs to. */
+  #party, #run, #log, #market { z-index: 12; }
+  #capture { z-index: 13; }
+  #dock { z-index: 20; }
+  #bag, #dex, #depot, #prof, #gyms, #browser, #helper, #diamond { z-index: 25; }
+  #shop { z-index: 30; }
+  /* Says what just happened, including while a dialog is open. */
+  #drawer { z-index: 32; }
+  #gate { z-index: 40; }
+
+  /* ── onboarding gate ─────────────────────────────────────────────────── */
+
+  #gate {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background:
+      linear-gradient(rgba(6, 10, 12, .78), rgba(6, 10, 12, .92)),
+      url('/packages/client/assets/login-bg.jpg') center / cover no-repeat;
+    overflow-y: auto;
+  }
+
+  #gate .sheet {
+    width: min(760px, 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  #gate .brand { width: min(420px, 78%); display: block; border-radius: 10px; }
+
+  #gate .box {
+    width: 100%;
+    background: rgba(9, 15, 17, .93);
+    border: 1px solid var(--edge);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .55);
+  }
+  #gate h2 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: .01em; }
+  #gate .sub { color: var(--dim); font-size: 12px; margin-top: -6px; }
+
+  #gate label { display: flex; flex-direction: column; gap: 5px; font-size: 11.5px; color: var(--dim); }
+  #gate input {
+    font: inherit;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid var(--edge);
+    border-radius: 6px;
+    padding: 9px 11px;
+  }
+  #gate input:focus-visible { outline: 1px solid var(--accent); }
+
+  #gate .actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
+  #gate .actions .spacer { flex: 1; }
+  #gate .primary { background: rgba(79, 188, 171, .34); border-color: var(--accent); }
+  #gate .link {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    padding: 6px 2px;
+    font: inherit;
+    text-decoration: underline;
+  }
+  #gate-err { color: #d7716f; font-size: 12px; min-height: 1em; }
+  #gate .note {
+    color: var(--faint);
+    font-size: 11px;
+    border-left: 2px solid var(--edge);
+    padding-left: 8px;
+    line-height: 1.45;
+  }
+
+  #outfit-row { display: flex; gap: 10px; }
+  .pick {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, .04);
+  }
+  .pick.on { background: rgba(79, 188, 171, .2); border-color: var(--accent); }
+  .pick canvas { width: 64px; height: 64px; image-rendering: pixelated; }
+
+  #gens { display: flex; flex-direction: column; gap: 14px; }
+  .gen-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
+  .gen-name { color: var(--accent); letter-spacing: .12em; text-transform: uppercase; font-size: 10.5px; }
+  .gen-region { color: var(--faint); font-size: 11px; }
+  .gen-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+
+  .starter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 6px 10px;
+    background: rgba(255, 255, 255, .04);
+  }
+  .starter.on { background: rgba(79, 188, 171, .2); border-color: var(--accent); }
+  .starter canvas { width: 72px; height: 72px; image-rendering: pixelated; }
+  .starter .st-name { font-size: 12.5px; text-transform: capitalize; }
+  .starter .st-type { display: flex; gap: 4px; align-items: center; min-height: 16px; }
+
+  /* Official artwork, unlike everything else on screen, is not pixel art —
+     it is drawn at 250px and shown small, so it wants smoothing. */
+  .poke-art { object-fit: contain; }
+  .poke-artwork { image-rendering: auto; }
+  .poke-portrait { image-rendering: auto; border-radius: 6px; }
+
+  .type-icon { width: 34px; height: auto; image-rendering: auto; }
+
+  #log-lines .cast {
+    opacity: .9;
+    border-left: 2px solid rgba(120, 200, 185, .35);
+    padding-left: 7px;
+  }
+  #log-lines .cast .move { font-weight: 600; }
+  #log-lines .cast .quiet { color: var(--faint); font-size: 10px; }
+
+  /* ── capture ─────────────────────────────────────────────────────────── */
+
+  /*
+   * Bodies waiting for a ball. A kill leaves a corpse for thirty seconds —
+   * the corpse item's own duration in the base — and this is the window the
+   * player has to throw.
+   */
+  /* The right edge is one column: the run's numbers, then the bodies waiting
+     for a ball, then the combat log. Capture sat on top of the run panel when
+     both were pinned to the top. */
+  #capture {
+    right: 14px;
+    top: 232px;
+    width: 296px;
+    max-height: 208px;
+    padding: 12px;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 9px;
+  }
+  #capture header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  #capture .link {
+    border: 0;
+    background: none;
+    color: var(--accent);
+    text-decoration: underline;
+    padding: 0;
+    font-size: 11.5px;
+  }
+  #capture .purses { display: flex; flex-wrap: wrap; gap: 5px; }
+  #capture .purse {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid var(--edge);
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    color: inherit;
+  }
+  #capture .purse img, #capture .purse canvas {
+    width: 18px;
+    height: 18px;
+    image-rendering: pixelated;
+  }
+  #capture .purse.ball { cursor: pointer; }
+  #capture .purse.ball:hover { border-color: var(--accent); }
+  /* The one a throw will use. */
+  #capture .purse.ball.on {
+    border-color: var(--accent);
+    background: rgba(79, 188, 171, .18);
+    box-shadow: 0 0 0 1px rgba(79, 188, 171, .35);
+  }
+  #capture .purse.ball.empty { opacity: .38; }
+  #capture .purse.gold { color: var(--exp); }
+
+  #cap-rows { overflow: auto; display: flex; flex-direction: column; gap: 5px; min-height: 0; }
+
+  .corpse {
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 5px 6px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid transparent;
+  }
+  .corpse img { width: 30px; height: 30px; }
+  .corpse .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+  .corpse .lv { display: block; color: var(--dim); font-size: 10.5px; }
+  /* The odds this ball has against this body, by the server's own numbers. */
+  .corpse .lv .odds { color: var(--accent); font-weight: 600; }
+  .corpse .lv .no { color: #f0674a; font-weight: 600; }
+  .corpse button { padding: 4px 11px; font-size: 11px; }
+  .corpse button:disabled { opacity: .35; cursor: not-allowed; }
+  /* Runs out as the body decays, so the hurry is visible. */
+  .corpse .fuse { grid-column: 1 / -1; height: 2px; border-radius: 2px; background: rgba(255,255,255,.08); }
+  .corpse .fuse i { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
+
+  /* ── shop ────────────────────────────────────────────────────────────── */
+
+  #shop {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(560px, 94vw);
+    height: min(70vh, 620px);
+    padding: 14px;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 10px;
+  }
+  #shop header { display: flex; justify-content: space-between; align-items: baseline; }
+  #shop .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #shop .close:hover { color: var(--ink); }
+  #shop .tabs { display: flex; gap: 6px; align-items: center; }
+  #shop .tabs .spacer { flex: 1; }
+  #shop .tabs button.on { background: rgba(79, 188, 171, .32); border-color: var(--accent); }
+  #shop .purse { color: var(--exp); font-variant-numeric: tabular-nums; }
+
+  #shop-rows { overflow: auto; display: flex; flex-direction: column; gap: 4px; min-height: 0; }
+
+  .trade {
+    display: grid;
+    grid-template-columns: 34px 1fr auto auto;
+    gap: 9px;
+    align-items: center;
+    padding: 5px 7px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, .035);
+  }
+  .trade canvas { width: 32px; height: 32px; image-rendering: pixelated; }
+  .trade .nm { text-transform: capitalize; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .trade .have { color: var(--faint); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .trade .price { color: var(--exp); font-variant-numeric: tabular-nums; min-width: 74px; text-align: right; }
+  .trade button { padding: 3px 10px; font-size: 11px; }
+  .trade button:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* ── gyms ────────────────────────────────────────────────────────────── */
+
+
+  #gyms {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(940px, 96vw);
+    height: min(80vh, 720px);
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 12px;
+  }
+  #gyms header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; }
+  #gyms .close { cursor: pointer; color: var(--dim); padding: 0 4px; }
+  #gyms .close:hover { color: var(--ink); }
+
+  #gym-list { overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+  .gymrow {
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 7px 8px;
+    border-radius: 5px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+  }
+  .gymrow:hover { border-color: var(--edge); }
+  .gymrow.on { background: rgba(79,188,171,.18); border-color: var(--accent); }
+  .gymrow .n { color: var(--faint); font-size: 11px; }
+  .gymrow .city { font-size: 12.5px; }
+  .gymrow .who { color: var(--faint); font-size: 10.5px; }
+  .tchip {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,.08);
+    color: var(--dim);
+  }
+
+  #gym-detail { overflow-y: auto; display: flex; flex-direction: column; gap: 11px; min-height: 0; }
+  #gym-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  #gym-head .title { font-size: 15px; font-weight: 600; }
+  #gym-head .meta { color: var(--faint); font-size: 11.5px; }
+  .authored-note {
+    color: var(--exp);
+    font-size: 11px;
+    border-left: 2px solid var(--exp);
+    padding-left: 8px;
+    line-height: 1.45;
+  }
+
+  #gym-team { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+  .gmon {
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--edge);
+    border-radius: 6px;
+    padding: 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gmon .top { display: grid; grid-template-columns: 44px 1fr; gap: 8px; align-items: center; }
+  .gmon canvas { width: 44px; height: 44px; image-rendering: pixelated; }
+  .gmon .nm { text-transform: capitalize; font-size: 12.5px; }
+  .gmon .st { color: var(--faint); font-size: 10.5px; }
+  .gmon .mv { display: flex; flex-direction: column; gap: 2px; }
+  .gmon .mvrow {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 6px;
+    font-size: 10.5px;
+    color: var(--dim);
+  }
+  .gmon .mvrow .p { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .gmon .mvrow .cd { color: var(--faint); font-variant-numeric: tabular-nums; }
+
+  /* pokedex detail */
+  #dex-detail {
+    border-top: 1px solid var(--edge);
+    padding-top: 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 190px;
+    overflow-y: auto;
+  }
+  #dex-detail .head { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: center; }
+  #dex-detail canvas { width: 52px; height: 52px; image-rendering: pixelated; }
+  #dex-detail .nm { font-size: 14px; text-transform: capitalize; }
+  #dex-detail .st { color: var(--faint); font-size: 11px; }
+  #dex-detail .mvrow {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--dim);
+  }
+  #dex-detail .mvrow .p, #dex-detail .mvrow .cd { font-variant-numeric: tabular-nums; }
+  #dex-detail .mvrow .p { color: var(--ink); }
+
+  /* ── misc ────────────────────────────────────────────────────────────── */
+
+
+  #boot {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 10px;
+    text-align: center;
+    background: #0b100f;
+    transition: opacity .25s;
+    z-index: 10;
+  }
+  #boot.done { opacity: 0; pointer-events: none; }
+  #boot .bar { width: 240px; height: 3px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+  #boot .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+  #boot .err { color: #d7716f; max-width: 460px; text-align: left; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <canvas id="stage"></canvas>
+  <div id="labels"></div>
+
+  <div class="panel" id="party" hidden>
+    <div class="mon trainer">
+      <div class="avatar" id="p-avatar"></div>
+      <div class="info">
+        <div class="top">
+          <span class="name" id="p-name">—</span>
+          <span class="cash" id="p-cash">—</span>
+        </div>
+        <div class="top">
+          <span class="lv" id="p-level">Nv. 1</span>
+        </div>
+        <div class="bar exp"><i id="p-xp"></i></div>
+        <div class="nums" id="p-xptext">—</div>
+      </div>
+    </div>
+    <div id="p-mons"></div>
+  </div>
+
+  <div class="panel" id="drawer" hidden>
+    <header>
+      <span class="lead" id="d-kind">—</span>
+      <span class="close" id="d-close" role="button" tabindex="0">✕</span>
+    </header>
+    <div class="body" id="d-body"></div>
+  </div>
+
+  <div class="panel" id="market" hidden>
+    <span class="lead">Mercado</span>
+    <span class="where" id="market-where">—</span>
+    <button id="market-go" type="button">Ir ao Mercado</button>
+  </div>
+
+  <div class="panel" id="run" hidden>
+    <header>
+      <span class="zone-name" id="r-zone">—</span>
+      <button id="r-stop" type="button">Parar</button>
+    </header>
+    <dl>
+      <dt>tempo ativo</dt><dd id="r-time">—</dd>
+      <dt>derrotados</dt><dd id="r-kills">—</dd>
+      <dt>experiência</dt><dd id="r-exp">—</dd>
+      <dt>capturas</dt><dd id="r-catch">—</dd>
+      <dt>por encontro</dt><dd id="r-rate">—</dd>
+    </dl>
+    <div class="drops" id="r-drops">—</div>
+  </div>
+
+  <div class="panel" id="log" hidden>
+    <span class="lead">Combate</span>
+    <div id="log-lines"></div>
+  </div>
+
+  <nav id="dock" hidden>
+    <button id="cp-open" class="dock-btn" type="button" title="Voltar ao Centro Pokémon">
+      <img src="/art/icons/icon_house.png" alt="">
+      <span>CP</span>
+    </button>
+    <button id="hunt-open" class="dock-btn" type="button" title="Escolher uma hunt no mapa" data-item="map">
+      <img src="/art/icons/map_icon.png" alt="">
+      <span>Hunts</span>
+    </button>
+    <button id="dex-open" class="dock-btn" type="button" title="Pokédex" data-item="pokedex">
+      <img src="/art/pokedex/pokeball.png" alt="">
+      <span>Pokédex</span>
+    </button>
+    <button id="bag-open" class="dock-btn" type="button" title="Mochila" data-item="poke bag">
+      <img src="/art/icons/icon_bag.png" alt="">
+      <span>Mochila</span>
+    </button>
+    <button id="diamond-open" class="dock-btn" type="button" title="Loja de diamantes">
+      <img src="/art/customIcons/diamond16.png" alt="">
+      <span>Loja</span>
+    </button>
+    <button id="helper-open" class="dock-btn" type="button" title="Auto-Helper">
+      <img src="/art/icons/icon_settings.png" alt="">
+      <span>Helper</span>
+    </button>
+    <button id="prof-open" class="dock-btn" type="button" title="Perfil do treinador">
+      <img src="/art/icons/person.png" alt="">
+      <span>Perfil</span>
+    </button>
+    <button id="gym-open" class="dock-btn" type="button" title="Ginásios" data-item="boulder badge">
+      <img src="/art/icons/star.png" alt="">
+      <span>Ginásios</span>
+    </button>
+  </nav>
+
+  <div class="panel" id="gyms" hidden>
+    <header>
+      <span class="lead">Ginásios · Kanto</span>
+      <span class="close" id="gyms-close" role="button" tabindex="0">✕</span>
+    </header>
+    <div id="gym-list"></div>
+    <div id="gym-detail"></div>
+  </div>
+
+  <div class="panel" id="prof" hidden>
+    <header>
+      <span class="lead">Perfil</span>
+      <span class="close" id="prof-close" role="button" tabindex="0">✕</span>
+    </header>
+
+    <div class="card">
+      <div class="avatar" id="pf-avatar"></div>
+      <div class="who">
+        <span class="nm" id="pf-name">—</span>
+        <span class="sub" id="pf-since">—</span>
+        <div class="xp"><i id="pf-xp"></i></div>
+        <span class="sub" id="pf-xptext">—</span>
+      </div>
+    </div>
+
+    <div class="chips">
+      <span class="chip">Nível <b id="pf-lvchip">—</b></span>
+      <span class="chip">Pokédex <b id="pf-dex">—</b></span>
+      <span class="chip">Capturas <b id="pf-catches">—</b></span>
+      <span class="chip">Ouro <b id="pf-gold">—</b></span>
+    </div>
+
+    <div class="rule"></div>
+    <section>
+      <span class="lead">Informações gerais</span>
+      <dl>
+        <dt>Nível do treinador</dt><dd id="pf-tlevel">—</dd>
+        <dt>Falta para o próximo</dt><dd id="pf-next">—</dd>
+        <dt>Hunts liberadas</dt><dd id="pf-hunts">—</dd>
+        <dt>Soma dos níveis da equipe</dt><dd id="pf-level">—</dd>
+        <dt>Experiência total</dt><dd id="pf-exp">—</dd>
+        <dt>Ouro</dt><dd id="pf-gold2">—</dd>
+        <dt>Pokémon na equipe</dt><dd id="pf-party">—</dd>
+      </dl>
+    </section>
+
+    <div class="rule"></div>
+    <section>
+      <span class="lead">Progressão</span>
+      <dl>
+        <dt>Tempo em caça</dt><dd id="pf-time">—</dd>
+        <dt>Derrotados</dt><dd id="pf-kills">—</dd>
+        <dt>Capturas (total)</dt><dd id="pf-catches2">—</dd>
+        <dt>Pokédex</dt><dd id="pf-dex2">—</dd>
+        <dt>Itens na mochila</dt><dd id="pf-items">—</dd>
+        <dt>Itens no depósito</dt><dd id="pf-stored">—</dd>
+      </dl>
+    </section>
+  </div>
+
+  <div class="panel" id="depot" hidden>
+    <header>
+      <span class="lead">Depósito</span>
+      <span>
+        <span id="depot-slots" style="color:var(--dim);font-size:11.5px">—</span>
+        <span class="close" id="depot-close" role="button" tabindex="0">✕</span>
+      </span>
+    </header>
+    <div id="depot-tabs">
+      <button type="button" data-tab="item" class="on">Itens</button>
+      <button type="button" data-tab="mon">Pokémon</button>
+    </div>
+    <div id="depot-filters" hidden>
+      <div class="frow">
+        <input id="depot-search" type="search" placeholder="Buscar pokémon" autocomplete="off">
+        <label class="range">Nv
+          <input id="depot-lvfrom" type="number" min="1" inputmode="numeric" placeholder="min">
+          <span>–</span>
+          <input id="depot-lvto" type="number" min="1" inputmode="numeric" placeholder="max">
+        </label>
+        <label class="range">IV
+          <input id="depot-ivfrom" type="number" min="0" max="192" inputmode="numeric" placeholder="0">
+          <span>–</span>
+          <input id="depot-ivto" type="number" min="0" max="192" inputmode="numeric" placeholder="192">
+        </label>
+        <select id="depot-type" title="Tipo"><option value="">Todos os tipos</option></select>
+        <select id="depot-sort" title="Ordenar">
+          <option value="recent">Mais recentes</option>
+          <option value="iv">Melhor IV</option>
+          <option value="level">Maior nível</option>
+          <option value="name">Nome</option>
+        </select>
+        <button id="depot-clear" type="button" title="Limpar filtros">Limpar</button>
+      </div>
+      <div id="depot-rarity"></div>
+    </div>
+    <div id="depot-cols">
+      <div class="depot-col">
+        <span class="lead"><span id="depot-left-title">Mochila</span> <span id="depot-left-count"></span></span>
+        <div class="depot-list" id="depot-left"></div>
+      </div>
+      <div class="depot-col">
+        <span class="lead"><span id="depot-right-title">Depósito</span> <span id="depot-right-count"></span></span>
+        <div class="depot-list" id="depot-right"></div>
+      </div>
+    </div>
+    <div id="depot-foot">
+      <span class="hint" id="depot-hint">Clique em uma linha para mover entre mochila e depósito.</span>
+      <button id="depot-all" type="button">Guardar tudo</button>
+    </div>
+  </div>
+
+  <div class="panel" id="diamond" hidden>
+    <header>
+      <span class="lead"><img class="gem" src="/art/customIcons/diamond16.png" alt=""> Loja de Diamantes</span>
+      <span>
+        <span class="purse" id="dm-balance"></span>
+        <span class="close" id="diamond-close" role="button" tabindex="0">✕</span>
+      </span>
+    </header>
+    <div id="dm-tabs">
+      <button type="button" data-tab="supply" class="on">Suprimentos</button>
+      <button type="button" data-tab="pokemon">Pokémon</button>
+    </div>
+    <div id="dm-grid"></div>
+    <div id="dm-foot">
+      <span class="hint" id="dm-hint"></span>
+    </div>
+  </div>
+
+  <div class="panel" id="helper" hidden>
+    <header>
+      <span class="lead"><img class="gear" src="/art/icons/icon_settings.png" alt=""> Auto-Helper</span>
+      <span class="close" id="helper-close" role="button" tabindex="0">✕</span>
+    </header>
+
+    <label class="hrow" for="h-potion">
+      <input type="checkbox" id="h-potion">
+      <span class="ic" id="h-ic-potion"></span>
+      <span class="nm">Auto-Potion</span>
+      <span class="sub" id="h-potion-sub"></span>
+    </label>
+    <div class="hbox">
+      <label class="pick"><span>Potion</span>
+        <select id="h-potion-item"></select>
+      </label>
+      <label class="pick"><span>Curar com HP ≤</span>
+        <select id="h-threshold">
+          <option value="0.3">30%</option>
+          <option value="0.5">50%</option>
+          <option value="0.7">70%</option>
+          <option value="0.9">90%</option>
+          <option value="1">qualquer dano</option>
+        </select>
+      </label>
+    </div>
+
+    <label class="hrow" for="h-revive">
+      <input type="checkbox" id="h-revive">
+      <span class="ic" id="h-ic-revive"></span>
+      <span class="nm">Auto-Revive</span>
+      <span class="sub" id="h-revive-sub">usa Revive ao desmaiar</span>
+    </label>
+
+    <label class="hrow" for="h-catch">
+      <input type="checkbox" id="h-catch">
+      <span class="ic" id="h-ic-catch"></span>
+      <span class="nm">Auto-Catch <img class="vip" src="/art/icons/icon_vip_14px.png" alt="VIP"></span>
+      <span class="sub">Pokémon normais</span>
+    </label>
+
+    <label class="hrow" for="h-catch-shiny">
+      <input type="checkbox" id="h-catch-shiny">
+      <span class="ic" id="h-ic-shiny"></span>
+      <span class="nm">Auto-Catch Shiny <img class="vip" src="/art/icons/icon_vip_14px.png" alt="VIP"></span>
+      <span class="sub">Pokémon shiny</span>
+    </label>
+
+    <div class="hfoot"><span id="helper-last">O helper age enquanto uma hunt está rodando.</span></div>
+  </div>
+
+  <div class="panel" id="capture" hidden>
+    <header>
+      <span class="lead">Captura <span id="cap-count"></span></span>
+      <button type="button" class="link" id="cap-shop">Loja</button>
+    </header>
+    <div class="purses" id="cap-purses"></div>
+    <div id="cap-rows"></div>
+  </div>
+
+  <div class="panel" id="shop" hidden>
+    <header>
+      <span class="lead" id="shop-who">Mercado</span>
+      <span class="close" id="shop-close" role="button" tabindex="0">✕</span>
+    </header>
+    <div class="tabs">
+      <button type="button" id="shop-tab-buy" class="on">Comprar</button>
+      <button type="button" id="shop-tab-sell">Vender</button>
+      <span class="spacer"></span>
+      <span class="purse" id="shop-purse">0 ¢</span>
+    </div>
+    <div id="shop-rows"></div>
+  </div>
+
+  <div class="panel" id="bag" hidden>
+    <header>
+      <span class="lead">Mochila</span>
+      <span class="close" id="bag-close" role="button" tabindex="0">✕</span>
+    </header>
+    <span id="bag-sum">—</span>
+    <div id="bag-grid"></div>
+  </div>
+
+  <div class="panel" id="dex" hidden>
+    <header>
+      <span class="lead">Pokédex</span>
+      <span class="close" id="dex-close" role="button" tabindex="0">✕</span>
+    </header>
+    <div class="tally">
+      <div><b id="d-caught">0</b><span>capturados</span></div>
+      <div><b id="d-missing">0</b><span>faltando</span></div>
+      <div><b id="d-shiny">0</b><span>com shiny</span></div>
+      <div><b id="d-total">0</b><span>espécies</span></div>
+    </div>
+    <div class="filters">
+      <input id="d-q" type="search" placeholder="Buscar por nome ou nº…" autocomplete="off">
+      <select id="d-type"><option value="">Todos os tipos</option></select>
+      <select id="d-variant">
+        <option value="base">Base</option>
+        <option value="shiny">Shiny</option>
+        <option value="mega">Mega</option>
+        <option value="">Todas as formas</option>
+      </select>
+    </div>
+    <div id="dex-grid"></div>
+    <div id="dex-detail" hidden></div>
+  </div>
+
+  <div class="panel" id="browser" hidden>
+    <header>
+      <span class="lead">Mapa de hunts</span>
+      <span>
+        <span id="z-count">—</span>
+        <span class="close" id="z-close" role="button" tabindex="0">✕</span>
+      </span>
+    </header>
+    <div id="regions"></div>
+    <div>
+      <div class="filters" style="margin-bottom:8px">
+        <input id="z-q" type="search" placeholder="Buscar espécie…" autocomplete="off">
+        <input id="z-min" type="number" placeholder="nv de" min="0">
+        <input id="z-max" type="number" placeholder="até" min="0">
+        <button id="z-clear" type="button">Limpar</button>
+        <span class="zoomer">
+          <button id="z-out" type="button" title="Afastar">−</button>
+          <span id="z-zoom">100%</span>
+          <button id="z-in" type="button" title="Aproximar">+</button>
+          <button id="z-fit" type="button" title="Ver a região inteira">Ajustar</button>
+        </span>
+      </div>
+      <div id="types"></div>
+    </div>
+    <div id="map-wrap">
+      <img id="map-img" alt="">
+      <div id="pins"></div>
+      <div id="map-empty" hidden>nenhuma zona com esses filtros</div>
+    </div>
+  </div>
+
+  <div id="gate" hidden>
+    <div class="sheet">
+      <img class="brand" src="/packages/client/assets/logo.jpg" alt="Poke TB Idle">
+
+      <div class="box" id="step-login" hidden>
+        <h2>Entrar</h2>
+        <p class="sub">Continue sua aventura.</p>
+        <label>E-mail<input id="li-email" type="email" autocomplete="email" placeholder="voce@exemplo.com"></label>
+        <label>Senha<input id="li-pass" type="password" autocomplete="current-password"></label>
+        <div id="gate-err"></div>
+        <div class="actions">
+          <button type="button" class="link" id="go-signup">Criar conta</button>
+          <span class="spacer"></span>
+          <button type="button" class="primary" id="do-login">Entrar</button>
+        </div>
+        <div class="note">
+          O progresso fica neste navegador. Nenhuma senha é enviada nem
+          guardada — guardar uma aqui seria pior do que não guardar nada.
+        </div>
+      </div>
+
+      <div class="box" id="step-signup" hidden>
+        <h2>Criar conta</h2>
+        <p class="sub">Escolha um e-mail e uma senha.</p>
+        <label>E-mail<input id="su-email" type="email" autocomplete="email" placeholder="voce@exemplo.com"></label>
+        <label>Senha<input id="su-pass" type="password" autocomplete="new-password" placeholder="mínimo 8 caracteres"></label>
+        <label>Repita a senha<input id="su-pass2" type="password" autocomplete="new-password"></label>
+        <div class="actions">
+          <button type="button" class="link" id="back-login">Já tenho conta</button>
+          <span class="spacer"></span>
+          <button type="button" class="primary" id="do-signup">Continuar</button>
+        </div>
+      </div>
+
+      <div class="box" id="step-trainer" hidden>
+        <h2>Seu treinador</h2>
+        <p class="sub">É assim que o mundo vai te chamar.</p>
+        <label>Nome<input id="tr-name" type="text" maxlength="20" placeholder="Ash" autocomplete="off"></label>
+        <div id="outfit-row"></div>
+        <div class="actions">
+          <button type="button" class="link" id="back-signup">Voltar</button>
+          <span class="spacer"></span>
+          <button type="button" class="primary" id="do-trainer">Continuar</button>
+        </div>
+      </div>
+
+      <div class="box" id="step-starter" hidden>
+        <h2>Escolha seu inicial</h2>
+        <p class="sub">Três gerações, nove parceiros. Só um vem com você.</p>
+        <div id="gens"></div>
+        <div class="actions">
+          <button type="button" class="link" id="back-trainer">Voltar</button>
+          <span class="spacer"></span>
+          <button type="button" class="primary" id="do-start">Começar aventura</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="boot">
+    <div id="boot-msg">carregando release…</div>
+    <div class="bar"><i id="boot-bar"></i></div>
+    <div class="err" id="boot-err"></div>
+  </div>
+
+  <script type="module" src="/packages/client/src/main.ts"></script>
+</body>
+</html>

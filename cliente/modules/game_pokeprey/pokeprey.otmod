@@ -1,0 +1,8 @@
+Module
+  name: game_pokeprey
+  description: Game Poke Prey
+  author: Gengo
+  sandboxed: true
+  scripts: [ pokeprey ]
+  @onLoad: init()
+  @onUnload: terminate()

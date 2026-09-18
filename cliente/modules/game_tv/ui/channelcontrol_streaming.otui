@@ -1,0 +1,43 @@
+MiniWindow
+  id: channelControlStreamingWindow
+  !text: tr("Channel Control")
+  height: 200
+
+  MiniWindowContents
+    Label
+      id: channelStatusLabel
+      text: Player Name
+      text-wrap: true
+      text-auto-resize: true
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: parent.top
+      margin-top: 4
+
+    Label
+      id: channelTimeLabel
+      text: 00:00:00
+      text-wrap: true
+      text-auto-resize: true
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: prev.bottom
+      margin-top: 4
+
+    TVButton
+      id: spectatorsButton
+      !text: tr("Spectators") .. " (0)"
+
+    TVButton
+      id: changeNameButton
+      !text: tr("Change Name")
+
+    TVButton
+      id: changePasswordButton
+      !text: tr("Change Password")
+
+    TVButton
+      id: bannedListButton
+      !text: tr("Banned List")
+
+    TVButton
+      id: pokemonsButton
+      !text: tr("Show Pokemons")

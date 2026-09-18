@@ -1,0 +1,158 @@
+StarIcon < UIWidget
+  image-source: /images/game/icons/star
+  width: 18
+  height: 19
+
+  $disabled:
+    image-color: #222222
+
+MainWindow
+  id: pokemonSellerWindow
+  !text: tr("NPC_NAME")
+  size: 350 390
+  @onEscape: modules.game_pokemonseller.cancel()
+  @onClose: modules.game_pokemonseller.cancel()
+
+  Label-14px-Regular
+    id: headerText
+    !text: tr("Arraste o Pokémon até o Slot para vendê-lo:")
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: parent.top
+    text-auto-resize: true
+    margin-top: 50
+
+  Item
+    id: pokemonItem
+    size: 34 34
+    virtual: true
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: headerText.bottom
+    margin-top: 30
+
+  ButtonClose
+    id: pokemonItemIcon
+    anchors.right: pokemonItem.right
+    anchors.bottom: pokemonItem.bottom
+    size: 16 16
+    margin-right: -8
+    margin-bottom: -8
+    visible: false
+    @onClick: modules.game_pokemonseller.cleanUpSellInfo()
+
+  HorizontalSeparator
+    id: separator
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: pokemonItem.bottom
+    margin-top: 30
+    width: 250
+
+  Label-16px-Bold
+    id: sellInfoLabel
+    !text: tr("Informações da venda")
+    text-auto-resize: true
+    anchors.horizontalCenter: separator.horizontalCenter
+    anchors.top: separator.bottom
+    margin-top: 5
+
+  Label-16px-Regular
+    id: descriptionLabel
+    !text: tr("Coloque o Pokémon no slot para ver\nas informações da venda")
+    text-align: center
+    text-auto-resize: true
+    color: #484848
+    anchors.horizontalCenter: sellInfoLabel.horizontalCenter
+    anchors.top: sellInfoLabel.bottom
+    margin-top: 16
+
+  Label-16px-Regular
+    id: pokemonNameConstLabel
+    !text: tr("Pokémon:")
+    text-auto-resize: true
+    anchors.left: parent.left
+    anchors.top: sellInfoLabel.bottom
+    visible: false
+    margin-top: 25
+
+  Label-16px-Regular
+    id: starsLabel
+    !text: tr("Estrelas:")
+    text-auto-resize: true
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    visible: false
+    margin-top: 10
+
+  Label-16px-Regular
+    id: priceConstLabel
+    !text: tr("Valor:")
+    text-auto-resize: true
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    visible: false
+    margin-top: 10
+
+  Label-16px-Bold
+    id: pokemonNameLabel
+    text: POKEMON_NAME
+    text-auto-resize: true
+    visible: false
+    anchors.right: parent.right
+    anchors.top: pokemonNameConstLabel.top
+
+  Label-16px-Bold
+    id: priceLabel
+    text: $VALUE
+    text-auto-resize: true
+    visible: false
+    anchors.right: parent.right
+    anchors.top: priceConstLabel.top
+
+  Panel
+    id: starsPanel
+    height: 20
+    width: 120
+    visible: false
+    anchors.right: parent.right
+    anchors.top: starsLabel.top
+    layout:
+      type: horizontalBox
+      fit-children: true
+      spacing: 5
+      
+  ButtonBlueSmall
+    id: sellButton
+    !text: tr("Vender")
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    margin-right: 5
+    enabled: false
+    @onClick: modules.game_pokemonseller.sell()
+
+  ButtonRedSmall
+    id: cancelButton
+    !text: tr("Cancelar")
+    anchors.right: parent.right
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    margin-left: 5
+    @onClick: modules.game_pokemonseller.cancel()
+
+  PanelRoundedSolid
+    id: dragArea
+    visible: false
+    margin: -16
+    image-color: #000000E6
+    phantom: false
+    anchors.fill: parent
+
+    UIWidget
+      anchors.centerIn: parent
+      image-source: /images/game/market/icon_sell
+
+    Label-14px-Medium
+      !text: tr('Drop your pokemon here to sell it')
+      text-auto-resize: true
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin-top: 12

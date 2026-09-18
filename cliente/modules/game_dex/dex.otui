@@ -1,0 +1,244 @@
+PokemonLocation < UIWidget
+  image-source: /images/game/icons/icon_location
+  image-clip: 0 0 32 32
+  opacity: 0.6
+  size: 32 32
+  &updateOnState: |
+    function(self, pos, posZ)
+      if ( posZ > pos.z ) then
+        self:setImageClip('0 64 32 32')
+      elseif ( posZ < pos.z ) then
+        self:setImageClip('0 32 32 32')
+      else
+        self:setImageClip('0 0 32 32')
+      end
+    end
+
+  $on:
+    opacity: 1
+
+DexTabBarHorizontal < UITabBar
+  width: 34
+
+  ScrollablePanelFlat
+    image-color: alpha
+    id: buttonsPanel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: scrollBar.top
+    margin-bottom: 1
+    padding-top: 5
+    border-color: alpha
+
+DexTabBarHorizontalPanel < Panel
+
+DexTabBarHorizontalButton < UIButton
+  text-auto-resize-horizontal: true
+  size: 34 28
+  padding: 0 18 2 18
+  anchors.top: parent.top
+  icon-source: /images/game/icons/icons_eight
+  icon-color: #666666
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover:
+    icon-color: white
+
+  $first:
+    anchors.left: parent.left
+
+  $!first:
+    anchors.left: prev.right
+
+  $checked:
+    icon-color: #427efa
+
+PokedexElement < UIWidget
+
+  $!first:
+    margin-left: 4
+
+PokedexClass < UIWidget
+
+  $!first:
+    margin-left: 4
+
+DexPokemon < Panel
+
+  Label-16px-Bold
+    id: name
+    anchors.top: parent.top
+    anchors.left: parent.left
+    text-auto-resize: true
+    text: Charmander
+    text-auto-resize: true
+
+  Label-14px-Regular
+    id: number
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    text-auto-resize: true
+    color: #d9d9d9
+    margin-top: 4
+    text: #003
+    text-auto-resize: true
+
+  UIWidget
+    id: shiny
+    size: 42 42
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    image-source: /images/game/pokedex/shiny
+    margin-top: 8
+
+  UIScrollArea
+    id: class
+    size: 20 20
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    layout: horizontalBox
+    margin: 8 0 0 6
+
+  UIWidget
+    id: search
+    anchors.left: number.right
+    anchors.verticalCenter: number.verticalCenter
+    image-source: /images/game/pokedex/icon_search
+    image-color: #FFFFFF
+    margin-left: 8
+    cursor: pointer
+    change-cursor-image: true
+    @onClick: modules.game_dex.onSearchPokemonOnMinimap()
+
+    $hover:
+      image-color: #057FFA
+
+    $pressed:
+      image-color: #69B2FC
+
+  UIWidget
+    id: backgroundBall
+    anchors.centerIn: parent
+    image-color: #ffffff1A
+    image-source: /images/game/pokedex/slot
+
+    $on:
+      image-color: #ffffff33
+
+  UIWidget
+    id: image
+    size: 200 140
+    anchors.centerIn: prev
+    image-color: black
+
+    $on:
+      image-color: white
+
+  UIScrollArea
+    id: elements
+    size: 50 24
+    anchors.top: backgroundBall.top
+    anchors.left: backgroundBall.right
+    layout: horizontalBox
+
+PokedexPokemonRow < UIWidget
+  height: 32
+  color: #FFFFFF
+  text-align: left
+  background-color: alpha
+  text-offset: 20 0
+  font: DMSans-14px-medium
+  icon: /images/game/icons/icon_default_14px
+  icon-color: alpha
+  icon-align: left
+  icon-offset: 3 0
+
+  $!first:
+    margin-top: 1
+
+  $hover:
+    background-color: #FFFFFF0D
+
+  $focus:
+    color: #427EFA
+
+  $on:
+    icon-color: white
+
+MainWindow
+  id: pokedexWindow
+  size: 632 426
+  visible: false
+  @onEscape: self:hide()
+
+  DexPokemon
+    id: uiPokemonDex
+    height: 165
+    anchors.top: prev.top
+    anchors.left: parent.left
+    anchors.right: uiPokemonList.left
+    margin-right: 8
+
+  DexTabBarHorizontal
+    id: uiDexTabBar
+    size: 175 34
+    anchors.horizontalCenter: uiPokemonDex.horizontalCenter
+    anchors.top: uiPokemonDex.bottom
+    @onTabChange: |
+      function(self, tab)
+        modules.game_dex.onDexTabChange(self, tab)
+      end
+
+    $on:
+      size: 210 34
+
+  Label-14px-Medium
+    id: uiTitleTabBar
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: prev.horizontalCenter
+    margin-top: 10
+    color: #e8c05e
+    text-auto-resize: true
+
+  Panel
+    id: uiContentPanel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin: 10 10 0 5
+
+  TextList
+    id: uiPokemonList
+    anchors.top: next.top
+    anchors.bottom: next.bottom
+    anchors.left: searchTextEdit.left
+    anchors.right: next.left
+    vertical-scrollbar: scrollList
+    auto-focus: first
+
+  VerticalScrollBar
+    id: scrollList
+    height: 86
+    anchors.right: parent.right
+    anchors.top: closeButton.bottom
+    anchors.bottom: next.top
+    margin: 8 0 8 0
+    step: 32
+    pixels-scroll: true
+
+  TextEdit
+    id: searchTextEdit
+    width: 250
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-right: 12
+    !placeholder: tr('Name') .. "..."
+    @onTextChange: |
+      function(self, text)
+        self.placeholderLabel:setVisible(text:len() == 0)
+        modules.game_dex.onSearchPokemon(text:lower())
+      end
+      

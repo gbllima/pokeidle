@@ -1,0 +1,41 @@
+PanelCustomOutfit < PanelRoundedSolid
+  image-color: #626262
+  focusable: true
+  phantom: false
+  padding: 10
+  @onClick: modules.game_outfit.onOutfitSelect(self)
+
+  $focus:
+    image-color: #057FFA
+
+  Creature
+    id: outfit
+    size: 56 56
+    anchors.centerIn: parent
+    margin-top: 5
+    phantom: true
+
+CustomOutfitGrid < ScrollablePanel
+  layout:
+    type: grid
+    cell-size: 80 89
+    cell-spacing: 3
+    flow: true
+
+Panel
+  id: outfitsPanel
+
+  CustomOutfitGrid
+    id: list
+    anchors.fill: parent
+    anchors.right: next.left
+    vertical-scrollbar: scroll
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+    visible: false

@@ -1,0 +1,140 @@
+MainHeadlessWindow
+  id: viewerManagerWindow
+  size: 400 350
+  !text: tr('Manage Viewers')
+  @onEscape: self:destroy()
+
+  Label
+    id: titleLabel
+    !text: tr("Current Viewers")
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 12
+    font: verdana-11px-rounded
+    text-auto-resize: true
+
+  ScrollablePanel
+    id: viewersContainer
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 120
+    margin: 12 12 4 12
+    vertical-scrollbar: viewersScrollBar
+    layout:
+      type: verticalBox
+      spacing: 2
+
+  VerticalScrollBar
+    id: viewersScrollBar
+    anchors.top: viewersContainer.top
+    anchors.bottom: viewersContainer.bottom
+    anchors.right: parent.right
+    margin-right: 4
+    step: 14
+    pixels-scroll: true
+
+  Label
+    id: bannedTitleLabel
+    !text: tr("Banned Players")
+    anchors.top: viewersContainer.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 8
+    font: verdana-11px-rounded
+    text-auto-resize: true
+
+  ScrollablePanel
+    id: bannedContainer
+    anchors.top: bannedTitleLabel.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: closeButton.top
+    margin: 8 12 8 12
+    vertical-scrollbar: bannedScrollBar
+    layout:
+      type: verticalBox
+      spacing: 2
+
+  VerticalScrollBar
+    id: bannedScrollBar
+    anchors.top: bannedContainer.top
+    anchors.bottom: bannedContainer.bottom
+    anchors.right: parent.right
+    margin-right: 4
+    step: 14
+    pixels-scroll: true
+
+  ButtonRedSmall
+    id: closeButton
+    !text: tr("Close")
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 12
+    @onClick: self:destroy()
+
+ViewerItem < UIWidget
+  height: 40
+  padding: 8
+  background-color: alpha
+  focusable: true
+  
+  $hover:
+    background-color: #69B2FC
+
+  $focus:
+    background-color: #057FFA
+
+  Label
+    id: nameLabel
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.right: kickButton.left
+    margin-right: 8
+    font: verdana-11px-antialised
+    text-auto-resize: true
+    color: #FFFFFF
+
+  ButtonRedSmall
+    id: kickButton
+    !text: tr("Kick")
+    width: 60
+    height: 24
+    anchors.right: banButton.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 8
+    @onClick: modules.game_spectate.kickViewer(self:getParent().viewerName)
+
+  ButtonRedSmall
+    id: banButton
+    !text: tr("Ban")
+    width: 60
+    height: 24
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    @onClick: modules.game_spectate.banViewer(self:getParent().viewerName)
+
+BannedItem < UIWidget
+  height: 40
+  padding: 8
+  background-color: alpha
+  focusable: true
+
+  Label
+    id: nameLabel
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.right: unbanButton.left
+    margin-right: 8
+    font: verdana-11px-antialised
+    text-auto-resize: true
+    color: #FFFFFF
+
+  ButtonBlueSmall
+    id: unbanButton
+    !text: tr("Unban")
+    width: 80
+    height: 24
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    color: #00FF00
+    @onClick: modules.game_spectate.unbanPlayer(self:getParent().playerName)

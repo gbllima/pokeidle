@@ -1,0 +1,30 @@
+Panel < UIWidget
+  phantom: true
+  auto-focus: first
+
+PanelFlat < Panel
+  image-source: /images/ui/panel
+  image-border: 10
+  border: 1 #3A3939
+
+PanelRounded < Panel
+  image-source: /images/ui/window
+  image-border: 10
+
+PanelOutline < Panel
+  image-source: /images/ui/panel_outline
+  image-clip: 0 180 170 60
+  image-border: 14
+
+PanelRoundedSolid < Panel
+  image-source: /images/ui/panel_rounded_solid
+  image-border: 10
+
+ScrollablePanel < UIScrollArea
+  phantom: true
+  auto-focus: first
+
+ScrollablePanelFlat < ScrollablePanel
+  image-source: /images/ui/panel
+  image-border: 10
+  border: 1 #3A3939

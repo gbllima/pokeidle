@@ -1,0 +1,8 @@
+Module
+  name: game_pokegear
+  description: PokeGear
+  author: PStory
+  sandboxed: true
+  scripts: [ pokegear ]
+  @onLoad: init()
+  @onUnload: terminate()

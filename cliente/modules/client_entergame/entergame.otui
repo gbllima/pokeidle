@@ -1,0 +1,3 @@
+EnterGameWindow
+  id: enterGame
+  @onEnter: EnterGame.doLogin()

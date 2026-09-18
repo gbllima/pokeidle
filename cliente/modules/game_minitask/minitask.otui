@@ -1,0 +1,198 @@
+PanelContainer < Panel
+  image-source: /images/ui/panel_rounded
+  font: DMSans-16px-bold
+  image-border: 21
+  text-offset: 0 6
+  text-align: top
+  padding: 10
+
+TaskItem < UIItem
+  size: 32 32
+  virtual: true
+
+  Label
+    id: count
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    font: verdana-11px-rounded
+    color: #FF0000
+
+    $on:
+      color: #FFFFFF
+
+  $!first:
+    margin-left: 5
+
+TaskRewardItem < TaskItem
+  size: 42 42
+  virtual: true
+
+TypeTask < UIWidget
+  image-color: #5c5c5c
+  size: 74 74
+
+  $on:
+    image-color: white
+
+PanelReward < PanelContainer
+  id: panelRewards
+  !text: tr('Rewards')
+
+  HorizontalList
+    id: list
+    size: 90 42
+    anchors.centerIn: parent
+    margin-top: 8
+
+PanelTask < PanelContainer
+  id: panelTask
+
+  TypeTask
+    id: type
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.left
+    on: true
+
+  Label-14px-Medium
+    id: description
+    anchors.top: prev.top
+    anchors.left: prev.right
+    text-auto-resize: true
+    margin: 0 8 8 8
+
+  Creature
+    id: outfit
+    size: 46 46
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin: 4 8
+
+  Label-14px-Medium
+    id: count
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    text-auto-resize: true
+    font: verdana-11px-rounded
+
+  HorizontalList
+    id: list
+    height: 34
+    anchors.top: description.bottom
+    anchors.left: description.left
+    anchors.right: parent.right
+    margin-top: 8
+    horizontal-scrollbar: scroll
+
+  HorizontalScrollBar
+    id: scroll
+    anchors.left: prev.left
+    anchors.right: prev.right
+    anchors.top: prev.bottom
+    margin-top: 2
+    visible: false
+    step: 8
+
+MainWindow
+  size: 510 400
+  visible: false
+  @onEscape: modules.game_minitask.hide() g_game.talkChannel(MessageModes.NpcTo, 0, "bye")
+  @onClose: modules.game_minitask.hide()  g_game.talkChannel(MessageModes.NpcTo, 0, "bye")
+
+  Label-14px-Regular
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-align: center
+    text-wrap: true
+    margin-top: 18
+    !text: tr('É possível concluir uma Mini Task semanalmente em cada Expedição!\nApós concluir uma Mini Task de uma Expedição, não será possível realizar outra Mini Task nesta Expedição até o reset semanal! (Domingo 00:10 BRT)')
+
+  Panel
+    id: panelTypes
+    width: 360
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    anchors.bottom: next.top
+    margin: 16
+
+    TypeTask
+      id: 1
+      anchors.right: next.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minitask/1
+      margin-right: 12
+      on: true
+
+    TypeTask
+      id: 2
+      anchors.centerIn: parent
+      image-source: /images/game/minitask/2
+
+    TypeTask
+      id: 3
+      anchors.left: prev.right
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minitask/3
+      margin-left: 12
+
+    ButtonBlueSmall
+      id: randomize
+      size: 42 42
+      anchors.left: prev.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 12
+      icon: /images/game/icons/icon_reset
+      @onClick: modules.game_minitask.onConfirmRandomize()
+
+  PanelReward
+    height: 95
+    anchors.bottom: next.bottom
+    anchors.right: finish.right
+    anchors.left: next.right
+    margin-left: 12
+
+  PanelTask
+    size: 310 95
+    anchors.bottom: next.top
+    anchors.left: next.left
+    margin: 0 12 12 0
+
+  ButtonBlueMedium
+    id: start
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin: 4
+    !text: tr('Accept')
+    @onClick: modules.game_minitask.onStart()
+
+  ButtonRedMedium
+    id: cancel
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin: 4
+    !text: tr('Cancel')
+    visible: false
+    @onClick: modules.game_minitask.onCancel()
+
+  ButtonRedMedium
+    id: finish
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin: 4
+    !text: tr('Finish')
+    visible: false
+    @onClick: modules.game_minitask.onEnd()
+
+  PanelRoundedSolid
+    id: panel
+    anchors.fill: parent
+    anchors.top: closeButton.bottom
+    margin-top: 18
+    image-color: #525252
+    font: DMSans-14px-medium
+    !text: tr('Não há mais tarefas. Volte na próxima semana.')
+    visible: false

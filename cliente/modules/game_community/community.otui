@@ -1,0 +1,56 @@
+ButtonCommunityTab < ButtonBlueCommunitySmall
+  focusable: true
+  image-color: #3799FB
+  
+  $focus:
+    image-color: #0466C8
+
+CommunitySelectorPanel < Panel
+  id: selectorPanel
+  anchors.top: prev.bottom
+  anchors.left: parent.left
+  anchors.right: parent.right
+  margin-top: 16
+  height: 40
+
+  ButtonCommunityTab
+    id: profilePanel
+    !text: tr('Profile')
+    anchors.left: parent.left
+    anchors.right: next.left
+    margin-right: 4
+    image-border: 28
+    @onClick: modules.game_community.setSelectorPanel(self)
+
+  ButtonCommunityTab
+    id: rankingPanel
+    !text: tr('Ranking')
+    anchors.centerIn: parent
+    width: 225
+    image-border: 28
+    @onClick: modules.game_community.setSelectorPanel(self)
+
+  ButtonCommunityTab
+    id: achievementPanel
+    !text: tr('Achievement')
+    anchors.right: parent.right
+    anchors.left: prev.right
+    margin-left: 4
+    image-border: 28
+    @onClick: modules.game_community.setSelectorPanel(self)
+
+MainWindow
+  id: communityWindow
+  size: 700 500
+  visible: false
+  !text: tr('Community')
+  @onEscape: modules.game_community.onGameEnd()
+  @onClose: modules.game_community.onGameEnd()
+
+  CommunitySelectorPanel
+
+  Panel
+    id: mainContentContainer
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    margin-top: 10

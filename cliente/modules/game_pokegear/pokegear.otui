@@ -1,0 +1,140 @@
+PokeGearTeam < UIWidget
+  image-source: /images/ui/panel_outline
+  image-clip: 0 180 170 60
+  image-border: 12
+  padding: 10
+
+  $hover !focus:
+    image-clip: 0 60 170 60
+
+  $focus:
+    image-clip: 0 120 170 60
+
+  $checked:
+    image-clip: 0 60 170 60
+
+  UIWidget
+    id: image
+    size: 54 54
+    anchors.top: parent.top
+    anchors.left: parent.left
+    image-source: /images/game/portrait/team magma
+    image-color: white
+    phantom: true
+
+    $on:
+      image-color: #3D3D3D
+
+  UIWidget
+    id: locked
+    anchors.centerIn: prev
+    image-source: /images/game/console/icon_lock
+    phantom: true
+
+  Label-20px-Bold
+    id: name
+    anchors.top: parent.top
+    anchors.left: image.right
+    text-auto-resize: true
+    margin: 4 12
+    text: Team Magma
+
+  Label-14px-Regular
+    id: count
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 5
+    text-auto-resize: true
+    !text: tr('Defeats: 0')
+
+  UIWidget
+    id: icon
+    size: 34 34
+    anchors.top: parent.top
+    anchors.right: parent.right
+    image-source: /images/game/icons/pieces_ronze_star
+    !tooltip: tr('Pieces of Bronze Star')
+    margin: 8 8
+
+    $on:
+      image-source: /images/game/contracts/pin_map
+      image-clip: 0 37 37 37
+      image-color: #47E08D
+      &tooltip: nil
+
+  ButtonBlueSmall
+    id: reward
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+    $checked:
+      !text: tr('Claim')
+
+    $on:
+      !text: tr('Finished')
+
+MainWindow
+  size: 717 442
+  !text: tr('Poké Gear')
+  icon: /images/game/icons/pokegear
+  icon-align: top
+  icon-offset: -88 13
+  @onClose: modules.game_pokegear.onGameEnd()
+  @onEscape: modules.game_pokegear.onGameEnd()
+  visible: false
+
+  Label-14px-Regular
+    id: description
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 18
+    !text: tr('Encontre os membros da Team Villain e derrote-os para reportar a Officer Jenny')
+
+  ScrollablePanel
+    id: panel
+    anchors.top: next.top
+    anchors.bottom: next.bottom
+    anchors.left: parent.left
+    anchors.right: next.left
+    image-source: /images/ui/panel_rounded_solid
+    image-border: 10
+    image-color: #545454
+    vertical-scrollbar: scroll
+    padding: 10
+    layout:
+      type: grid
+      cell-size: 320 130
+      flow: true
+      cell-spacing: 10
+
+  VerticalScrollBar
+    id: scroll
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    anchors.top: description.bottom
+    margin: 16 0 16 0
+    step: 36
+    pixels-scroll: true
+
+  PanelOutline
+    id: dailyPanel
+    size: 170 34
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+
+    UIWidget
+      size: 24 24
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/icons/pieces_ronze_star
+      margin-left: 12
+
+    Label-13px-Bold
+      id: count
+      anchors.left: prev.right
+      anchors.verticalCenter: parent.verticalCenter
+      text-auto-resize: true
+      margin-left: 8
+      !text: tr('Daily limit: %d/%d', 0, 3)

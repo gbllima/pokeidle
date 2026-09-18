@@ -1,0 +1,9 @@
+Module
+  name: game_nameeffects
+  description: effect module
+  author: snowsz
+  website: http://pokeunion.com.br/
+  sandboxed: true
+  scripts: [ nameeffects ]
+  @onLoad: init()
+  @onUnload: terminate()

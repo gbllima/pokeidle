@@ -1,0 +1,8 @@
+Panel
+  id: achievementPanel
+  anchors.fill: parent
+  visible: false
+
+  Label-13px-Bold
+    anchors.centerIn: parent
+    text: Em breve

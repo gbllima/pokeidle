@@ -1,0 +1,9 @@
+Module
+  name: game_highscore
+  description: Highscore/Leaderboard
+  author: Kanohn
+  website: https://github.com/edubart/otclient
+  sandboxed: true
+  scripts: [ highscore ]
+  @onLoad: init()
+  @onUnload: terminate()

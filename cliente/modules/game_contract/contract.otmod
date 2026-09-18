@@ -1,0 +1,8 @@
+Module
+  name: game_contract
+  description: Game contract for brotherhood
+  author: Gengo
+  sandboxed: true
+  scripts: [ contract ]
+  @onLoad: init()
+  @onUnload: terminate()

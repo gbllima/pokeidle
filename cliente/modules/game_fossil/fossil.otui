@@ -1,0 +1,151 @@
+Fossil-Label-16px-Bold < Label-16px-Bold
+  text-auto-resize: true
+
+Fossil-Label-14px-Medium < Label-14px-Medium
+  text-auto-resize: true
+
+Fossil-Label-16px-Regular < Label-16px-Regular
+  text-auto-resize: true
+
+Fossil-Item < UIWidget
+  size: 40 40
+
+  Item
+    id: item
+    anchors.top: parent.top
+    anchors.left: parent.left
+    virtual: true
+    show-count: false
+    &selectable: true
+    &editable: false
+    &onDrop: modules.game_fossil.onDropSlot
+
+  ButtonClose
+    size: 16 16
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: modules.game_fossil.onClearSlot(self:getParent().item)
+
+Fossil-Image < UIWidget
+  phantom: true
+
+FossilMachine < MainWindow
+  size: 320 517
+  !text: tr('Fossil Machine')
+  @onEscape: modules.game_fossil.onGameEnd()
+  @onClose: modules.game_fossil.onGameEnd()
+
+  Fossil-Image
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    image-source: /images/game/fossil/image_left
+    margin: 0 0 -14 -16
+
+  Fossil-Image
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    image-source: /images/game/fossil/image_right
+    margin: 0 -16 -14 0
+
+  Fossil-Label-16px-Bold
+    id: nameLabel
+    anchors.top: closeButton.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 18
+    text: ???
+
+  HorizontalList
+    id: elementList
+    height: 24
+    anchors.right: prev.left
+    anchors.verticalCenter: prev.verticalCenter
+    margin-right: 8
+
+  Fossil-Image
+    id: pokemonImage
+    size: 200 143
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 12
+    image-smooth: true
+    image-fixed-ratio: true
+    image-source: /images/game/fossil/default
+
+  Fossil-Label-14px-Medium
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 10
+    !text: tr('Fossil') .. ':'
+
+  Fossil-Item
+    id: slotOne
+    anchors.top: prev.bottom
+    anchors.right: prev.horizontalCenter
+    margin: 4 2 0 0
+    &slotType: 1
+
+  Fossil-Item
+    id: slotTwo
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 8
+    &slotType: 2
+
+  Fossil-Label-14px-Medium
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 10
+    !text: tr('DNA') .. ':'
+
+  Item
+    id: dnaItem
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 4
+    virtual: true
+
+  Label
+    id: countLabel
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    font: verdana-11px-rounded
+    margin-right: 2
+    color: red
+
+    $on:
+      color: white
+
+  Fossil-Label-16px-Bold
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 10
+    !text: tr('Additional Information')
+
+  UIWidget
+    size: 22 22
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/icons/info
+    margin-left: 4
+    !tooltip: tr('Ao reviver um Fóssil, existe uma pequena chance\ndo mesmo ser um Shiny. Esta chance vária de espécie para espécie.')
+
+  Fossil-Label-16px-Regular
+    anchors.left: reviveButton.left
+    anchors.bottom: next.bottom
+    !text: tr('Resurrection Value') .. ':'
+
+  Fossil-Label-16px-Bold
+    id: priceLabel
+    anchors.right: next.right
+    anchors.bottom: next.top
+    margin-bottom: 12
+    text: 0
+
+  ButtonBlueLarge
+    id: reviveButton
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 12
+    enabled: false
+    !text: tr('Fossil Revive')
+    @onClick: modules.game_fossil.revivePokemon()

@@ -1,0 +1,273 @@
+ElementRockIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 0 0 20 20
+
+ElementGrassIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 20 0 20 20
+
+ElementPsychicIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 40 0 20 20
+
+ElementDarkIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 60 0 20 20
+
+ElementGroundIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 80 0 20 20
+
+ElementPoisonIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 0 20 20 20
+
+ElementFlyingIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 20 20 20 20
+
+ElementSteelIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 40 20 20 20
+
+ElementWaterIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 60 20 20 20
+
+ElementDragonIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 80 20 20 20
+
+ElementElectricIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 0 40 20 20
+
+ElementFairyIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 20 40 20 20
+
+ElementGhostIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 40 40 20 20
+
+ElementFireIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 60 40 20 20
+
+ElementIceIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 80 40 20 20
+
+ElementBugIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 0 60 20 20
+
+ElementFightingIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 20 60 20 20
+
+ElementNormalIcon-20px < UIWidget
+  size: 20 20
+  image-source: /images/game/icons/icon_elements_20px
+  image-clip: 40 60 20 20
+
+
+
+ElementRockIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 0 0 24 24
+
+ElementGrassIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 24 0 24 24
+
+ElementPsychicIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 48 0 24 24
+
+ElementDarkIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 72 0 24 24
+
+ElementGroundIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 96 0 24 24
+
+ElementPoisonIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 0 24 24 24
+
+ElementFlyingIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 24 24 24 24
+
+ElementSteelIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 48 24 24 24
+
+ElementWaterIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 72 24 24 24
+
+ElementDragonIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 96 24 24 24
+
+ElementElectricIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 0 48 24 24
+
+ElementFairyIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 24 48 24 24
+
+ElementGhostIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 48 48 24 24
+
+ElementFireIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 72 48 24 24
+
+ElementIceIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 96 48 24 24
+
+ElementBugIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 0 72 24 24
+
+ElementFightingIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 24 72 24 24
+
+ElementNormalIcon-24px < UIWidget
+  size: 24 24
+  image-source: /images/game/icons/icon_elements_24px
+  image-clip: 48 72 24 24
+
+
+
+ElementRockIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 0 0 32 32
+
+ElementGrassIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 32 0 32 32
+
+ElementPsychicIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 64 0 32 32
+
+ElementDarkIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 96 0 32 32
+
+ElementGroundIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 128 0 32 32
+
+ElementPoisonIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 0 32 32 32
+
+ElementFlyingIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 32 32 32 32
+
+ElementSteelIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 64 32 32 32
+
+ElementWaterIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 96 32 32 32
+
+ElementDragonIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 128 32 32 32
+
+ElementElectricIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 0 64 32 32
+
+ElementFairyIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 32 64 32 32
+
+ElementGhostIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 64 64 32 32
+
+ElementFireIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 96 64 32 32
+
+ElementIceIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 128 64 32 32
+
+ElementBugIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 0 96 32 32
+
+ElementFightingIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 32 96 32 32
+
+ElementNormalIcon-32px < UIWidget
+  size: 32 32
+  image-source: /images/game/icons/icon_elements_32px
+  image-clip: 64 96 32 32

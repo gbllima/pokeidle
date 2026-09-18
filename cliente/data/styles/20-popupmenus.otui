@@ -1,0 +1,66 @@
+PopupMenuButton < UIButton
+  height: 26
+  text-offset: 10 0
+  text-align: left
+  background-color: alpha
+  font: DMSans-14px-regular
+  padding: 4 6 4 6
+
+  $hover !disabled:
+    background-color: #69B2FC
+
+PopupMenuShortcutLabel < Label-12px-Regular
+  text-align: right
+  anchors.fill: parent
+  margin: 1 3 0 5
+
+PopupMenuIcon < UIWidget
+  anchors.verticalCenter: parent.verticalCenter
+  anchors.right: parent.right
+  icon-align: right
+  phantom: true
+
+PopupMenuSeparator < UIWidget
+  height: 1
+  border: 1 #444444
+  phantom: true
+
+PopupMenu < UIPopupMenu
+  width: 89
+  padding: 2
+  border: 2 #444444
+  background-color: #242424
+
+PopupScrollMenuButton < UIButton
+  height: 26
+  text-offset: 10 0
+  text-align: left
+  background-color: alpha
+  font: DMSans-14px-regular
+  padding: 4 6 4 6
+
+  $hover !disabled:
+    background-color: #69B2FC
+
+PopupScrollMenuShortcutLabel < Label-12px-Regular
+  text-align: right
+  anchors.fill: parent
+  margin: 1 3 0 5
+
+PopupScrollMenuIcon < UIWidget
+  anchors.verticalCenter: parent.verticalCenter
+  anchors.right: parent.right
+  icon-align: right
+  phantom: true
+
+PopupScrollMenuSeparator < UIWidget
+  height: 1
+  border: 1 #444444
+  phantom: true
+
+PopupScrollMenu < UIPopupScrollMenu
+  width: 50
+  image-source: /images/ui/menubox
+  image-border: 3
+  padding: 3
+  background: #00000059

@@ -1,0 +1,133 @@
+MiniGameIndicator < UIWidget
+  anchors.verticalCenter: parent.verticalCenter
+  anchors.left: parent.left
+  image-source: /images/game/minigame/indicator
+
+MiniGamePanel < Panel
+  size: 265 48
+
+MiniGameSafeArea < Panel
+  id: area
+  size: 212 38
+  anchors.right: parent.right
+  anchors.verticalCenter: parent.verticalCenter
+  margin-right: 5
+
+MiniGameState < UIWidget
+  id: state
+  anchors.verticalCenter: parent.verticalCenter
+  anchors.left: parent.left
+  image-source: /images/game/minigame/fail
+  opacity: 0
+
+  $on:
+    image-source: /images/game/minigame/success
+
+MiniGameHotkey < Panel
+  id: hotkey
+  anchors.bottom: parent.top
+  anchors.horizontalCenter: parent.horizontalCenter
+  image-source: /images/game/minigame/hotkey
+  margin-left: 12
+  visible: true
+
+  $on:
+    visible: false
+
+MiniGamePhotographerPanel < MiniGamePanel
+  image-source: /images/game/minigame/panel_photographer
+  anchors.centerIn: parent
+
+  MiniGameHotkey
+  MiniGameState
+  MiniGameSafeArea
+
+    UIWidget
+      id: target
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minigame/icon_photographer
+
+    MiniGameIndicator
+      id: indicator
+
+MiniGameDesignerPanel < MiniGamePanel
+  image-source: /images/game/minigame/panel_designer
+  anchors.centerIn: parent
+
+  MiniGameHotkey
+  MiniGameState
+  MiniGameSafeArea
+
+    UIWidget
+      id: 1
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minigame/icon_designer_blue
+
+    UIWidget
+      id: 2
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minigame/icon_designer_red
+
+    UIWidget
+      id: 3
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minigame/icon_designer_red
+
+    MiniGameIndicator
+      id: indicator
+
+MiniGameBreederPanel < MiniGamePanel
+  image-source: /images/game/minigame/panel_breeder
+  anchors.centerIn: parent
+
+  MiniGameHotkey
+  MiniGameState
+  MiniGameSafeArea
+
+    UIWidget
+      id: target
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minigame/icon_breeder_green
+
+    MiniGameIndicator
+      id: indicator
+
+MiniGameResearcherPanel < MiniGamePanel
+  image-source: /images/game/minigame/panel_researcher
+  anchors.centerIn: parent
+
+  UIWidget
+    anchors.bottom: parent.top
+    anchors.left: parent.left
+    image-source: /images/game/minigame/icon_researcher_indicator
+    margin-left: 56
+
+  MiniGameHotkey
+  MiniGameState
+  MiniGameSafeArea
+
+    UIWidget
+      id: 1
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minigame/icon_researcher_pink
+
+    UIWidget
+      id: 2
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minigame/icon_researcher_green
+
+    UIWidget
+      id: 3
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      image-source: /images/game/minigame/icon_researcher_blue
+
+    MiniGameIndicator
+      id: indicator

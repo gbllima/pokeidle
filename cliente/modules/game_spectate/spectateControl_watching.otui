@@ -1,0 +1,74 @@
+MiniWindow
+  id: spectateControlWatchingWindow
+  !text: tr("Control")
+  height: 200
+  icon: /images/game/icons/icon_cam
+  icon-clip: 0 48 16 16
+  icon-size: 16 16
+  icon-offset: 2 3
+  @onSetup: |
+    self:disableResize()
+  @onClose: modules.game_spectate.stopSpectating()
+
+  MiniWindowContents
+    id: contents
+    padding: 8
+
+    Label
+      id: hostNameLabel
+      text: -
+      text-wrap: true
+      text-auto-resize: true
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text-align: center
+      margin-top: 4
+      font: verdana-11px-rounded
+
+    Label
+      id: viewersLabel
+      text: Viewers: 0
+      text-wrap: true
+      text-auto-resize: true
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text-align: center
+      margin-top: 4
+      font: verdana-11px-rounded
+
+    UIWidget
+      id: pokemons
+      height: 110
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      width: 150
+      margin-top: 8
+      margin-bottom: 8
+      layout:
+        type: grid
+        cell-size: 34 34
+        cell-spacing: 2
+        num-columns: 4
+        fit-children: true
+
+    ButtonRedBase
+      id: stopWatchingButton
+      height: 28
+      !text: tr("Stop Watching")
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 12
+      margin-bottom: 4
+      @onClick: modules.game_spectate.stopSpectating()
+
+PokemonHost < UIWidget
+  size: 32 32
+  
+  UIWidget
+    id: pokeImage
+    size: 32 32
+    anchors.fill: parent
+    image-smooth: true

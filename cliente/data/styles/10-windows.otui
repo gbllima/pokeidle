@@ -1,0 +1,44 @@
+Window < UIWindow
+  size: 624 488
+  image-source: /images/ui/window
+  image-border: 20
+  padding: 14 16 14 16
+  font: DMSans-26px-bold
+  text-offset: 0 14
+  text-align: top
+  color: #FFFFFF
+  &animation: true
+
+  ButtonClose
+    id: closeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+
+HeadlessWindow < UIWindow
+  size: 624 488
+  image-source: /images/ui/window
+  image-border: 20
+  padding: 54 16 16 16
+  font: DMSans-20px-bold
+  text-offset: 0 14
+  text-align: top
+  color: #FFFFFF
+  &animation: true
+
+MainWindow < Window
+  anchors.centerIn: parent
+
+MainHeadlessWindow < HeadlessWindow
+  anchors.centerIn: parent
+
+StaticWindow < Window
+  &static: true
+
+StaticHeadlessWindow < HeadlessWindow
+  &static: true
+
+StaticMainWindow < StaticWindow
+  anchors.centerIn: parent
+
+StaticMainHeadlessWindow < StaticHeadlessWindow
+  anchors.centerIn: parent

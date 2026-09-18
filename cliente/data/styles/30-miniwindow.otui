@@ -1,0 +1,139 @@
+MiniPanel < Panel
+  text-offset: 0 3
+  text-align: top
+  image-source: /images/ui/minipanel
+  image-border: 3
+  image-border-top: 22
+  padding-left: 6
+  padding-bottom: 6
+  padding-top: 25
+  padding-right: 6
+  color: #929292
+
+MiniWindow < UIMiniWindow
+  size: 192 200
+  font: DMSans-13px-bold
+  icon-rect: 4 3 18 18
+  text-offset: 26 5
+  text-align: topLeft
+  image-source: /images/ui/panel
+  image-border: 12
+  focusable: false
+  border: 1 #3A3939
+  &minimizedHeight: 25
+
+  $on:
+    image-border-bottom: 12
+
+  UIWidget
+    id: miniwindowTopBar
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.left: parent.left
+    size: 258 25
+    phantom: true
+
+  UIButton
+    id: closeButton
+    anchors.verticalCenter: prev.verticalCenter
+    anchors.right: parent.right
+    margin-right: 4
+    size: 18 18
+    image-source: /images/game/miniwindow/close
+    //image-color: #d4d4d4
+    change-cursor-image: true
+    cursor: pointer
+
+    $hover:
+      //image-color: #ffffff
+
+    $pressed:
+      //image-color: #cccccc
+
+  UIButton
+    id: minimizeButton
+    anchors.top: prev.top
+    anchors.right: prev.left
+    size: 18 18
+    image-source: /images/game/miniwindow/maximize
+    //image-color: #d4d4d4
+    margin-right: 2
+    change-cursor-image: true
+    cursor: pointer
+
+    $hover:
+      //image-color: #ffffff
+
+    $pressed:
+      //image-color: #cccccc
+
+    $on:
+      image-source: /images/game/miniwindow/minimize
+      //image-clip: 33 1 19 19
+
+    $on hover:
+      //image-color: #ffffff
+
+    $on pressed:
+      //image-color: #cccccc
+
+  UIButton
+    id: lockButton
+    anchors.top: prev.top
+    anchors.right: prev.left
+    size: 18 18
+    image-source: /images/game/miniwindow/unlocked
+    //image-color: #d4d4d4
+    margin-right: 2
+    change-cursor-image: true
+    cursor: pointer
+
+    $hover:
+      //image-color: #ffffff
+
+    $pressed:
+      //image-color: #cccccc
+
+    $on:
+      image-source: /images/game/miniwindow/locked
+
+    $on hover:
+      image-color: #ffffff
+
+    $on pressed:
+      image-color: #cccccc
+
+  VerticalScrollBar
+    id: miniwindowScrollBar
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin: 28 3 3 3
+    step: 14
+    pixels-scroll: true
+
+    $!on:
+      width: 0
+
+    $on:
+      width: 13
+
+  ResizeBorder
+    id: bottomResizeBorder
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 3
+    minimum: 48
+    margin-left: 3
+    margin-right: 3
+    background: #ffffff88
+
+MiniWindowContents < ScrollablePanel
+  id: contentsPanel
+  anchors.fill: parent
+  anchors.right: miniwindowScrollBar.left
+  margin: 26 0 1 1
+  vertical-scrollbar: miniwindowScrollBar
+
+HeadlessMiniWindow < MiniWindow

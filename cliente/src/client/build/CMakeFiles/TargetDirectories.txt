@@ -1,0 +1,2 @@
+C:/Users/Mikael Magalhaes/Desktop/MEU POKETIBIA/cliente/src/client/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Mikael Magalhaes/Desktop/MEU POKETIBIA/cliente/src/client/build/CMakeFiles/ZERO_CHECK.dir

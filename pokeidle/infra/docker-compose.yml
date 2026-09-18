@@ -1,0 +1,33 @@
+# MariaDB for the PokeIdle server, matched to servidor/config.lua as shipped:
+#   mysqlHost 127.0.0.1 / mysqlPort 3306 / mysqlUser root / mysqlPass "" / mysqlDatabase poke2
+# Nothing is installed on the host and `docker compose down -v` removes it all.
+services:
+  db:
+    image: mariadb:10.11
+    container_name: pokeidle-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+      MARIADB_DATABASE: poke2
+    ports:
+      - "127.0.0.1:3306:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      # TFS writes whole item blobs in single statements.
+      - --max-allowed-packet=64M
+      - --innodb-buffer-pool-size=512M
+      # The fork's Lua queries predate ONLY_FULL_GROUP_BY being on by default.
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
+    volumes:
+      - pokeidle-db-data:/var/lib/mysql
+      # Every .sql dropped here is imported, in name order, on FIRST start only.
+      - ./dump:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  pokeidle-db-data:

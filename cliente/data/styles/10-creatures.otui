@@ -1,0 +1,7 @@
+Creature < UICreature
+  size: 80 80
+  padding: 1
+  raw: true
+
+  $checked:
+    border-color: white

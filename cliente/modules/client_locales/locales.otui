@@ -1,0 +1,38 @@
+LocalesMainLabel < Label
+  font: sans-bold-16px
+
+LocalesButton < UIWidget
+  size: 80 58
+  image-smooth: true
+  text-offset: 0 96
+  font: DMSans-14px-regular
+  opacity: 0.6
+
+  $hover:
+    opacity: 1
+
+UIWindow
+  id: localesWindow
+  background-color: #000000
+  opacity: 0.90
+  clipping: true
+  anchors.fill: parent
+
+  Label-30px-Bold
+    !text: tr('Select your language')
+    text-auto-resize: true
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.verticalCenter: parent.verticalCenter
+    margin-top: -100
+
+  Panel
+    id: localesPanel
+    margin-top: 50
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    anchors.bottom: parent.bottom
+    layout:
+      type: grid
+      cell-size: 80 58
+      cell-spacing: 32
+      flow: true

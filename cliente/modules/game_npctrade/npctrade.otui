@@ -1,0 +1,352 @@
+SellItem < Item
+  virtual: true
+  color: white
+  @onHoverChange: |
+    function(self, hovered)
+      if not self:isOn() then
+        self.block:setVisible(hovered)
+      end
+    end
+
+  $hover:
+    color: #ffffffBF
+
+  UIWidget
+    id: block
+    anchors.centerIn: parent
+    phantom: true
+    image-source: /images/game/minimap/flag7
+    image-color: red
+    visible: false
+
+ConfirmSellAll < MainHeadlessWindow
+  size: 380 230
+  !text: tr('Are you sure?')
+
+  Label-16px-Regular
+    id: messageLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-wrap: true
+    text-align: center
+
+  VerticalScrollBar
+    id: scrollList
+    anchors.top: prev.bottom
+    anchors.bottom: confirmButton.top
+    anchors.right: parent.right
+    margin: 22 0 22 0
+    step: 15
+    pixels-scroll: true
+    //visible: false
+
+  ScrollablePanel
+    id: listItem
+    anchors.top: prev.top
+    anchors.bottom: prev.bottom
+    anchors.left: parent.left
+    anchors.right: prev.left
+    vertical-scrollbar: scrollList
+    //margin-left: 12
+    //border: 1 white
+    layout:
+      type: grid
+      cell-size: 32 32
+      cell-spacing: 4
+      flow: true
+
+  ButtonBlueSmall
+    id: confirmButton
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin-right: 8
+    !text: tr("Yes")
+
+  ButtonRedSmall
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-left: 8
+    !text: tr("No")
+    @onClick: self:getParent():destroy() modules.game_npctrade.confirmWindow = nil modules.game_npctrade.npcWindow:show()
+
+NPCOfferLabel < Label
+  anchors.left: prev.right
+  anchors.top: prev.top
+  margin-left: 5
+  text-auto-resize: true
+
+NPCItemBox < UICheckBox
+  height: 32
+  background-color: #323232
+  @onCheckChange: modules.game_npctrade.onItemBoxChecked(self)
+
+  UIItem
+    id: item
+    size: 34 34
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    phantom: true
+    margin-left: 33
+
+  Label-14px-Medium
+    id: name
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-auto-resize: true
+    margin-left: 41
+
+  Label-14px-Medium
+    id: price
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    text-auto-resize: true
+    margin-right: 10
+    phantom: false
+
+  $alternate:
+    background-color: #212121 
+
+  $hover:
+    background-color: #ffffff26
+
+  $checked on:
+    background-color: #057FFA
+
+  $!checked:
+
+  $!on:
+    image-color: #ffffff88
+    color: #aaaaaa88
+
+MainWindow
+  id: npcWindow
+  !text: tr('NPC Trade')
+  size: 707 614
+  @onEscape: modules.game_npctrade.closeNpcTrade()
+  @onClose:  modules.game_npctrade.closeNpcTrade()
+
+  TabButton
+    id: buyTab
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    margin-top: 30
+    checked: true
+    checked: true
+    !tooltip: tr("List of items that you're able to buy")
+    !text: tr('Buy')
+
+  TabButton
+    id: sellTab
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin-left: 8
+    !tooltip: tr("List of items that you're able to sell")
+    !text: tr('Sell')
+
+  TextEdit
+    id: searchText
+    width: 288
+    anchors.top: prev.top
+    anchors.right: parent.right
+    margin-right: 14
+    !placeholder: tr('Search') .. "..."
+    @onTextChange: |
+      function(self, text)
+        self.placeholderLabel:setVisible(text:len() == 0)
+        modules.game_npctrade.onSearchTextChange()
+      end
+
+  Panel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    anchors.bottom: tradeButton.top
+    margin: 10 0 28 0
+
+    Panel
+      id: title
+      height: 22
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      border: 1 #616161
+      border-width-bottom: 0
+      margin-right: 16
+      background-color: #212121
+
+      Label-14px-Medium
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text-align: center
+        !text: tr('Item')
+        color: #FFE255
+        margin-left: 33
+
+      Label-14px-Medium
+        anchors.left: prev.right
+        anchors.right: next.left
+        anchors.verticalCenter: parent.verticalCenter
+        !text: tr('Name')
+        color: #FFE255
+        margin-left: 45
+
+      Label-14px-Medium
+        width: 120
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin-right: 10
+        text-align: right
+        !text: tr('Price')
+        color: #FFE255
+
+    VerticalScrollBar
+      id: itemsPanelListScrollBar
+      anchors.top: prev.top
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      margin: 8 3 0 0
+      step: 24
+      pixels-scroll: true
+
+    TextList
+      id: itemsPanel
+      height: 280
+      anchors.left: parent.left
+      anchors.right: prev.left
+      anchors.top: title.bottom
+      anchors.bottom: parent.bottom
+      vertical-scrollbar: itemsPanelListScrollBar
+      margin-right: 1
+      border: 1 #6B6B6B
+      border-width-top: 0
+      auto-focus: first
+
+  PanelFlat
+    id: setupPanel
+    height: 130
+    enabled: false
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 5
+    margin-right: 5
+    image-color: #ffffff88
+    visible: false
+
+    Label
+      !text: tr('Name') .. ':'
+      anchors.left: parent.left
+      anchors.top: parent.top
+      margin-top: 5
+      margin-left: 5
+      width: 85
+
+    NPCOfferLabel
+      id: name
+
+    NPCOfferLabel
+      id: id
+
+    Label
+      !text: tr('Price') .. ':'
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      margin-top: 3
+      margin-left: 5
+      width: 85
+
+    NPCOfferLabel
+      id: price
+
+    Label
+      !text: tr('Your Money') .. ':'
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      margin-top: 3
+      margin-left: 5
+      width: 85
+
+    HorizontalScrollBar
+      id: quantityScroll
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: prev.bottom
+      margin-top: 3
+      margin-left: 5
+      margin-right: 5
+      show-value: true
+      minimum: 1
+      maximum: 10000
+      step: 1
+      @onValueChange: modules.game_npctrade.onQuantityValueChange(self:getValue())
+
+  PanelFlat
+    id: buyOptions
+    height: 54
+    anchors.top: prev.top
+    anchors.left: parent.horizontalCenter
+    anchors.right: parent.right
+    margin-left: 5
+    image-color: #ffffff88
+    visible: false
+
+    Label
+      id: searchLabel
+      !text: tr('Search') .. ':'
+      anchors.left: parent.left
+      anchors.top: parent.top
+      text-auto-resize: true
+      margin-top: 7
+      margin-left: 5
+
+    CheckBox
+      id: showAllItems
+      !text: tr('Show all items')
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-left: 5
+      margin-top: 3
+      visible: false
+      checked: true
+      @onCheckChange: modules.game_npctrade.onShowAllItemsChange()
+
+  //Button
+  //  id: sellAllWithDelayButton
+  //  !text: tr('Sell all with delay')
+  //  width: 128
+  //  anchors.right: next.left
+  //  anchors.bottom: parent.bottom
+  //  margin-right: 10
+  //  visible: false
+  //  @onClick: modules.game_npctrade.confirmSellAll(true)
+
+  Label-14px-Medium
+    id: money
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    anchors.right: next.left
+    text-auto-resize: true
+    margin-bottom: 12
+    text-auto-resize: true
+
+  ButtonBlueMedium
+    id: sellAllButton
+    !text: tr('Sell all')
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    visible: false
+    @onClick: modules.game_npctrade.confirmSellAll(true)
+
+  ButtonBlueMedium
+    id: tradeButton
+    !text: tr('Buy')
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: modules.game_npctrade.onTradeClick()
+

@@ -1,0 +1,24 @@
+# Arquivos grandes
+*.spr
+*.dat
+*.pic
+*.zip
+*.rar
+*.7z
+*.apk
+*.exe
+*.dll
+*.HDMOD
+
+# Windows lixo
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+"*.spr" 
+"*.dat" 
+"*.exe" 
+"*.apk" 
+"*.dll" 
+"*.HDMOD" 

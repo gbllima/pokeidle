@@ -1,0 +1,98 @@
+EvolutionStone < UIItem
+  size: 32 32
+  virtual: true
+
+  Label-13px-Bold
+    id: count
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    text-auto-resize: true
+    color: #FF0000
+
+    $on:
+      color: #FFFFFF
+
+
+EvolutionPanel < PanelRoundedSolid
+  height: 60
+  image-color: alpha
+  phantom: false
+
+  $hover:
+    image-color: #69B2FC
+
+  $focus:
+    image-color: #057FFA
+
+  $!focus:
+    margin-top: 2
+
+  UIWidget
+    id: image
+    size: 52 52
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 4
+    phantom: true
+
+  Label-16px-Bold
+    id: name
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 12
+    text-auto-resize: true
+
+  Label-13px-Regular
+    id: level
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+
+  Panel
+    id: stones
+    height: 32
+    anchors.right: parent.right
+    anchors.left: prev.right
+    anchors.verticalCenter: parent.verticalCenter
+    background-color: alpha
+    border-color: alpha
+    margin: 0 8
+    &numColumn: 4
+
+MainHeadlessWindow
+  !text: tr('Evolutions')
+  size: 336 247
+  @onEscape: modules.game_evolutions.offline()
+
+  TextList
+    id: list
+    vertical-scrollbar: scroll
+    anchors.fill: parent
+    anchors.bottom: next.bottom
+    anchors.right: next.left
+    auto-focus: first
+
+  VerticalScrollBar
+    id: scroll
+    anchors.top: parent.top
+    anchors.bottom: next.top
+    anchors.right: parent.right
+    margin-bottom: 12
+    step: 14
+    pixels-scroll: true
+
+  ButtonBlueSmall
+    id: evolutionButton
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin-right: 5
+    !text: tr('Evoluir')
+    @onClick: modules.game_evolutions.requestEnvolvePokemon()
+
+  ButtonRedSmall
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-left: 5
+    !text: tr('Cancel')
+    @onClick: modules.game_evolutions.offline()

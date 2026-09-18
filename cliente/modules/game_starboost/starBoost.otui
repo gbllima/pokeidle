@@ -1,0 +1,152 @@
+StarsIcon < UIWidget
+  anchors.top: parent.top
+  anchors.left: parent.left
+  image-source: /images/game/minimap/flag3
+  image-color: #ffffff
+  opacity: 0.3
+
+  $!first:
+    anchors.left: prev.right
+
+  $on:
+    image-color: #a36205
+    opacity: 1
+
+StarBoostRequiredItem < UIItem
+  size: 34 34
+  virtual: true
+
+  Label
+    id: count
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    font: verdana-11px-rounded
+    color: #FF0000
+
+    $on:
+      color: #FFFFFF
+
+StarInfo < UIWidget
+  size: 22 22
+  image-source: /images/game/icons/info
+  margin: 0 0 -4 4
+  !tooltip: tr('Cada estrela que seu Pokémon progredir aumentará 3%% dos seus Status Base, sendo:\n1 Estrela: +3%% nos Status Base.\n2 Estrelas: +6%% nos Status Base.\n3 Estrelas: +9%% nos Status Base.\n4 Estrelas: +12%% nos Status Base.\n5 Estrelas: +15%% nos Status Base.')
+
+StarBoostPokemonElement < UIWidget
+
+  $!first:
+    margin-left: 2
+
+StarBoostWindow < MainWindow
+  size: 300 500
+  !text: tr('Star Boost')
+  @onEscape: modules.game_starboost.onOffline()
+
+  Label-16px-Regular
+    id: pokemonNameLabel
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 18
+    text: ?????
+
+  UIScrollArea
+    id: elementList
+    size: 50 24
+    anchors.top: prev.top
+    anchors.right: prev.left
+    layout: horizontalBox
+    margin: -2 8 0 0
+
+  UIWidget
+    id: pokemonImage
+    size: 160 120
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 8
+    image-source: /images/game/pokedex/pokemon/none
+    phantom: true
+
+  Label-14px-Regular
+    anchors.top: pokemonImage.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 22
+    text: Pokémon
+
+  Item
+    id: pokemonItem
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 8
+    &onDrop: modules.game_starboost.onDropSlotItem
+
+  ButtonClose
+    size: 16 16
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    margin: 0 -8 -8 0
+    @onClick: modules.game_starboost.onClearSlot()
+
+  Label-14px-Regular
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 14
+    text: Star Boost
+
+  StarInfo
+    anchors.left: prev.right
+    anchors.bottom: prev.bottom
+
+  Panel
+    id: starList
+    size: 200 32
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-left: 19
+
+    StarsIcon
+      id: 1
+    StarsIcon
+      id: 2
+    StarsIcon
+      id: 3
+    StarsIcon
+      id: 4
+    StarsIcon
+      id: 5
+
+  Label-14px-Regular
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 8
+    text: Required materia for next Star:
+
+  HorizontalList
+    id: requiredList
+    size: 34 34
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 6
+
+  ButtonBlueSmall
+    id: upgradeButton
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 12
+    !text: tr('Upgrade')
+    enabled: false
+    @onClick: modules.game_starboost.onUpgrade()
+
+  Label-14px-Regular
+    id: messageLabel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-wrap: true
+    text-align: center
+    margin-top: 8

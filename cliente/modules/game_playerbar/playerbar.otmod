@@ -1,0 +1,9 @@
+Module
+  name: game_playerbar
+  description: Displays health, mana points, soul points, and conditions
+  author: Union
+  website: https://pokeunion.com.br
+  sandboxed: true
+  scripts: [ playerbar ]
+  @onLoad: init()
+  @onUnload: terminate()

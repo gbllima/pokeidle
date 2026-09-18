@@ -1,0 +1,8 @@
+Module
+  name: game_house
+  description: Game House
+  author: Union
+  sandboxed: true
+  scripts: [ house ]
+  @onLoad: init()
+  @onUnload: terminate()

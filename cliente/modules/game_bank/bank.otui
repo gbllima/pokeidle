@@ -1,0 +1,128 @@
+BankPanelBalance < Panel
+  padding: 4
+
+  Label-16px-Regular
+    id: title
+    anchors.top: parent.top
+    anchors.left: parent.left
+    text-auto-resize: true
+
+  PanelFlat
+    id: balance
+    height: 32
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    margin-top: 4
+    font: DMSans-14px-medium
+    text: 0
+
+  ButtonBlueSmall
+    id: action1
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    margin-right: 5
+
+  ButtonBlueSmall
+    id: action2
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.horizontalCenter
+    margin-left: 5
+
+BankActionWindow < MainHeadlessWindow
+  size: 355 205
+
+  Label-16px-Regular
+    id: balanceLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-wrap: true
+    text-align: center
+
+  TextEdit
+    id: amountEdit
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.verticalCenter: prev.verticalCenter
+    margin-top: 36
+    &value: 0
+
+  Label-13px-Regular
+    id: helperAmountEdit
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    margin-top: 2
+    text: 0
+
+  ButtonBlueSmall
+    id: confirmButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    margin-right: 5
+    enabled: false
+    !text: tr('Confirm')
+
+  ButtonRedSmall
+    id: cancelButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.horizontalCenter
+    margin-left: 5
+    !text: tr('Cancel')
+
+DepositBankWindow  < BankActionWindow
+WithdrawBankWindow < BankActionWindow
+
+MainWindow
+  size: 640 240
+  visible: false
+  !text: tr('Pokemon Bank')
+  @onEscape: modules.game_bank.onOffline()
+  @onClose: modules.game_bank.onOffline()
+
+  BankPanelBalance
+    id: inventory
+    anchors.top: next.top
+    anchors.left: parent.left
+    anchors.bottom: next.bottom
+    anchors.right: next.left
+    margin-right: 8
+    @onSetup: |
+      self.title:setText(tr('Inventory Balance'))
+      self.action1:setText(tr('Deposit'))
+      self.action2:setText(tr('Deposit all'))
+
+  VerticalSeparator
+    anchors.top: closeButton.bottom
+    anchors.bottom: message.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin: 18 0
+
+  BankPanelBalance
+    id: bank
+    anchors.top: prev.top
+    anchors.right: parent.right
+    anchors.bottom: prev.bottom
+    anchors.left: prev.right
+    margin-left: 8
+    @onSetup: |
+      self.title:setText(tr('Bank Balance'))
+      self.action1:setText(tr('Withdraw'))
+      self.action2:setText(tr('Withdraw all'))
+
+  PanelFlat
+    id: message
+    height: 36
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-align: center
+    text-wrap: true

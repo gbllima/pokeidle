@@ -1,0 +1,45 @@
+
+MainWindow
+  size: 320 340
+  !text: tr('Twitch Drops')
+  @onEscape: modules.game_twitchdrops.hide()
+  @onClose:  modules.game_twitchdrops.hide()
+
+  Label-16px-Regular
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-auto-resize: true
+    text-align: center
+    text-wrap: true
+    margin-top: 18
+    !text: tr('Resgate prêmios com suas Coins das Lives de nossos parceiros!')
+
+  UIWidget
+    size: 220 120
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: prev.horizontalCenter
+    margin: 14
+    image-source: /images/game/twitch/banner
+    phantom: true
+
+  Label-13px-Bold
+    id: points
+    anchors.bottom: next.top
+    anchors.horizontalCenter: next.horizontalCenter
+    text-auto-resize: true
+    text: x0
+    margin-bottom: 12
+    icon: /images/game/twitch/coin
+    icon-align: left
+    text-offset: 22 0
+
+  ButtonBlueMedium
+    id: reedem
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin: 10
+    enabled: false
+    !text: tr('Redeem')
+    @onClick: modules.game_twitchdrops.onReedem()

@@ -1,0 +1,8 @@
+Module
+  name: game_twitchdrops
+  description: Twitch Drops
+  author: PStory
+  sandboxed: true
+  scripts: [ twitchdrops ]
+  @onLoad: init()
+  @onUnload: terminate()

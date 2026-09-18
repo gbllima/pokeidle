@@ -1,0 +1,132 @@
+EnterGameWindow < UIWindow
+  width: 430
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
+  anchors.left: parent.left
+  image-source: /images/ui/panel
+  image-border: 12
+  draggable: false
+  border: 1 #3A3939
+  &animation: false
+
+  UIWidget
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    image-source: /images/ui/enterGameLogo
+    margin-top: 20
+
+  Panel
+    id: panel
+    size: 340 258
+    anchors.centerIn: parent
+    margin-bottom: 50
+
+    Label-14px-Medium
+      anchors.bottom: next.top
+      anchors.left: parent.left
+      margin-bottom: 8
+      !text: tr('Email')
+
+    TextEdit
+      id: accountNameTextEdit
+      anchors.bottom: next.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-bottom: 20
+
+      ButtonEye
+        id: viewEmail
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin: 0 10 3 0
+        @onClick: |
+          local isOn = not self:isOn()
+
+          self:setOn(isOn)
+          self:getParent():setTextHidden(isOn)
+          g_settings.set('viewEmail', isOn)
+
+    Label-14px-Medium
+      anchors.bottom: next.top
+      anchors.left: parent.left
+      margin-bottom: 8
+      !text: tr('Password')
+
+    TextEditPassword
+      id: accountPasswordTextEdit
+      anchors.bottom: next.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-bottom: 20
+
+      ButtonEye
+        id: viewPassword
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin: 0 10 3 0
+        @onClick: |
+          local isOn = not self:isOn()
+
+          self:setOn(isOn)
+          self:getParent():setTextHidden(isOn)
+          g_settings.set('viewPassword', isOn)
+
+    CheckBox
+      id: rememberPasswordBox
+      anchors.bottom: next.top
+      anchors.left: parent.left
+      margin-bottom: 20
+      text-auto-resize: true
+      !text: tr('Remember password')
+      !tooltip: tr('Remember account and password when starts client')
+
+    Label-14px-Medium
+      id: selecteServLabel
+      anchors.bottom: next.top
+      anchors.left: parent.left
+      margin-bottom: 8
+      !text: tr('Select a server')
+
+    ComboBox
+      id: serverSelector
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      menu-scroll: true
+      menu-height: 120
+      menu-scroll-step: 25
+      @onOptionChange: EnterGame.onServerChange()
+
+  ButtonBlueLarge
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 50
+    !text: tr('Login')
+    @onClick: EnterGame.doLogin()
+
+  Panel
+    size: 234 50
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 40
+
+    Label-16px-Bold
+      anchors.top: parent.top
+      anchors.left: parent.left
+      text-auto-resize: true
+      !text: tr("Don't have an account?")
+
+    ButtonLabel
+      anchors.top: parent.top
+      anchors.left: prev.right
+      font: DMSans-16px-bold
+      margin-left: 6
+      !text: tr('Create account')
+      @onClick: modules.game_accounts.showAccountPanel()
+
+    ButtonLabel
+      anchors.bottom: parent.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      !text: tr('Forgot your password?')
+      font: DMSans-16px-bold
+      @onClick: modules.game_accounts.showRecoverPanel()

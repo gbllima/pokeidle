@@ -1,0 +1,236 @@
+TabPhotoButton < TabButton
+  focusable: true
+
+  $on:
+    image-color: #3799FB
+  
+  $focus:
+    image-color: #0466C8
+
+PhotoItemSelectable < UIWidget
+  focusable: true
+  phantom: false
+  cursor: pointer
+    
+  UIWidget
+    id: image
+    size: 125 172
+    anchors.centerIn: parent
+    image-fixed-ratio: true
+    image-smooth: true
+    phantom: true
+    image-shader: grayscale
+
+  UIWidget
+    id: lock
+    size: 16 16
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-right: 5
+    margin-top: 5
+    image-source: /images/game/prey/locked
+    visible: false
+    phantom: true
+
+  Label-12px-Regular
+    id: name
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 20
+    background-color: #C4C4C4
+    color: #FFFFFF
+    text-align: center
+    phantom: true
+
+MainWindow
+  id: photoWindow
+  !text: tr('Profile photo')
+  size: 700 500
+  @onEscape: self.cancelButton.onClick()
+  @onClose: self.cancelButton.onClick()
+  
+  Panel
+    id: mainTabBar
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 18
+    width: 250
+    height: 40
+    @onChildFocusChange: |
+      function(self, focusedChild)
+        if focusedChild == self.avatarTabButton then
+          modules.game_community.ProfilePhoto:onTabSelected(modules.game_community.ProfilePhotoModel.ItemType.AVATAR, false)
+        elseif focusedChild == self.borderTabButton then
+          modules.game_community.ProfilePhoto:onTabSelected(modules.game_community.ProfilePhotoModel.ItemType.BORDER, false)
+        end
+      end
+
+    TabPhotoButton
+      id: avatarTabButton
+      anchors.left: parent.left
+      !text: tr('Avatar')
+      width: 110
+
+    TabPhotoButton
+      id: borderTabButton
+      !text: tr('Border')
+      anchors.left: prev.right
+      width: 110
+      margin-left: 8
+
+  TextEdit
+    id: searchInput
+    anchors.bottom: prev.bottom
+    anchors.right: parent.right
+    !placeholder: tr('Search')  .. "..."
+    margin-top: 18
+    &delay: 0
+    @onKeyDown: |
+      function(self, keyCode, keyboardModifiers)
+        if os.time() > self.delay and keyboardModifiers == KeyboardNoModifier and keyCode == KeyEnter and self:getText():trim():len() > 0 then
+          self.delay = os.time() + 1.4
+          modules.game_community.searchPhotoItems(self:getText():trim():lower(), 1)
+        end
+      end
+    @onTextChange: |
+      function(self)
+        self.placeholderLabel:setVisible(self:getText():len() == 0)
+        if self:getText():len() == 0 then
+          modules.game_community.clearPhotoSearch()
+        end
+      end
+
+  UIButton
+    size: 32 33
+    anchors.right: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    image-source: /images/game/market/icone
+    image-clip: 31 1 32 33
+    image-color: #A1A1A1
+    change-cursor-image: true
+    cursor: pointer
+    &delay: 0
+    @onClick: |
+      function(self)
+        if os.time() > self.delay and self:getParent().searchInput:getText():trim():len() > 0 then
+          self.delay = os.time() + 1.4
+          modules.game_community.searchPhotoItems(self:getParent().searchInput:getText():trim():lower(), 1)
+        end
+      end
+
+    $hover:
+      image-color: white
+
+    $pressed:
+      image-color: #a1a1a1
+
+  Panel
+    id: loadingPanel
+    anchors.fill: parent
+    visible: false
+    
+    UIWidget
+      id: loadingImageContainer
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
+      size: 64 64
+      image-source: /images/game/community/load
+      
+    UILabel
+      id: loadingText
+      text: Carregando...
+      anchors.horizontalCenter: parent.horizontalCenter  
+      anchors.top: prev.bottom
+      margin-top: 10
+      text-auto-resize: true
+      text-align: center
+
+  CheckBox
+    id: showAllCheckBox
+    !text: tr('Show all')
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    width: 140
+    margin-bottom: 25
+    margin-right: 10
+    @onCheckChange: function(self, checked) modules.game_community.Community.onShowAllToggle(checked) end
+
+  Panel
+    id: pagePanel
+    size: 155 20
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin-bottom: 22
+
+    ButtonFirst
+      id: firstButton
+      anchors.verticalCenter: next.verticalCenter
+      anchors.right: next.left
+      margin-right: 2
+
+    ButtonPrevious
+      id: prevButton
+      anchors.verticalCenter: next.verticalCenter
+      anchors.right: next.left
+      margin-right: 4
+
+    Label-16px-Regular
+      id: pageText
+      anchors.centerIn: parent
+      text-align: center
+      text-auto-resize: true
+      !text: tr('01 / 01')
+
+    ButtonNext
+      id: nextButton
+      anchors.verticalCenter: prev.verticalCenter
+      anchors.left: prev.right
+      margin-left: 4
+
+    ButtonLast
+      id: lastButton
+      anchors.verticalCenter: prev.verticalCenter
+      anchors.left: prev.right
+      margin-left: 2
+
+  ScrollablePanel
+    id: mainContent
+    anchors.top: next.top
+    anchors.left: parent.left
+    anchors.right: next.left
+    anchors.bottom: next.bottom
+    vertical-scrollbar: mainScrollBar
+    layout:
+      type: grid
+      cell-size: 125 172
+      cell-spacing: 7
+      flow: true
+
+  VerticalScrollBar
+    id: mainScrollBar
+    anchors.top: mainTabBar.bottom
+    anchors.bottom: next.top
+    anchors.right: parent.right
+    margin-bottom: 18
+    margin-top: 18
+    step: 20
+    pixels-scroll: true
+
+  ButtonRedSmall
+    id: cancelButton
+    !text: tr('Cancel')
+    width: 96
+    anchors.right: next.left
+    anchors.bottom: next.bottom
+    margin-right: 10
+    @onClick: modules.game_community.closePhotoEditor()
+
+  ButtonBlueSmall
+    id: saveButton
+    !text: tr('Save')
+    width: 96
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-bottom: 14
+    @onClick: modules.game_community.savePhotoSelection()

@@ -1,0 +1,8 @@
+Module
+  name: game_pokemoves
+  description: Poke Moves
+  author: Gengo
+  sandboxed: true
+  scripts: [ pokemoves ]
+  @onLoad: init()
+  @onUnload: terminate()
