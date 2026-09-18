@@ -23,6 +23,7 @@ import { HuntField, encounterProgress, landingSpot, FLOAT_MS, type WildSpawn } f
 import {
   WalkGrid,
   findPath,
+  findPathTo,
   Trail,
   Walker,
   stepDurationMs,
@@ -1308,40 +1309,17 @@ function start(world: World): void {
   /** Never more than this many path searches a second, however many targets. */
   const SEARCH_INTERVAL_MS = 250;
 
-  const stepHunt = (now: number): void => {
-    if (!hunts.current || !field.armed) {
-      if (walker.walking) walker.stop();
-      return;
-    }
+  /** True while a click/WASD route owns the shared walker. */
+  let cityWalking = false;
 
-    const target = field.focus(player, stuckTargets);
-
-    if (target && pathTarget !== target.key && !walker.walking) {
-      // Searching is the expensive part of this loop, so it is rationed. An
-      // unrationed search ran once per frame and took the whole page down to
-      // a frame a second.
-      if (now < nextSearchAt) return;
-      nextSearchAt = now + SEARCH_INTERVAL_MS;
-
-      const path = findPath(player, target, grid);
-      if (path === null) {
-        // No way through from here — across water, or behind a cliff. Remember
-        // it so focus moves on instead of retrying the same failed search.
-        stuckTargets.add(target.key);
-        return;
-      }
-      pathTarget = target.key;
-      walker.follow(path, now, { x: player.x, y: player.y });
-      facing = faceToward(target);
-    }
-
-    const step = walker.step(now);
-    if (!step) return;
-
-    // Where everyone stood before the line shuffled forward. A follower's own
-    // step starts when the tile under it changes, which is one leader-step
-    // later — record them from the same snapshot so the whole line slides in
-    // sequence rather than snapping together.
+  /**
+   * Move the visible line by one tile.
+   *
+   * Hunts and free city movement use the same actor/trail animation, so there
+   * is one place that updates coordinates, facing, stride animation, camera
+   * and nearby-market UI.
+   */
+  const applyWalkStep = (step: { x: number; y: number }, now: number): void => {
     const before = [
       { x: player.x, y: player.y },
       ...party.map((_, i) => ({ ...trail.follower(i) })),
@@ -1372,6 +1350,83 @@ function start(world: World): void {
 
     actors = buildActors();
     centreOnPlayer();
+    refreshMarket();
+  };
+
+  /** Start a free route through the city, landing on the chosen tile. */
+  const walkToCity = (wanted: { x: number; y: number }, now = Date.now()): void => {
+    if (hunts.current || field.armed) return;
+
+    // A click can land on the edge of a wall sprite. Snap only a very short
+    // distance to nearby floor; a distant blocked click should not send the
+    // player somewhere surprising.
+    const target = grid.walkable(wanted.x, wanted.y) ? wanted : grid.nearestOpen(wanted, 2);
+    if (!target) return;
+
+    const path = findPathTo(player, target, grid);
+    if (path === null) {
+      openDrawer('Caminho bloqueado', 'Não existe um caminho caminhável até esse ponto.');
+      return;
+    }
+
+    walker.stop();
+    cityWalking = false;
+    if (path.length === 0) {
+      centreOnPlayer();
+      return;
+    }
+
+    walker.setSpeed((party.find((m) => m.hp > 0) ?? party[0])?.speed ?? 180);
+    walker.follow(path, now, { x: player.x, y: player.y });
+    facing = faceToward(path[0]!);
+    cityWalking = true;
+  };
+
+  /** Advance a click/WASD route when no hunt owns movement. */
+  const stepCity = (now: number): void => {
+    if (hunts.current || field.armed) return;
+    if (!cityWalking) return;
+    if (!walker.walking) {
+      cityWalking = false;
+      return;
+    }
+
+    const step = walker.step(now);
+    if (!step) return;
+    applyWalkStep(step, now);
+    if (!walker.walking) cityWalking = false;
+  };
+
+  const stepHunt = (now: number): void => {
+    if (!hunts.current || !field.armed) {
+      if (!cityWalking && walker.walking) walker.stop();
+      return;
+    }
+
+    const target = field.focus(player, stuckTargets);
+
+    if (target && pathTarget !== target.key && !walker.walking) {
+      // Searching is the expensive part of this loop, so it is rationed. An
+      // unrationed search ran once per frame and took the whole page down to
+      // a frame a second.
+      if (now < nextSearchAt) return;
+      nextSearchAt = now + SEARCH_INTERVAL_MS;
+
+      const path = findPath(player, target, grid);
+      if (path === null) {
+        // No way through from here — across water, or behind a cliff. Remember
+        // it so focus moves on instead of retrying the same failed search.
+        stuckTargets.add(target.key);
+        return;
+      }
+      pathTarget = target.key;
+      walker.follow(path, now, { x: player.x, y: player.y });
+      facing = faceToward(target);
+    }
+
+    const step = walker.step(now);
+    if (!step) return;
+    applyWalkStep(step, now);
   };
 
   /**
@@ -4241,20 +4296,45 @@ function start(world: World): void {
   // ── input ──────────────────────────────────────────────────────────────────
 
   let dragging = false;
+  let dragMoved = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
   let lastX = 0;
   let lastY = 0;
 
+  /** Convert a pointer position on the canvas back into a map tile. */
+  const pointerTile = (clientX: number, clientY: number) => {
+    const rect = stage.getBoundingClientRect();
+    const dpr = stage.width / Math.max(1, rect.width);
+    const sx = (clientX - rect.left) * dpr;
+    const sy = (clientY - rect.top) * dpr;
+    const worldX = camera.x + (sx - stage.width / 2) / SCALE;
+    const worldY = camera.y + (sy - stage.height / 2) / SCALE;
+    return { x: Math.floor(worldX / TILE), y: Math.floor(worldY / TILE) };
+  };
+
   stage.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
     dragging = true;
-    lastX = e.clientX;
-    lastY = e.clientY;
-    stage.classList.add('dragging');
+    dragMoved = false;
+    dragStartX = lastX = e.clientX;
+    dragStartY = lastY = e.clientY;
     stage.setPointerCapture(e.pointerId);
   });
 
   stage.addEventListener('pointermove', (e) => {
     if (!dragging) return;
-    const dpr = stage.width / window.innerWidth;
+
+    // A normal click is movement, not camera drag. Do not take the camera until
+    // the pointer has travelled far enough to clearly be a drag gesture.
+    if (!dragMoved) {
+      dragMoved = Math.hypot(e.clientX - dragStartX, e.clientY - dragStartY) >= 6;
+      if (!dragMoved) return;
+      stage.classList.add('dragging');
+    }
+
+    const rect = stage.getBoundingClientRect();
+    const dpr = stage.width / Math.max(1, rect.width);
     camera.x -= ((e.clientX - lastX) * dpr) / SCALE;
     camera.y -= ((e.clientY - lastY) * dpr) / SCALE;
     lastX = e.clientX;
@@ -4266,12 +4346,48 @@ function start(world: World): void {
     stage.classList.remove('dragging');
     if (stage.hasPointerCapture(e.pointerId)) stage.releasePointerCapture(e.pointerId);
   };
-  stage.addEventListener('pointerup', endDrag);
+
+  stage.addEventListener('pointerup', (e) => {
+    const walkClick = dragging && !dragMoved && e.button === 0;
+    endDrag(e);
+    if (walkClick) walkToCity(pointerTile(e.clientX, e.clientY));
+  });
   stage.addEventListener('pointercancel', endDrag);
 
   window.addEventListener('keydown', (e) => {
     if (e.key === '0') centreOnPlayer();
     if (e.key === 'Escape') drawer.root.hidden = true;
+
+    const target = e.target as HTMLElement | null;
+    if (target?.matches('input, textarea, select, [contenteditable="true"]')) return;
+    if (hunts.current || field.armed) return;
+
+    const key = e.key.toLowerCase();
+    const direction =
+      key === 'w' || key === 'arrowup'
+        ? { x: 0, y: -1 }
+        : key === 's' || key === 'arrowdown'
+          ? { x: 0, y: 1 }
+          : key === 'a' || key === 'arrowleft'
+            ? { x: -1, y: 0 }
+            : key === 'd' || key === 'arrowright'
+              ? { x: 1, y: 0 }
+              : null;
+    if (!direction) return;
+
+    e.preventDefault();
+
+    // A fresh key press takes control away from a longer click route. While
+    // the key is held, browser repeat events wait for each tile to finish and
+    // then feed the next one, giving continuous keyboard walking.
+    if (!e.repeat && walker.walking) {
+      walker.stop();
+      cityWalking = false;
+    }
+    if (walker.walking) return;
+
+    const next = { x: player.x + direction.x, y: player.y + direction.y };
+    if (grid.walkable(next.x, next.y)) walkToCity(next);
   });
 
   // ── terrain baking ─────────────────────────────────────────────────────────
@@ -4474,6 +4590,7 @@ function start(world: World): void {
     // by second.
     const wallNow = Date.now();
     stepHunt(wallNow);
+    stepCity(wallNow);
     // Moves fire on their own cooldowns, aimed at whatever the run is
     // currently resolving. They report what is happening; they do not decide
     // it — the rewards come from the simulation either way.
